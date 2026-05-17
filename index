@@ -273,7 +273,7 @@
      * IMPORTANT
      * Remplace cette URL par ton URL Apps Script /exec
      ****************************************************/
-    const APPS_SCRIPT_API_URL = 'COLLE_ICI_URL_APPS_SCRIPT_EXEC';
+    const APPS_SCRIPT_API_URL = 'AKfycbyGDPOD5BS3iylT_PYQys4i25ANQAkKWkZGPU-Rkh9iAKHd6851-6BCSAfRSivjb36v';
 
     const btnEnvoyer = document.getElementById('btnEnvoyer');
     const btnMicro = document.getElementById('btnMicro');

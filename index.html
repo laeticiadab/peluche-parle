@@ -1,1 +1,648 @@
-AKfycbyGDPOD5BS3iylT_PYQys4i25ANQAkKWkZGPU-Rkh9iAKHd6851-6BCSAfRSivjb36v
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Peluche qui parle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7efe5;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 18px 0;
+    }
+
+    .app {
+      width: 94%;
+      max-width: 480px;
+      background: white;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    .peluche {
+      width: 170px;
+      height: 170px;
+      margin: 0 auto 16px;
+      background: #c48a5a;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: inset 0 -10px 0 rgba(0,0,0,0.08);
+    }
+
+    .oreille {
+      width: 58px;
+      height: 58px;
+      background: #b6784c;
+      border-radius: 50%;
+      position: absolute;
+      top: -18px;
+    }
+
+    .oreille.gauche {
+      left: 10px;
+    }
+
+    .oreille.droite {
+      right: 10px;
+    }
+
+    .oeil {
+      width: 16px;
+      height: 16px;
+      background: #222;
+      border-radius: 50%;
+      position: absolute;
+      top: 65px;
+    }
+
+    .oeil.gauche {
+      left: 52px;
+    }
+
+    .oeil.droite {
+      right: 52px;
+    }
+
+    .museau {
+      width: 72px;
+      height: 50px;
+      background: #f2d2b6;
+      border-radius: 50%;
+      position: absolute;
+      left: 49px;
+      top: 88px;
+    }
+
+    .nez {
+      width: 22px;
+      height: 16px;
+      background: #3a2318;
+      border-radius: 50%;
+      position: absolute;
+      left: 25px;
+      top: 8px;
+    }
+
+    .bouche {
+      width: 28px;
+      height: 8px;
+      background: #3a2318;
+      border-radius: 0 0 20px 20px;
+      position: absolute;
+      left: 22px;
+      top: 30px;
+    }
+
+    .parle .bouche {
+      animation: bouche 0.25s infinite alternate;
+    }
+
+    @keyframes bouche {
+      from { height: 6px; }
+      to { height: 20px; }
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 85px;
+      border-radius: 14px;
+      border: 1px solid #ddd;
+      padding: 12px;
+      font-size: 15px;
+      box-sizing: border-box;
+      resize: vertical;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #8b5e3c;
+      color: white;
+      margin-top: 10px;
+    }
+
+    button.secondaire {
+      background: #555;
+    }
+
+    button.diagnostic {
+      background: #2f5d62;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .statut {
+      margin: 12px 0;
+      padding: 10px;
+      font-size: 14px;
+      color: #444;
+      background: #f8f3ee;
+      border-radius: 12px;
+      text-align: left;
+      line-height: 1.4;
+    }
+
+    .texte {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #f6f1ec;
+      min-height: 70px;
+      text-align: left;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .bloc {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid #eee;
+    }
+
+    .petit {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background: #111;
+      color: #eee;
+      padding: 12px;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 12px;
+      max-height: 220px;
+      overflow: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <div id="peluche" class="peluche">
+      <div class="oreille gauche"></div>
+      <div class="oreille droite"></div>
+      <div class="oeil gauche"></div>
+      <div class="oeil droite"></div>
+      <div class="museau">
+        <div class="nez"></div>
+        <div class="bouche"></div>
+      </div>
+    </div>
+
+    <h2>Ma peluche qui parle</h2>
+
+    <div id="statut" class="statut">
+      État : page chargée. Clique sur “Tester micro”, puis sur “Parler à la peluche”.
+    </div>
+
+    <div class="bloc">
+      <textarea id="messageTexte" placeholder="Écris ici ton message si tu veux tester sans micro..."></textarea>
+
+      <button id="btnEnvoyer" onclick="envoyerTexte()">
+        Envoyer le texte à la peluche
+      </button>
+
+      <button id="btnMicro" class="secondaire" onclick="demarrerMicro()">
+        🎙️ Parler à la peluche
+      </button>
+    </div>
+
+    <div class="texte">
+      <strong>Toi :</strong>
+      <div id="question">...</div>
+      <br>
+      <strong>Peluche :</strong>
+      <div id="reponse">...</div>
+    </div>
+
+    <div class="bloc">
+      <div class="petit">
+        Tests utiles pour vérifier que tout marche.
+      </div>
+
+      <button class="diagnostic" onclick="testerVoix()">
+        1. Tester la voix
+      </button>
+
+      <button class="diagnostic" onclick="testerMicroSeul()">
+        2. Tester le micro
+      </button>
+
+      <button class="diagnostic" onclick="testerGemini()">
+        3. Tester Gemini via Apps Script
+      </button>
+    </div>
+
+    <div class="bloc">
+      <strong>Diagnostic :</strong>
+      <pre id="diagnostic">Aucun diagnostic pour le moment.</pre>
+    </div>
+
+  </div>
+
+  <script>
+    /****************************************************
+     * IMPORTANT
+     * Remplace cette URL par ton URL Apps Script /exec
+     ****************************************************/
+    const APPS_SCRIPT_API_URL = 'AKfycbyGDPOD5BS3iylT_PYQys4i25ANQAkKWkZGPU-Rkh9iAKHd6851-6BCSAfRSivjb36v';
+
+    const btnEnvoyer = document.getElementById('btnEnvoyer');
+    const btnMicro = document.getElementById('btnMicro');
+    const statut = document.getElementById('statut');
+    const question = document.getElementById('question');
+    const reponse = document.getElementById('reponse');
+    const peluche = document.getElementById('peluche');
+    const diagnostic = document.getElementById('diagnostic');
+    const messageTexte = document.getElementById('messageTexte');
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    function afficherStatut(message) {
+      statut.textContent = message;
+    }
+
+    function ajouterDiagnostic(titre, objet) {
+      const ancien = diagnostic.textContent === 'Aucun diagnostic pour le moment.'
+        ? ''
+        : diagnostic.textContent + '\n\n';
+
+      diagnostic.textContent =
+        ancien +
+        '--- ' + titre + ' ---\n' +
+        JSON.stringify(objet, null, 2);
+    }
+
+    function bloquerBoutons(etat) {
+      btnEnvoyer.disabled = etat;
+      btnMicro.disabled = etat;
+    }
+
+    /****************************************************
+     * TEST GEMINI VIA APPS SCRIPT
+     ****************************************************/
+    function testerGemini() {
+      appelerAppsScript('Bonjour peluche, réponds simplement : je fonctionne.')
+        .then(function(data) {
+          ajouterDiagnostic('Test Gemini via Apps Script', data);
+
+          if (data.ok) {
+            reponse.textContent = data.reponse;
+            parler(data.reponse);
+            afficherStatut('Gemini fonctionne via Apps Script.');
+          } else {
+            afficherStatut('Erreur Gemini via Apps Script.');
+          }
+        })
+        .catch(function(error) {
+          ajouterDiagnostic('Erreur appel Apps Script', {
+            ok: false,
+            erreur: error.message
+          });
+
+          afficherStatut('Impossible d’appeler Apps Script.');
+        });
+    }
+
+    /****************************************************
+     * ENVOI TEXTE
+     ****************************************************/
+    function envoyerTexte() {
+      const texte = messageTexte.value.trim();
+
+      if (!texte) {
+        afficherStatut('Écris d’abord un message.');
+        return;
+      }
+
+      question.textContent = texte;
+      reponse.textContent = '...';
+      afficherStatut('La peluche réfléchit...');
+      bloquerBoutons(true);
+
+      appelerAppsScript(texte)
+        .then(function(data) {
+          if (data.ok) {
+            reponse.textContent = data.reponse;
+            parler(data.reponse);
+            afficherStatut('La peluche a répondu.');
+          } else {
+            reponse.textContent = 'Erreur : ' + data.message;
+            afficherStatut('Erreur côté Apps Script.');
+          }
+
+          bloquerBoutons(false);
+        })
+        .catch(function(error) {
+          reponse.textContent = 'Erreur : ' + error.message;
+          afficherStatut('Erreur de communication avec Apps Script.');
+          ajouterDiagnostic('Erreur communication', {
+            ok: false,
+            erreur: error.message
+          });
+          bloquerBoutons(false);
+        });
+    }
+
+    /****************************************************
+     * APPEL APPS SCRIPT PAR JSONP
+     ****************************************************/
+    function appelerAppsScript(message) {
+      return new Promise(function(resolve, reject) {
+        if (!APPS_SCRIPT_API_URL || APPS_SCRIPT_API_URL === 'COLLE_ICI_URL_APPS_SCRIPT_EXEC') {
+          reject(new Error('URL Apps Script non configurée dans le fichier HTML.'));
+          return;
+        }
+
+        const callbackName =
+          'callbackPeluche_' +
+          Date.now() +
+          '_' +
+          Math.floor(Math.random() * 100000);
+
+        const script = document.createElement('script');
+
+        const timeout = setTimeout(function() {
+          nettoyer();
+          reject(new Error('Temps d’attente dépassé. Apps Script ne répond pas.'));
+        }, 30000);
+
+        function nettoyer() {
+          clearTimeout(timeout);
+
+          if (script && script.parentNode) {
+            script.parentNode.removeChild(script);
+          }
+
+          try {
+            delete window[callbackName];
+          } catch (e) {
+            window[callbackName] = undefined;
+          }
+        }
+
+        window[callbackName] = function(data) {
+          nettoyer();
+          resolve(data);
+        };
+
+        script.onerror = function() {
+          nettoyer();
+          reject(new Error('Erreur de chargement JSONP vers Apps Script.'));
+        };
+
+        const url =
+          APPS_SCRIPT_API_URL +
+          '?api=ask' +
+          '&callback=' + encodeURIComponent(callbackName) +
+          '&q=' + encodeURIComponent(message);
+
+        script.src = url;
+        document.body.appendChild(script);
+      });
+    }
+
+    /****************************************************
+     * MICRO
+     ****************************************************/
+    async function testerMicroSeul() {
+      afficherStatut('Test du micro en cours...');
+
+      const result = await diagnostiquerMicro();
+
+      ajouterDiagnostic('Micro navigateur', result);
+
+      if (result.ok) {
+        afficherStatut('Micro autorisé. Le navigateur peut accéder au micro.');
+      } else {
+        afficherStatut('Micro bloqué. Voir diagnostic.');
+      }
+    }
+
+    async function diagnostiquerMicro() {
+      const result = {
+        ok: false,
+        navigateur: navigator.userAgent,
+        protocole: window.location.protocol,
+        origine: window.location.origin,
+        contexteSecurise: window.isSecureContext,
+        mediaDevicesDisponible: !!navigator.mediaDevices,
+        getUserMediaDisponible: !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
+        speechRecognitionDisponible: !!SpeechRecognition,
+        permissionMicro: 'non vérifiée',
+        erreur: null,
+        conseil: null
+      };
+
+      if (!window.isSecureContext) {
+        result.erreur = 'Contexte non sécurisé.';
+        result.conseil = 'La page doit être ouverte en HTTPS.';
+        return result;
+      }
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        result.erreur = 'getUserMedia indisponible.';
+        result.conseil = 'Utilise Google Chrome récent.';
+        return result;
+      }
+
+      if (navigator.permissions && navigator.permissions.query) {
+        try {
+          const permission = await navigator.permissions.query({ name: 'microphone' });
+          result.permissionMicro = permission.state;
+        } catch (e) {
+          result.permissionMicro = 'non supportée par ce navigateur';
+        }
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        stream.getTracks().forEach(function(track) {
+          track.stop();
+        });
+
+        result.ok = true;
+        result.conseil = 'Le micro est accessible.';
+        return result;
+
+      } catch (e) {
+        result.ok = false;
+        result.erreur = e.name + ' : ' + e.message;
+
+        if (e.name === 'NotAllowedError') {
+          result.conseil =
+            'Le micro est refusé. Clique sur le cadenas de Chrome, autorise le micro, puis recharge la page.';
+        } else if (e.name === 'NotFoundError') {
+          result.conseil =
+            'Aucun micro détecté. Vérifie que l’appareil possède un micro actif.';
+        } else if (e.name === 'NotReadableError') {
+          result.conseil =
+            'Le micro est utilisé par une autre application. Ferme WhatsApp, Zoom, Meet ou autre logiciel.';
+        } else {
+          result.conseil =
+            'Erreur micro non spécifique. Vérifie Chrome et les paramètres système.';
+        }
+
+        return result;
+      }
+    }
+
+    function demarrerMicro() {
+      if (!SpeechRecognition) {
+        afficherStatut('Reconnaissance vocale non disponible. Utilise Chrome.');
+        ajouterDiagnostic('SpeechRecognition', {
+          ok: false,
+          erreur: 'SpeechRecognition indisponible.'
+        });
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+
+      recognition.lang = 'fr-FR';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      bloquerBoutons(true);
+      afficherStatut('J’écoute. Parle maintenant...');
+
+      try {
+        recognition.start();
+      } catch (e) {
+        ajouterDiagnostic('Erreur démarrage micro', {
+          ok: false,
+          erreur: e.name + ' : ' + e.message
+        });
+
+        afficherStatut('Impossible de démarrer le micro.');
+        bloquerBoutons(false);
+        return;
+      }
+
+      recognition.onresult = function(event) {
+        const texte = event.results[0][0].transcript;
+
+        question.textContent = texte;
+        messageTexte.value = texte;
+        reponse.textContent = '...';
+        afficherStatut('Phrase reçue. La peluche réfléchit...');
+
+        appelerAppsScript(texte)
+          .then(function(data) {
+            if (data.ok) {
+              reponse.textContent = data.reponse;
+              parler(data.reponse);
+              afficherStatut('La peluche a répondu.');
+            } else {
+              reponse.textContent = 'Erreur : ' + data.message;
+              afficherStatut('Erreur côté Apps Script.');
+            }
+
+            bloquerBoutons(false);
+          })
+          .catch(function(error) {
+            reponse.textContent = 'Erreur : ' + error.message;
+            afficherStatut('Erreur de communication avec Apps Script.');
+            bloquerBoutons(false);
+          });
+      };
+
+      recognition.onerror = function(event) {
+        ajouterDiagnostic('Erreur reconnaissance vocale', {
+          ok: false,
+          erreur: event.error
+        });
+
+        if (event.error === 'not-allowed') {
+          afficherStatut('Micro refusé par Chrome. Autorise le micro dans le cadenas.');
+        } else if (event.error === 'no-speech') {
+          afficherStatut('Aucune parole détectée. Réessaie.');
+        } else {
+          afficherStatut('Erreur micro : ' + event.error);
+        }
+
+        bloquerBoutons(false);
+      };
+
+      recognition.onend = function() {
+        if (statut.textContent === 'J’écoute. Parle maintenant...') {
+          afficherStatut('Écoute terminée sans phrase détectée.');
+          bloquerBoutons(false);
+        }
+      };
+    }
+
+    /****************************************************
+     * VOIX
+     ****************************************************/
+    function testerVoix() {
+      parler('Bonjour. Je suis ta peluche. Ma voix fonctionne.');
+    }
+
+    function parler(texte) {
+      if (!window.speechSynthesis) {
+        afficherStatut('Lecture vocale non supportée sur ce navigateur.');
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const voix = new SpeechSynthesisUtterance(texte);
+
+      voix.lang = 'fr-FR';
+      voix.rate = 0.95;
+      voix.pitch = 1.2;
+      voix.volume = 1;
+
+      voix.onstart = function() {
+        peluche.classList.add('parle');
+      };
+
+      voix.onend = function() {
+        peluche.classList.remove('parle');
+      };
+
+      voix.onerror = function(event) {
+        peluche.classList.remove('parle');
+
+        ajouterDiagnostic('Erreur voix', {
+          ok: false,
+          erreur: event.error || 'Erreur inconnue'
+        });
+      };
+
+      window.speechSynthesis.speak(voix);
+    }
+  </script>
+</body>
+</html>

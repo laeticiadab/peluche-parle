@@ -62,17 +62,9 @@
       margin-top: 10px;
     }
 
-    button.secondaire {
-      background: #555;
-    }
-
-    button.diagnostic {
-      background: #2f5d62;
-    }
-
-    button.danger {
-      background: #9b2c2c;
-    }
+    button.secondaire { background: #555; }
+    button.diagnostic { background: #2f5d62; }
+    button.danger { background: #9b2c2c; }
 
     button:disabled {
       opacity: 0.6;
@@ -113,9 +105,7 @@
       line-height: 1.4;
     }
 
-    .hidden {
-      display: none;
-    }
+    .hidden { display: none; }
 
     pre {
       white-space: pre-wrap;
@@ -149,13 +139,8 @@
       top: -18px;
     }
 
-    .oreille.gauche {
-      left: 10px;
-    }
-
-    .oreille.droite {
-      right: 10px;
-    }
+    .oreille.gauche { left: 10px; }
+    .oreille.droite { right: 10px; }
 
     .oeil {
       width: 16px;
@@ -166,13 +151,8 @@
       top: 65px;
     }
 
-    .oeil.gauche {
-      left: 52px;
-    }
-
-    .oeil.droite {
-      right: 52px;
-    }
+    .oeil.gauche { left: 52px; }
+    .oeil.droite { right: 52px; }
 
     .museau {
       width: 72px;
@@ -212,6 +192,46 @@
       from { height: 6px; }
       to { height: 20px; }
     }
+
+    .modalOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.58);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 9999;
+    }
+
+    .modalOverlay.hidden {
+      display: none;
+    }
+
+    .modalBox {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.28);
+      text-align: left;
+      box-sizing: border-box;
+    }
+
+    .modalBox h3 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .modalBox .info {
+      background: #f8f3ee;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.4;
+      color: #444;
+    }
   </style>
 </head>
 
@@ -235,23 +255,16 @@
       Connecte-toi pour parler à ta peluche.
     </div>
 
-    <!-- BLOC CONNEXION CLIENT -->
     <div id="blocLogin" class="bloc">
       <h3>Connexion client</h3>
 
       <input id="username" type="text" placeholder="Identifiant">
       <input id="password" type="password" placeholder="Mot de passe ou code d’accès">
 
-      <button onclick="seConnecter()">
-        Se connecter
-      </button>
-
-      <button class="diagnostic" onclick="testerServeur()">
-        Tester serveur
-      </button>
+      <button onclick="seConnecter()">Se connecter</button>
+      <button class="diagnostic" onclick="testerServeur()">Tester serveur</button>
     </div>
 
-    <!-- BLOC APPLICATION APRÈS CONNEXION -->
     <div id="blocApp" class="hidden">
 
       <div class="bloc">
@@ -260,21 +273,14 @@
           <strong id="nomUtilisateurConnecte">...</strong>
         </div>
 
-        <button class="danger" onclick="seDeconnecter()">
-          Se déconnecter
-        </button>
+        <button class="danger" onclick="seDeconnecter()">Se déconnecter</button>
       </div>
 
       <div class="bloc">
         <textarea id="messageTexte" placeholder="Écris ici ton message si tu veux tester sans micro..."></textarea>
 
-        <button id="btnEnvoyer" onclick="envoyerTexte()">
-          Envoyer le texte à la peluche
-        </button>
-
-        <button id="btnMicro" class="secondaire" onclick="demarrerMicro()">
-          🎙️ Parler à la peluche
-        </button>
+        <button id="btnEnvoyer" onclick="envoyerTexte()">Envoyer le texte à la peluche</button>
+        <button id="btnMicro" class="secondaire" onclick="demarrerMicro()">🎙️ Parler à la peluche</button>
       </div>
 
       <div class="texte">
@@ -286,13 +292,8 @@
       </div>
 
       <div class="bloc">
-        <button class="diagnostic" onclick="testerVoix()">
-          Tester la voix
-        </button>
-
-        <button class="diagnostic" onclick="testerMicroSeul()">
-          Tester le micro
-        </button>
+        <button class="diagnostic" onclick="testerVoix()">Tester la voix</button>
+        <button class="diagnostic" onclick="testerMicroSeul()">Tester le micro</button>
       </div>
     </div>
 
@@ -303,6 +304,27 @@
 
   </div>
 
+  <div id="modalChangePassword" class="modalOverlay hidden">
+    <div class="modalBox">
+      <h3>Changer le mot de passe</h3>
+
+      <div class="info">
+        C’est ta première connexion. Pour protéger ton accès, tu dois choisir un nouveau mot de passe avant d’utiliser la peluche.
+      </div>
+
+      <input id="oldPasswordChange" type="password" placeholder="Ancien mot de passe">
+      <input id="newPassword1" type="password" placeholder="Nouveau mot de passe">
+      <input id="newPassword2" type="password" placeholder="Confirmer le nouveau mot de passe">
+
+      <button onclick="changerMotDePassePremiereConnexion()">Valider le nouveau mot de passe</button>
+      <button class="danger" onclick="seDeconnecter()">Annuler et se déconnecter</button>
+
+      <div id="changePasswordMessage" class="statut">
+        Le nouveau mot de passe doit contenir au moins 6 caractères.
+      </div>
+    </div>
+  </div>
+
   <script>
     /****************************************************
      * URL APPS SCRIPT
@@ -311,6 +333,7 @@
 
     let sessionToken = localStorage.getItem('PELUCHE_SESSION_TOKEN') || '';
     let currentUser = null;
+    let pendingFirstLoginMessage = '';
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -325,9 +348,15 @@
     const btnEnvoyer = document.getElementById('btnEnvoyer');
     const btnMicro = document.getElementById('btnMicro');
     const nomUtilisateurConnecte = document.getElementById('nomUtilisateurConnecte');
+    const modalChangePassword = document.getElementById('modalChangePassword');
+    const changePasswordMessage = document.getElementById('changePasswordMessage');
 
     function afficherStatut(message) {
       statut.textContent = message;
+    }
+
+    function afficherMessageChangement(message) {
+      changePasswordMessage.textContent = message;
     }
 
     function ajouterDiagnostic(titre, objet) {
@@ -459,9 +488,17 @@
 
         sessionToken = data.token;
         currentUser = data.user;
+        pendingFirstLoginMessage = data.firstLoginMessage || '';
 
         localStorage.setItem('PELUCHE_SESSION_TOKEN', sessionToken);
         localStorage.setItem('PELUCHE_CURRENT_USER', JSON.stringify(currentUser));
+
+        if (data.mustChangePassword) {
+          document.getElementById('oldPasswordChange').value = password;
+          ouvrirFenetreChangementMotDePasse();
+          afficherStatut('Première connexion : change le mot de passe avant utilisation.');
+          return;
+        }
 
         afficherInterfaceConnectee(data);
 
@@ -482,7 +519,95 @@
       });
     }
 
+    function ouvrirFenetreChangementMotDePasse() {
+      blocLogin.classList.add('hidden');
+      blocApp.classList.add('hidden');
+      modalChangePassword.classList.remove('hidden');
+      afficherMessageChangement('Le nouveau mot de passe doit contenir au moins 6 caractères.');
+    }
+
+    function fermerFenetreChangementMotDePasse() {
+      modalChangePassword.classList.add('hidden');
+    }
+
+    function changerMotDePassePremiereConnexion() {
+      const oldPassword = document.getElementById('oldPasswordChange').value.trim();
+      const newPassword1 = document.getElementById('newPassword1').value.trim();
+      const newPassword2 = document.getElementById('newPassword2').value.trim();
+
+      if (!sessionToken) {
+        afficherMessageChangement('Session absente. Reconnecte-toi.');
+        return;
+      }
+
+      if (!oldPassword) {
+        afficherMessageChangement('Saisis l’ancien mot de passe.');
+        return;
+      }
+
+      if (!newPassword1 || newPassword1.length < 6) {
+        afficherMessageChangement('Le nouveau mot de passe doit contenir au moins 6 caractères.');
+        return;
+      }
+
+      if (newPassword1 !== newPassword2) {
+        afficherMessageChangement('Les deux nouveaux mots de passe ne sont pas identiques.');
+        return;
+      }
+
+      if (oldPassword === newPassword1) {
+        afficherMessageChangement('Le nouveau mot de passe doit être différent de l’ancien.');
+        return;
+      }
+
+      afficherMessageChangement('Changement du mot de passe en cours...');
+
+      appelerAppsScript({
+        api: 'changePassword',
+        token: sessionToken,
+        oldPassword: oldPassword,
+        newPassword: newPassword1
+      })
+      .then(function(data) {
+        ajouterDiagnostic('Changement mot de passe', data);
+
+        if (!data.ok) {
+          afficherMessageChangement(data.message || 'Impossible de changer le mot de passe.');
+          return;
+        }
+
+        fermerFenetreChangementMotDePasse();
+
+        document.getElementById('password').value = '';
+        document.getElementById('oldPasswordChange').value = '';
+        document.getElementById('newPassword1').value = '';
+        document.getElementById('newPassword2').value = '';
+
+        afficherInterfaceConnectee({
+          user: currentUser
+        });
+
+        const messageAccueil = data.firstLoginMessage || pendingFirstLoginMessage || '';
+
+        if (messageAccueil) {
+          reponse.textContent = messageAccueil;
+          parler(messageAccueil);
+        }
+
+        afficherStatut('Mot de passe changé. Tu peux utiliser la peluche.');
+      })
+      .catch(function(error) {
+        ajouterDiagnostic('Erreur changement mot de passe', {
+          ok: false,
+          erreur: error.message
+        });
+
+        afficherMessageChangement('Erreur de communication avec Apps Script.');
+      });
+    }
+
     function afficherInterfaceConnectee(data) {
+      fermerFenetreChangementMotDePasse();
       blocLogin.classList.add('hidden');
       blocApp.classList.remove('hidden');
 
@@ -499,10 +624,12 @@
     function seDeconnecter() {
       sessionToken = '';
       currentUser = null;
+      pendingFirstLoginMessage = '';
 
       localStorage.removeItem('PELUCHE_SESSION_TOKEN');
       localStorage.removeItem('PELUCHE_CURRENT_USER');
 
+      modalChangePassword.classList.add('hidden');
       blocApp.classList.add('hidden');
       blocLogin.classList.remove('hidden');
 
@@ -544,6 +671,11 @@
           afficherStatut('La peluche a répondu.');
         } else {
           reponse.textContent = 'Erreur : ' + (data.message || 'Erreur inconnue');
+
+          if ((data.message || '').toLowerCase().indexOf('mot de passe') !== -1) {
+            ouvrirFenetreChangementMotDePasse();
+          }
+
           afficherStatut('Erreur côté Apps Script.');
         }
 
@@ -621,6 +753,11 @@
             afficherStatut('La peluche a répondu.');
           } else {
             reponse.textContent = 'Erreur : ' + (data.message || 'Erreur inconnue');
+
+            if ((data.message || '').toLowerCase().indexOf('mot de passe') !== -1) {
+              ouvrirFenetreChangementMotDePasse();
+            }
+
             afficherStatut('Erreur côté Apps Script.');
           }
 

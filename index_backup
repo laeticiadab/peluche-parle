@@ -52,13 +52,8 @@
       top: -18px;
     }
 
-    .oreille.gauche {
-      left: 10px;
-    }
-
-    .oreille.droite {
-      right: 10px;
-    }
+    .oreille.gauche { left: 10px; }
+    .oreille.droite { right: 10px; }
 
     .oeil {
       width: 16px;
@@ -69,13 +64,8 @@
       top: 65px;
     }
 
-    .oeil.gauche {
-      left: 52px;
-    }
-
-    .oeil.droite {
-      right: 52px;
-    }
+    .oeil.gauche { left: 52px; }
+    .oeil.droite { right: 52px; }
 
     .museau {
       width: 72px;
@@ -141,13 +131,8 @@
       margin-top: 10px;
     }
 
-    button.secondaire {
-      background: #555;
-    }
-
-    button.diagnostic {
-      background: #2f5d62;
-    }
+    button.secondaire { background: #555; }
+    button.diagnostic { background: #2f5d62; }
 
     button:disabled {
       opacity: 0.6;
@@ -205,7 +190,6 @@
 
 <body>
   <div class="app">
-
     <div id="peluche" class="peluche">
       <div class="oreille gauche"></div>
       <div class="oreille droite"></div>
@@ -220,7 +204,7 @@
     <h2>Ma peluche qui parle</h2>
 
     <div id="statut" class="statut">
-      État : page chargée. Clique sur “Tester micro”, puis sur “Parler à la peluche”.
+      État : page chargée. Clique d’abord sur “Tester Apps Script”.
     </div>
 
     <div class="bloc">
@@ -244,20 +228,18 @@
     </div>
 
     <div class="bloc">
-      <div class="petit">
-        Tests utiles pour vérifier que tout marche.
-      </div>
+      <div class="petit">Tests utiles pour vérifier que tout marche.</div>
+
+      <button class="diagnostic" onclick="testerAppsScript()">
+        1. Tester Apps Script
+      </button>
 
       <button class="diagnostic" onclick="testerVoix()">
-        1. Tester la voix
+        2. Tester la voix
       </button>
 
       <button class="diagnostic" onclick="testerMicroSeul()">
-        2. Tester le micro
-      </button>
-
-      <button class="diagnostic" onclick="testerGemini()">
-        3. Tester Gemini via Apps Script
+        3. Tester le micro
       </button>
     </div>
 
@@ -265,15 +247,15 @@
       <strong>Diagnostic :</strong>
       <pre id="diagnostic">Aucun diagnostic pour le moment.</pre>
     </div>
-
   </div>
 
   <script>
     /****************************************************
      * IMPORTANT
-     * Remplace cette URL par ton URL Apps Script /exec
+     * Remplace l’URL ci-dessous par ton URL Apps Script /exec.
+     * Elle doit finir par /exec
      ****************************************************/
-    const APPS_SCRIPT_API_URL = 'AKfycbyGDPOD5BS3iylT_PYQys4i25ANQAkKWkZGPU-Rkh9iAKHd6851-6BCSAfRSivjb36v';
+    const APPS_SCRIPT_API_URL = 'https://script.google.com/macros/s/AKfycbzixCPGImtzIe1Vm-rFKcT4FX_Mil7BFToR6RQLsLr8id7jdmUPGkYHBkvYfpuTrQkf/exec';
 
     const btnEnvoyer = document.getElementById('btnEnvoyer');
     const btnMicro = document.getElementById('btnMicro');
@@ -295,10 +277,7 @@
         ? ''
         : diagnostic.textContent + '\n\n';
 
-      diagnostic.textContent =
-        ancien +
-        '--- ' + titre + ' ---\n' +
-        JSON.stringify(objet, null, 2);
+      diagnostic.textContent = ancien + '--- ' + titre + ' ---\n' + JSON.stringify(objet, null, 2);
     }
 
     function bloquerBoutons(etat) {
@@ -306,35 +285,28 @@
       btnMicro.disabled = etat;
     }
 
-    /****************************************************
-     * TEST GEMINI VIA APPS SCRIPT
-     ****************************************************/
-    function testerGemini() {
-      appelerAppsScript('Bonjour peluche, réponds simplement : je fonctionne.')
+    function testerAppsScript() {
+      afficherStatut('Test Apps Script en cours...');
+
+      appelerAppsScriptPing()
         .then(function(data) {
-          ajouterDiagnostic('Test Gemini via Apps Script', data);
+          ajouterDiagnostic('Test Apps Script', data);
 
           if (data.ok) {
-            reponse.textContent = data.reponse;
-            parler(data.reponse);
-            afficherStatut('Gemini fonctionne via Apps Script.');
+            afficherStatut('Apps Script répond correctement.');
           } else {
-            afficherStatut('Erreur Gemini via Apps Script.');
+            afficherStatut('Apps Script répond, mais signale une erreur.');
           }
         })
         .catch(function(error) {
-          ajouterDiagnostic('Erreur appel Apps Script', {
+          ajouterDiagnostic('Erreur Apps Script', {
             ok: false,
             erreur: error.message
           });
-
-          afficherStatut('Impossible d’appeler Apps Script.');
+          afficherStatut('Impossible d’appeler Apps Script. Vérifie l’URL /exec.');
         });
     }
 
-    /****************************************************
-     * ENVOI TEXTE
-     ****************************************************/
     function envoyerTexte() {
       const texte = messageTexte.value.trim();
 
@@ -348,7 +320,7 @@
       afficherStatut('La peluche réfléchit...');
       bloquerBoutons(true);
 
-      appelerAppsScript(texte)
+      appelerAppsScriptAsk(texte)
         .then(function(data) {
           if (data.ok) {
             reponse.textContent = data.reponse;
@@ -356,6 +328,7 @@
             afficherStatut('La peluche a répondu.');
           } else {
             reponse.textContent = 'Erreur : ' + data.message;
+            ajouterDiagnostic('Erreur Apps Script', data);
             afficherStatut('Erreur côté Apps Script.');
           }
 
@@ -363,31 +336,31 @@
         })
         .catch(function(error) {
           reponse.textContent = 'Erreur : ' + error.message;
-          afficherStatut('Erreur de communication avec Apps Script.');
           ajouterDiagnostic('Erreur communication', {
             ok: false,
             erreur: error.message
           });
+          afficherStatut('Erreur de communication avec Apps Script.');
           bloquerBoutons(false);
         });
     }
 
-    /****************************************************
-     * APPEL APPS SCRIPT PAR JSONP
-     ****************************************************/
-    function appelerAppsScript(message) {
+    function appelerAppsScriptPing() {
+      return appelerJsonp('ping', 'bonjour');
+    }
+
+    function appelerAppsScriptAsk(message) {
+      return appelerJsonp('ask', message);
+    }
+
+    function appelerJsonp(api, message) {
       return new Promise(function(resolve, reject) {
         if (!APPS_SCRIPT_API_URL || APPS_SCRIPT_API_URL === 'COLLE_ICI_URL_APPS_SCRIPT_EXEC') {
-          reject(new Error('URL Apps Script non configurée dans le fichier HTML.'));
+          reject(new Error('URL Apps Script non configurée dans le fichier GitHub index.html.'));
           return;
         }
 
-        const callbackName =
-          'callbackPeluche_' +
-          Date.now() +
-          '_' +
-          Math.floor(Math.random() * 100000);
-
+        const callbackName = 'callbackPeluche_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
         const script = document.createElement('script');
 
         const timeout = setTimeout(function() {
@@ -416,12 +389,11 @@
 
         script.onerror = function() {
           nettoyer();
-          reject(new Error('Erreur de chargement JSONP vers Apps Script.'));
+          reject(new Error('Erreur de chargement JSONP vers Apps Script. Vérifie que l’URL /exec?api=ping&callback=test&q=bonjour affiche test({...});'));
         };
 
-        const url =
-          APPS_SCRIPT_API_URL +
-          '?api=ask' +
+        const url = APPS_SCRIPT_API_URL +
+          '?api=' + encodeURIComponent(api) +
           '&callback=' + encodeURIComponent(callbackName) +
           '&q=' + encodeURIComponent(message);
 
@@ -430,18 +402,13 @@
       });
     }
 
-    /****************************************************
-     * MICRO
-     ****************************************************/
     async function testerMicroSeul() {
       afficherStatut('Test du micro en cours...');
-
       const result = await diagnostiquerMicro();
-
       ajouterDiagnostic('Micro navigateur', result);
 
       if (result.ok) {
-        afficherStatut('Micro autorisé. Le navigateur peut accéder au micro.');
+        afficherStatut('Micro autorisé.');
       } else {
         afficherStatut('Micro bloqué. Voir diagnostic.');
       }
@@ -485,33 +452,14 @@
 
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-        stream.getTracks().forEach(function(track) {
-          track.stop();
-        });
-
+        stream.getTracks().forEach(function(track) { track.stop(); });
         result.ok = true;
         result.conseil = 'Le micro est accessible.';
         return result;
-
       } catch (e) {
         result.ok = false;
         result.erreur = e.name + ' : ' + e.message;
-
-        if (e.name === 'NotAllowedError') {
-          result.conseil =
-            'Le micro est refusé. Clique sur le cadenas de Chrome, autorise le micro, puis recharge la page.';
-        } else if (e.name === 'NotFoundError') {
-          result.conseil =
-            'Aucun micro détecté. Vérifie que l’appareil possède un micro actif.';
-        } else if (e.name === 'NotReadableError') {
-          result.conseil =
-            'Le micro est utilisé par une autre application. Ferme WhatsApp, Zoom, Meet ou autre logiciel.';
-        } else {
-          result.conseil =
-            'Erreur micro non spécifique. Vérifie Chrome et les paramètres système.';
-        }
-
+        result.conseil = 'Autorise le micro dans Chrome et dans les paramètres de ton appareil.';
         return result;
       }
     }
@@ -527,7 +475,6 @@
       }
 
       const recognition = new SpeechRecognition();
-
       recognition.lang = 'fr-FR';
       recognition.continuous = false;
       recognition.interimResults = false;
@@ -543,7 +490,6 @@
           ok: false,
           erreur: e.name + ' : ' + e.message
         });
-
         afficherStatut('Impossible de démarrer le micro.');
         bloquerBoutons(false);
         return;
@@ -551,13 +497,12 @@
 
       recognition.onresult = function(event) {
         const texte = event.results[0][0].transcript;
-
         question.textContent = texte;
         messageTexte.value = texte;
         reponse.textContent = '...';
         afficherStatut('Phrase reçue. La peluche réfléchit...');
 
-        appelerAppsScript(texte)
+        appelerAppsScriptAsk(texte)
           .then(function(data) {
             if (data.ok) {
               reponse.textContent = data.reponse;
@@ -565,13 +510,17 @@
               afficherStatut('La peluche a répondu.');
             } else {
               reponse.textContent = 'Erreur : ' + data.message;
+              ajouterDiagnostic('Erreur Apps Script', data);
               afficherStatut('Erreur côté Apps Script.');
             }
-
             bloquerBoutons(false);
           })
           .catch(function(error) {
             reponse.textContent = 'Erreur : ' + error.message;
+            ajouterDiagnostic('Erreur communication', {
+              ok: false,
+              erreur: error.message
+            });
             afficherStatut('Erreur de communication avec Apps Script.');
             bloquerBoutons(false);
           });
@@ -582,15 +531,7 @@
           ok: false,
           erreur: event.error
         });
-
-        if (event.error === 'not-allowed') {
-          afficherStatut('Micro refusé par Chrome. Autorise le micro dans le cadenas.');
-        } else if (event.error === 'no-speech') {
-          afficherStatut('Aucune parole détectée. Réessaie.');
-        } else {
-          afficherStatut('Erreur micro : ' + event.error);
-        }
-
+        afficherStatut('Erreur micro : ' + event.error);
         bloquerBoutons(false);
       };
 
@@ -602,9 +543,6 @@
       };
     }
 
-    /****************************************************
-     * VOIX
-     ****************************************************/
     function testerVoix() {
       parler('Bonjour. Je suis ta peluche. Ma voix fonctionne.');
     }
@@ -618,7 +556,6 @@
       window.speechSynthesis.cancel();
 
       const voix = new SpeechSynthesisUtterance(texte);
-
       voix.lang = 'fr-FR';
       voix.rate = 0.95;
       voix.pitch = 1.2;
@@ -634,7 +571,6 @@
 
       voix.onerror = function(event) {
         peluche.classList.remove('parle');
-
         ajouterDiagnostic('Erreur voix', {
           ok: false,
           erreur: event.error || 'Erreur inconnue'

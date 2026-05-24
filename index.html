@@ -3,8 +3,11 @@
 <head>
   <base target="_top">
   <meta charset="UTF-8">
-  <title>BB Burkina Bear V3.24</title>
+  <title>BB Burkina Bear GitHub V3.28</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <style>
     :root{--violet:#58a6d7;--cream:#fffaf1;--sand:#f6e7bd;--blue:#dff3ff;--green:#23d400;--red:#b71e1e;--brown:#8a5437;--text:#24170e;--line:#d9c6ac;--shadow:0 14px 34px rgba(40,22,10,.18)}
     *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,sans-serif;background:#fff;color:var(--text);display:flex;justify-content:center;padding:24px 0}.phone{width:min(96vw,720px);min-height:calc(100vh - 48px);background:#58a6d7;padding:0 0 28px;box-shadow:var(--shadow);border-radius:34px;overflow:hidden}
@@ -74,12 +77,14 @@ function callServer(fn,...args){
     clientGetDashboard:{api:'getDashboard',keys:['token']},
     clientAsk:{api:'ask',keys:['token','q','moduleCode']},
     clientAskDebug:{api:'ask',keys:['token','q','moduleCode']},
-    clientChangePassword:{api:'changePassword',keys:['token','oldPassword','newPassword']}
+    clientChangePassword:{api:'changePassword',keys:['token','oldPassword','newPassword']},
+    clientForgotPassword:{api:'forgotPassword',keys:['username']},
+    clientUpdateMySpace:{api:'updateMySpace',keys:['token','data','scope','confirmPassword']}
   };
   const cfg=map[fn];
   if(!cfg) return Promise.reject(new Error('API JSONP non configurée pour : '+fn));
   const params={api:cfg.api};
-  cfg.keys.forEach((k,i)=>params[k]=args[i] == null ? '' : args[i]);
+  cfg.keys.forEach((k,i)=>{const v=args[i];params[k]=v == null ? '' : (typeof v==='object' ? JSON.stringify(v) : v)});
   return jsonpRequest(params);
 }
 function jsonpRequest(params){

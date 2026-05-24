@@ -2,42 +2,583 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <title>Peluche qui parle</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BB Burkina Bear</title>
+
   <style>
-    :root{--sky:#86c9ff;--sky2:#dff3ff;--sun:#ffd45c;--green:#5ba946;--green2:#86c96a;--earth:#c88951;--earth2:#9b6239;--sand:#fff0cd;--cream:#fffaf0;--card:rgba(255,250,240,.94);--text:#2f2a25;--muted:#756b60;--line:#ead8b8;--danger:#c84c43;--warning:#d69124;--info:#4c8ebf;--shadow:0 18px 42px rgba(52,83,105,.16);--radius:28px}*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,sans-serif;color:var(--text);background:radial-gradient(circle at 84% 8%,rgba(255,212,92,.84),transparent 13%),radial-gradient(circle at 11% 12%,rgba(255,255,255,.78),transparent 12%),linear-gradient(180deg,var(--sky) 0%,var(--sky2) 34%,#f8e8c8 78%,#ecd4aa 100%);overflow-x:hidden}.hidden{display:none!important}.screen{min-height:100vh;padding:18px}.app{width:min(1040px,100%);margin:0 auto}.card{background:var(--card);border:1px solid rgba(255,255,255,.72);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(5px)}.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.login-card{width:min(460px,100%);padding:28px}.brand{display:flex;align-items:center;gap:14px;margin-bottom:18px}.brand-icon{width:66px;height:66px;border-radius:22px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--green2),var(--green));box-shadow:0 12px 18px rgba(91,169,70,.22);color:#fff;font-size:32px}.brand-icon::before{content:"🧸"}h1,h2,h3{margin:0}.brand h1{font-size:26px;line-height:1.05}.brand p{margin:5px 0 0;color:var(--muted);font-size:13px;line-height:1.4}label{display:block;margin:13px 0 6px;color:#574838;font-size:13px;font-weight:800}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:17px;padding:13px 14px;background:rgba(255,255,255,.92);color:var(--text);font-size:15px;outline:none}textarea{min-height:92px;resize:vertical;line-height:1.45}button{border:0;border-radius:18px;padding:12px 16px;font-weight:900;cursor:pointer;color:#fff;background:linear-gradient(180deg,var(--green2),var(--green));box-shadow:0 10px 18px rgba(91,169,70,.22);font-size:15px}button:disabled{opacity:.55;cursor:not-allowed}.btn-wide{width:100%;margin-top:14px}.btn-soft{background:linear-gradient(180deg,#fff8ea,#ead7b6);color:#4e4438;box-shadow:none}.btn-info{background:linear-gradient(180deg,#79b7e4,#4b8ebf)}.btn-warning{background:linear-gradient(180deg,#efbe58,#d69124)}.btn-danger{background:linear-gradient(180deg,#dc7066,#c84c43)}.status{padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.75);border:1px solid var(--line);color:#69593c;font-size:13px;line-height:1.45;white-space:pre-wrap;margin:12px 0}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;margin-bottom:16px}.topbar-title{display:flex;align-items:center;gap:12px;min-width:0}.mini-bear-icon{width:48px;height:48px;border-radius:18px;background:linear-gradient(180deg,var(--earth),var(--earth2));position:relative;flex:0 0 auto}.mini-bear-icon::before,.mini-bear-icon::after{content:"";position:absolute;top:-4px;width:18px;height:18px;border-radius:50%;background:var(--earth)}.mini-bear-icon::before{left:4px}.mini-bear-icon::after{right:4px}.topbar h1{font-size:22px;line-height:1.1}.topbar p{margin:4px 0 0;color:var(--muted);font-size:13px}.grid{display:grid;gap:14px}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:center;padding:20px;margin-bottom:16px;background:radial-gradient(circle at 86% 12%,rgba(255,212,92,.70),transparent 17%),linear-gradient(180deg,rgba(139,204,255,.68),rgba(255,250,240,.95))}.hero h2{font-size:28px;margin-bottom:8px}.hero p{color:var(--muted);line-height:1.5;margin:0}.pill-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.pill{background:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.8);border-radius:999px;padding:8px 12px;color:#5e5143;font-size:13px;font-weight:800}.bear-stage{min-height:280px;border-radius:26px;position:relative;overflow:hidden;background:radial-gradient(circle at 82% 15%,rgba(255,212,92,.82),transparent 15%),linear-gradient(180deg,#9bd4ff 0%,#e8f7ff 36%,#f5ddae 100%);border:1px solid rgba(255,255,255,.72)}.hut{position:absolute;bottom:20px;left:18px;width:76px;height:52px;border-radius:0 0 18px 18px;background:#b8794b}.hut::before{content:"";position:absolute;left:-8px;top:-30px;width:92px;height:38px;background:#d6b37f;clip-path:polygon(50% 0,100% 100%,0 100%)}.tree{position:absolute;right:24px;bottom:28px;width:22px;height:74px;border-radius:14px;background:#8b5f3a}.tree::before{content:"";position:absolute;left:50%;top:-34px;transform:translateX(-50%);width:92px;height:60px;border-radius:999px;background:#77b95e}.bear{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);width:160px;height:220px}.bear-head{width:126px;height:126px;margin:0 auto;border-radius:50%;background:var(--earth);position:relative;box-shadow:inset 0 -14px rgba(0,0,0,.06)}.bear-head::before,.bear-head::after{content:"";position:absolute;top:0;width:42px;height:42px;border-radius:50%;background:inherit;box-shadow:inset 0 -8px rgba(0,0,0,.05)}.bear-head::before{left:4px}.bear-head::after{right:4px}.bear-eye{position:absolute;top:52px;width:13px;height:13px;border-radius:50%;background:#2f2014}.bear-eye.left{left:39px}.bear-eye.right{right:39px}.bear-snout{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);width:56px;height:36px;border-radius:999px;background:#f3dcc1}.bear-snout::before{content:"";position:absolute;left:50%;top:8px;transform:translateX(-50%);width:19px;height:13px;border-radius:999px;background:#5f3b24}.bear-snout::after{content:"";position:absolute;left:50%;bottom:7px;transform:translateX(-50%);width:22px;height:9px;border-radius:0 0 20px 20px;background:#5f3b24}.bear-body{width:132px;height:96px;margin:-8px auto 0;border-radius:26px 26px 36px 36px;background:linear-gradient(180deg,var(--green2),var(--green));position:relative}.bear-body::before{content:"BB";position:absolute;left:50%;top:28px;transform:translateX(-50%);border-radius:999px;background:rgba(255,255,255,.92);color:var(--earth);font-weight:900;font-size:24px;padding:7px 16px}.bear.speaking .bear-snout::after{animation:talk .25s infinite alternate}@keyframes talk{from{height:7px}to{height:18px}}.bear.sleeping{opacity:.78;filter:grayscale(.15)}.bear.sleeping::after{content:"Zzz";position:absolute;top:6px;right:0;color:#4b8ebf;font-size:28px;font-weight:900;animation:floatZ 1.4s infinite alternate}@keyframes floatZ{from{transform:translateY(0);opacity:.55}to{transform:translateY(-12px);opacity:1}}.quota-box{margin-top:14px;border-radius:22px;padding:13px;background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.85)}.quota-line{height:14px;border-radius:999px;background:#ead8b8;overflow:hidden}.quota-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--green2));transition:width .2s ease}.quota-text{margin-top:8px;color:var(--muted);font-size:13px;font-weight:800}.module-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.module-btn{min-height:155px;padding:16px;border-radius:28px;background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.84);box-shadow:var(--shadow);text-align:left;color:var(--text);position:relative;overflow:hidden}.module-btn .emoji{font-size:36px;display:block;margin-bottom:12px}.module-btn strong{display:block;font-size:18px;margin-bottom:6px}.module-btn span{display:block;color:var(--muted);font-size:13px;line-height:1.35}.module-btn .dot{position:absolute;right:14px;top:14px;width:14px;height:14px;border-radius:50%;background:var(--danger)}.module-btn.active .dot{background:var(--green)}.module-btn.locked{opacity:.62;filter:grayscale(.15)}.drawer-backdrop{position:fixed;inset:0;display:none;background:rgba(47,64,80,.34);z-index:20}.drawer-backdrop.show{display:block}.drawer{position:fixed;top:0;left:-330px;width:min(330px,88vw);height:100vh;background:linear-gradient(180deg,var(--cream),var(--sand));z-index:30;box-shadow:18px 0 42px rgba(0,0,0,.14);transition:left .18s ease;padding:18px;overflow:auto}.drawer.show{left:0}.drawer .menu{display:grid;gap:10px;margin-top:18px}.drawer .menu button{width:100%;text-align:left;background:rgba(255,255,255,.78);box-shadow:none;color:var(--text);border:1px solid rgba(255,255,255,.8)}.chat-layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px}.chat-box{padding:18px}.bubble{padding:13px 15px;border-radius:20px;margin-bottom:12px;line-height:1.45;background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.8)}.bubble.me{background:#e6f5dd}.bubble.bear{background:#fff5dc}.chat-actions{display:grid;grid-template-columns:1fr 120px 120px;gap:10px;margin-top:10px}.content-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.content-card{padding:15px;border-radius:22px;background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.84)}.content-card .cover{height:110px;border-radius:18px;background:radial-gradient(circle at 80% 20%,rgba(255,212,92,.8),transparent 18%),linear-gradient(180deg,#a6d9ff,#f5ddae);margin-bottom:12px}.content-card h3{font-size:17px;margin-bottom:7px}.content-card p{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.4}.profile-list{display:grid;gap:10px}.profile-row{display:grid;grid-template-columns:170px 1fr;gap:12px;padding:12px;border-radius:18px;background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.8)}.modal{position:fixed;inset:0;z-index:50;background:rgba(47,64,80,.34);display:none;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modal-card{width:min(520px,100%);padding:22px}@media(max-width:900px){.hero,.chat-layout{grid-template-columns:1fr}.module-grid,.content-list{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:620px){.screen{padding:12px}.module-grid,.content-list,.grid-2,.grid-3{grid-template-columns:1fr}.chat-actions{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.bear-stage{min-height:230px}.bear{transform:translateX(-50%) scale(.82);transform-origin:bottom center}}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7efe5;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 18px 0;
+    }
+
+    .app {
+      width: 94%;
+      max-width: 480px;
+      background: white;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    .peluche {
+      width: 170px;
+      height: 170px;
+      margin: 0 auto 16px;
+      background: #c48a5a;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: inset 0 -10px 0 rgba(0,0,0,0.08);
+    }
+
+    .oreille {
+      width: 58px;
+      height: 58px;
+      background: #b6784c;
+      border-radius: 50%;
+      position: absolute;
+      top: -18px;
+    }
+
+    .oreille.gauche { left: 10px; }
+    .oreille.droite { right: 10px; }
+
+    .oeil {
+      width: 16px;
+      height: 16px;
+      background: #222;
+      border-radius: 50%;
+      position: absolute;
+      top: 65px;
+    }
+
+    .oeil.gauche { left: 52px; }
+    .oeil.droite { right: 52px; }
+
+    .museau {
+      width: 72px;
+      height: 50px;
+      background: #f2d2b6;
+      border-radius: 50%;
+      position: absolute;
+      left: 49px;
+      top: 88px;
+    }
+
+    .nez {
+      width: 22px;
+      height: 16px;
+      background: #3a2318;
+      border-radius: 50%;
+      position: absolute;
+      left: 25px;
+      top: 8px;
+    }
+
+    .bouche {
+      width: 28px;
+      height: 8px;
+      background: #3a2318;
+      border-radius: 0 0 20px 20px;
+      position: absolute;
+      left: 22px;
+      top: 30px;
+    }
+
+    .parle .bouche {
+      animation: bouche 0.25s infinite alternate;
+    }
+
+    @keyframes bouche {
+      from { height: 6px; }
+      to { height: 20px; }
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 85px;
+      border-radius: 14px;
+      border: 1px solid #ddd;
+      padding: 12px;
+      font-size: 15px;
+      box-sizing: border-box;
+      resize: vertical;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #8b5e3c;
+      color: white;
+      margin-top: 10px;
+    }
+
+    button.secondaire { background: #555; }
+    button.diagnostic { background: #2f5d62; }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .statut {
+      margin: 12px 0;
+      padding: 10px;
+      font-size: 14px;
+      color: #444;
+      background: #f8f3ee;
+      border-radius: 12px;
+      text-align: left;
+      line-height: 1.4;
+    }
+
+    .texte {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #f6f1ec;
+      min-height: 70px;
+      text-align: left;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .bloc {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid #eee;
+    }
+
+    .petit {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background: #111;
+      color: #eee;
+      padding: 12px;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 12px;
+      max-height: 220px;
+      overflow: auto;
+    }
   </style>
 </head>
+
 <body>
-  <div id="loginScreen" class="login-wrap">
-    <div class="login-card card">
-      <div class="brand"><div class="brand-icon"></div><div><h1>BB Burkina Bear</h1><p>Connecte-toi pour retrouver ton nounours.</p></div></div>
-      <div id="loginStatus" class="status">Entre ton identifiant et ton mot de passe.</div>
-      <label>Identifiant</label><input id="loginUsername" type="text" autocomplete="username">
-      <label>Mot de passe</label><input id="loginPassword" type="password" autocomplete="current-password">
-      <button class="btn-wide" onclick="login()">Se connecter</button>
-      <button class="btn-wide btn-soft" onclick="testServer()">Tester le serveur</button>
+  <div class="app">
+    <div id="peluche" class="peluche">
+      <div class="oreille gauche"></div>
+      <div class="oreille droite"></div>
+      <div class="oeil gauche"></div>
+      <div class="oeil droite"></div>
+      <div class="museau">
+        <div class="nez"></div>
+        <div class="bouche"></div>
+      </div>
+    </div>
+
+    <h2>Ma peluche qui parle</h2>
+
+    <div id="statut" class="statut">
+      État : page chargée. Clique d’abord sur “Tester Apps Script”.
+    </div>
+
+    <div class="bloc">
+      <textarea id="messageTexte" placeholder="Écris ici ton message si tu veux tester sans micro..."></textarea>
+
+      <button id="btnEnvoyer" onclick="envoyerTexte()">
+        Envoyer le texte à la peluche
+      </button>
+
+      <button id="btnMicro" class="secondaire" onclick="demarrerMicro()">
+        🎙️ Parler à la peluche
+      </button>
+    </div>
+
+    <div class="texte">
+      <strong>Toi :</strong>
+      <div id="question">...</div>
+      <br>
+      <strong>Peluche :</strong>
+      <div id="reponse">...</div>
+    </div>
+
+    <div class="bloc">
+      <div class="petit">Tests utiles pour vérifier que tout marche.</div>
+
+      <button class="diagnostic" onclick="testerAppsScript()">
+        1. Tester Apps Script
+      </button>
+
+      <button class="diagnostic" onclick="testerVoix()">
+        2. Tester la voix
+      </button>
+
+      <button class="diagnostic" onclick="testerMicroSeul()">
+        3. Tester le micro
+      </button>
+    </div>
+
+    <div class="bloc">
+      <strong>Diagnostic :</strong>
+      <pre id="diagnostic">Aucun diagnostic pour le moment.</pre>
     </div>
   </div>
-  <div id="appScreen" class="screen hidden"><div class="app">
-    <div class="topbar card"><div class="topbar-title"><button class="btn-soft" onclick="openDrawer()">☰</button><div class="mini-bear-icon"></div><div><h1 id="topTitle">BB Burkina Bear</h1><p id="topSubtitle">Tableau de bord</p></div></div><button class="btn-soft" onclick="loadDashboard()">Actualiser</button></div>
-    <div id="appStatus" class="status">Chargement...</div>
-    <section id="dashboardView">
-      <div class="hero card"><div><h2 id="welcomeTitle">Bienvenue</h2><p id="welcomeText">Que veux-tu faire aujourd’hui avec ton nounours ?</p><div class="pill-row"><span id="subscriptionPill" class="pill">Abonnement</span><span id="quotaPill" class="pill">Interactions</span><span id="productPill" class="pill">Formule</span></div><div class="quota-box"><div class="quota-line"><div id="quotaFill" class="quota-fill"></div></div><div id="quotaText" class="quota-text">Interactions restantes : ...</div></div></div><div class="bear-stage"><div class="hut"></div><div class="tree"></div><div id="mainBear" class="bear"><div class="bear-head"><div class="bear-eye left"></div><div class="bear-eye right"></div><div class="bear-snout"></div></div><div class="bear-body"></div></div></div></div>
-      <div class="module-grid"><button id="btnTalk" class="module-btn" onclick="openTalk()"><span class="dot"></span><span class="emoji">🎙️</span><strong>Parlez à votre nounours</strong><span>Discute avec lui par micro ou texte.</span></button><button id="btnStories" class="module-btn" onclick="openContent('STORIES')"><span class="dot"></span><span class="emoji">📖</span><strong>Écoutez une histoire</strong><span>Contes et histoires disponibles.</span></button><button id="btnBooks" class="module-btn" onclick="openContent('BOOKS')"><span class="dot"></span><span class="emoji">📚</span><strong>Lire un livre</strong><span>Livres, PDF ou audios autorisés.</span></button><button id="btnQuiz" class="module-btn" onclick="openQuiz()"><span class="dot"></span><span class="emoji">❓</span><strong>Testez vos connaissances</strong><span>Quiz simple pour apprendre.</span></button></div>
-    </section>
-    <section id="talkView" class="hidden"><div class="chat-layout"><div class="bear-stage card"><div id="chatBear" class="bear"><div class="bear-head"><div class="bear-eye left"></div><div class="bear-eye right"></div><div class="bear-snout"></div></div><div class="bear-body"></div></div></div><div class="chat-box card"><h2 id="talkTitle">Parlez à votre nounours</h2><p class="muted" id="talkSubtitle">Micro ou texte.</p><div class="bubble me"><strong>Toi :</strong><div id="userBubble">...</div></div><div class="bubble bear"><strong>Nounours :</strong><div id="bearBubble">...</div></div><label>Message texte</label><textarea id="textMessage" placeholder="Écris ici si tu ne veux pas utiliser le micro..."></textarea><div class="chat-actions"><button onclick="sendText()">Envoyer</button><button class="btn-info" onclick="startMic()">🎙️ Micro</button><button class="btn-soft" onclick="showDashboard()">Retour</button></div></div></div></section>
-    <section id="contentView" class="hidden"><div class="card" style="padding:18px"><h2 id="contentTitle">Contenus</h2><p class="muted" id="contentSubtitle">Choisis un contenu disponible.</p><div id="contentList" class="content-list"></div><button class="btn-soft btn-wide" onclick="showDashboard()">Retour</button></div></section>
-    <section id="quizView" class="hidden"><div class="card" style="padding:18px"><h2>Testez vos connaissances</h2><p class="muted">Version simple pour la V3.1. Les quiz détaillés seront ajoutés ensuite.</p><div class="content-list"><div class="content-card"><div class="cover"></div><h3>Quiz alphabet</h3><p>Apprendre les lettres avec le nounours.</p><button onclick="sayLocal('Quiz alphabet. Cette activité sera bientôt disponible.')">Lancer</button></div><div class="content-card"><div class="cover"></div><h3>Quiz chiffres</h3><p>Compter et reconnaître les nombres.</p><button onclick="sayLocal('Quiz chiffres. Cette activité sera bientôt disponible.')">Lancer</button></div></div><button class="btn-soft btn-wide" onclick="showDashboard()">Retour</button></div></section>
-    <section id="settingsView" class="hidden"><div class="card" style="padding:18px"><h2>Paramètres</h2><p class="muted">Tests techniques et apparence du nounours.</p><div class="grid grid-2"><button onclick="testVoice()">Tester la voix</button><button class="btn-info" onclick="testMicOnly()">Tester le micro</button></div><button class="btn-soft btn-wide" onclick="showDashboard()">Retour</button></div></section>
-    <section id="contactView" class="hidden"><div class="card" style="padding:18px"><h2 id="contactTitle">Contacter le parent</h2><div class="profile-list" id="contactBox"></div><button class="btn-soft btn-wide" onclick="showDashboard()">Retour</button></div></section>
-    <section id="spaceView" class="hidden"><div class="card" style="padding:18px"><h2>Mon espace</h2><div class="profile-list" id="spaceBox"></div><button class="btn-warning btn-wide" onclick="openPasswordModal()">Changer mon mot de passe</button><button class="btn-danger btn-wide" onclick="logout()">Déconnexion</button><button class="btn-soft btn-wide" onclick="showDashboard()">Retour</button></div></section>
-    <section id="subscriptionView" class="hidden"><div class="card" style="padding:18px"><h2>Mon abonnement</h2><div class="profile-list" id="subscriptionBox"></div><button class="btn-soft btn-wide" onclick="showDashboard()">Retour</button></div></section>
-  </div></div>
-  <div id="drawerBackdrop" class="drawer-backdrop" onclick="closeDrawer()"></div><aside id="drawer" class="drawer"><div class="brand"><div class="brand-icon"></div><div><h1>Menu</h1><p>BB Burkina Bear</p></div></div><div class="menu"><button onclick="closeDrawer();showSettings()">⚙ Paramètres</button><button id="drawerContactButton" onclick="closeDrawer();showContact()">📞 Contacter le parent</button><button onclick="closeDrawer();showSpace()">👤 Mon espace</button><button onclick="closeDrawer();showSubscription()">🧾 Mon abonnement</button><button class="btn-danger" onclick="logout()">Déconnexion</button></div></aside>
-  <div id="passwordModal" class="modal"><div class="modal-card card"><h2>Changer le mot de passe</h2><p class="muted">Obligatoire à la première connexion.</p><label>Ancien mot de passe</label><input id="oldPassword" type="password"><label>Nouveau mot de passe</label><input id="newPassword" type="password"><label>Confirmer le nouveau mot de passe</label><input id="confirmPassword" type="password"><button class="btn-wide" onclick="changePassword()">Valider</button><button class="btn-wide btn-soft" onclick="closePasswordModal()">Fermer</button></div></div>
-<script>
-const CONFIG={APPS_SCRIPT_URL:'https://script.google.com/macros/s/AKfycbx8Umq2QDU1PZpsuTHfjRutXMGogn5xxb6tw2uHjrVDk7rJtEuAp2DQb4PP51Qc5RkfNA/exec'};let token=localStorage.getItem('BB_TOKEN')||'',currentUser=null,dashboard=null,lastDashboard=localStorage.getItem('BB_DASHBOARD')||'',currentModule='TALK';const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;function qs(id){return document.getElementById(id)}function setLoginStatus(m){qs('loginStatus').textContent=m}function setAppStatus(m){qs('appStatus').textContent=m}function hideAllViews(){['dashboardView','talkView','contentView','quizView','settingsView','contactView','spaceView','subscriptionView'].forEach(id=>qs(id).classList.add('hidden'))}function showDashboard(){hideAllViews();qs('dashboardView').classList.remove('hidden');setHeader('Tableau de bord','Choisis une activité.');renderDashboard()}function setHeader(t,s){qs('topTitle').textContent=t;qs('topSubtitle').textContent=s}function callApi(params){return new Promise((resolve,reject)=>{const cb='bbCallback_'+Date.now()+'_'+Math.floor(Math.random()*999999),script=document.createElement('script');const timer=setTimeout(()=>{cleanup();reject(new Error('Temps d’attente dépassé.'))},30000);function cleanup(){clearTimeout(timer);if(script.parentNode)script.parentNode.removeChild(script);try{delete window[cb]}catch(e){window[cb]=undefined}}window[cb]=data=>{cleanup();resolve(data)};script.onerror=()=>{cleanup();reject(new Error('Erreur de chargement JSONP vers Apps Script.'))};params.callback=cb;const query=Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');script.src=CONFIG.APPS_SCRIPT_URL+'?'+query;document.body.appendChild(script)})}window.addEventListener('load',()=>{if(lastDashboard){try{dashboard=JSON.parse(lastDashboard)}catch(e){}}if(token){showApp();loadMe()}});function showApp(){qs('loginScreen').classList.add('hidden');qs('appScreen').classList.remove('hidden')}function showLogin(){qs('appScreen').classList.add('hidden');qs('loginScreen').classList.remove('hidden')}function login(){const username=qs('loginUsername').value.trim(),password=qs('loginPassword').value;if(!username||!password){setLoginStatus('Renseigne l’identifiant et le mot de passe.');return}setLoginStatus('Connexion en cours...');callApi({api:'login',username,password}).then(res=>{if(!res.ok){setLoginStatus(res.message||'Connexion refusée.');return}token=res.token;currentUser=res.user;dashboard=res.dashboard||null;localStorage.setItem('BB_TOKEN',token);if(dashboard)localStorage.setItem('BB_DASHBOARD',JSON.stringify(dashboard));showApp();renderDashboard();showDashboard();if(res.mustChangePassword){openPasswordModal();setAppStatus('Change ton mot de passe avant d’utiliser le nounours.')}else if(res.firstLoginMessage){speak(res.firstLoginMessage);setAppStatus(res.firstLoginMessage)}else setAppStatus('Connexion réussie.')}).catch(err=>setLoginStatus('Erreur : '+err.message))}function loadMe(){setAppStatus('Chargement du profil...');callApi({api:'me',token}).then(res=>{if(!res.ok){logout(false);setLoginStatus(res.message||'Session expirée.');return}currentUser=res.user;dashboard=res.dashboard||dashboard;if(dashboard)localStorage.setItem('BB_DASHBOARD',JSON.stringify(dashboard));renderDashboard();showDashboard();setAppStatus('Profil chargé.')}).catch(err=>setAppStatus('Erreur : '+err.message))}function logout(reload){localStorage.removeItem('BB_TOKEN');localStorage.removeItem('BB_DASHBOARD');token='';currentUser=null;dashboard=null;if(reload===false)showLogin();else location.reload()}function loadDashboard(){if(!token)return;setAppStatus('Actualisation...');callApi({api:'getDashboard',token}).then(res=>{if(!res.ok){setAppStatus(res.message||'Erreur.');return}dashboard=res.dashboard;localStorage.setItem('BB_DASHBOARD',JSON.stringify(dashboard));renderDashboard();setAppStatus('Tableau de bord actualisé.')}).catch(err=>setAppStatus('Erreur : '+err.message))}function testServer(){setLoginStatus('Test serveur...');callApi({api:'ping',q:'bonjour'}).then(res=>setLoginStatus(JSON.stringify(res,null,2))).catch(err=>setLoginStatus('Erreur : '+err.message))}function renderDashboard(){if(!dashboard)return;const u=dashboard.user||{},p=dashboard.product||{},s=dashboard.subscription||{},usage=dashboard.usage||{},modules=dashboard.modules||[];currentUser=u;const child=u.NomEnfant||u.Username||'mon ami',bear=u.NomNounours||'BB Burkina Bear';qs('welcomeTitle').textContent='Bonjour '+child;qs('welcomeText').textContent='Je suis '+bear+'. Que veux-tu faire aujourd’hui ?';qs('subscriptionPill').textContent='Abonnement : '+(s.Status||'non défini');qs('productPill').textContent='Formule : '+(p.ProductName||u.ProductID||'non définie');const limit=Number(usage.limit||0),remaining=Number(usage.remaining||0),percent=limit>0?Math.max(0,Math.min(100,(remaining/limit)*100)):0;qs('quotaFill').style.width=percent+'%';qs('quotaText').textContent='Interactions restantes : '+remaining+' / '+limit;qs('quotaPill').textContent='Restant : '+remaining;const qReached=remaining<=0||dashboard.quotaReached;qs('mainBear').classList.toggle('sleeping',qReached);qs('chatBear').classList.toggle('sleeping',qReached);const codes=modules.map(m=>String(m.OptionCode||'').toUpperCase());setModuleButton('btnTalk',codes.includes('TALK'));setModuleButton('btnStories',codes.includes('STORIES'));setModuleButton('btnBooks',codes.includes('BOOKS'));setModuleButton('btnQuiz',codes.includes('QUIZ'));qs('drawerContactButton').textContent='📞 '+(dashboard.contactButtonLabel||'Contacter le parent');renderProfileBoxes()}function setModuleButton(id,active){const btn=qs(id);btn.classList.toggle('active',active);btn.classList.toggle('locked',!active);btn.disabled=false;btn.dataset.active=active?'1':'0'}function moduleAllowed(code){return dashboard&&dashboard.modules&&dashboard.modules.some(m=>String(m.OptionCode||'').toUpperCase()===String(code||'').toUpperCase())}function quotaReached(){return dashboard&&dashboard.usage&&Number(dashboard.usage.remaining||0)<=0}function handleLockedOrQuota(code){if(!moduleAllowed(code)){setAppStatus('Ce module n’est pas inclus dans ton abonnement.');speak('Ce module n’est pas inclus dans ton abonnement.');return true}if(code==='TALK'&&quotaReached()){setAppStatus('Le nounours est fatigué pour aujourd’hui.');const link=dashboard.redirectWhenLimitReached||'';if(link)window.open(link,'_blank');speak('Je suis fatigué pour aujourd’hui. Je reviens demain.');return true}return false}function openTalk(){if(handleLockedOrQuota('TALK'))return;hideAllViews();qs('talkView').classList.remove('hidden');const bear=currentUser&&currentUser.NomNounours?currentUser.NomNounours:'ton nounours';setHeader('Parlez à votre nounours','Micro ou texte.');qs('talkTitle').textContent='Parlez à '+bear;setAppStatus('Le nounours t’écoute.')}function sendText(){const text=qs('textMessage').value.trim();if(!text){setAppStatus('Écris d’abord un message.');return}sendQuestion(text)}function sendQuestion(text){if(quotaReached()){handleLockedOrQuota('TALK');return}qs('userBubble').textContent=text;qs('bearBubble').textContent='Je réfléchis...';setAppStatus('Le nounours réfléchit...');qs('chatBear').classList.add('speaking');callApi({api:'ask',token,moduleCode:currentModule||'TALK',q:text}).then(res=>{qs('chatBear').classList.remove('speaking');if(!res.ok){qs('bearBubble').textContent=res.message||'Erreur.';speak(res.message||'Je ne peux pas répondre maintenant.');setAppStatus(res.message||'Erreur.');loadDashboard();return}qs('bearBubble').textContent=res.reponse||'';speak(res.reponse||'');if(res.usage&&dashboard){dashboard.usage=res.usage;localStorage.setItem('BB_DASHBOARD',JSON.stringify(dashboard));renderDashboard()}setAppStatus(res.censored?'Message sensible détecté.':'Réponse reçue.')}).catch(err=>{qs('chatBear').classList.remove('speaking');qs('bearBubble').textContent='Erreur : '+err.message;setAppStatus('Erreur : '+err.message)})}function startMic(){if(!SpeechRecognition){setAppStatus('Reconnaissance vocale non disponible. Utilise Chrome.');return}if(quotaReached()){handleLockedOrQuota('TALK');return}const rec=new SpeechRecognition();rec.lang='fr-FR';rec.continuous=false;rec.interimResults=false;setAppStatus('J’écoute. Parle maintenant...');try{rec.start()}catch(e){setAppStatus('Erreur micro : '+e.message);return}rec.onresult=e=>{const text=e.results[0][0].transcript;qs('textMessage').value=text;sendQuestion(text)};rec.onerror=e=>setAppStatus('Erreur micro : '+e.error)}function openContent(moduleCode){if(handleLockedOrQuota(moduleCode))return;hideAllViews();qs('contentView').classList.remove('hidden');const titleMap={STORIES:'Écoutez une histoire',BOOKS:'Lire un livre',MUSIC:'Musique'};qs('contentTitle').textContent=titleMap[moduleCode]||'Contenus';const current=(dashboard.modules||[]).filter(m=>String(m.OptionCode||'').toUpperCase()===String(moduleCode).toUpperCase());let html='';if(!current.length)html='<div class="content-card"><div class="cover"></div><h3>Module indisponible</h3><p>Aucun contenu disponible.</p></div>';else current.forEach(m=>{const link=m.ContentLink||'';html+='<div class="content-card"><div class="cover"></div><h3>'+escapeHtml(m.OptionName||'Contenu')+'</h3><p>'+escapeHtml(m.Notes||'Contenu inclus dans votre formule.')+'</p><button onclick="openExternalLink(\''+escapeAttr(link)+'\')">Ouvrir</button></div>'});qs('contentList').innerHTML=html;setHeader(qs('contentTitle').textContent,'Contenus autorisés.')}function openQuiz(){if(handleLockedOrQuota('QUIZ'))return;hideAllViews();qs('quizView').classList.remove('hidden');setHeader('Testez vos connaissances','Quiz et apprentissage.')}function openExternalLink(link){if(!link){sayLocal('Aucun lien n’est encore configuré pour ce contenu.');return}window.open(link,'_blank')}function openDrawer(){qs('drawerBackdrop').classList.add('show');qs('drawer').classList.add('show')}function closeDrawer(){qs('drawerBackdrop').classList.remove('show');qs('drawer').classList.remove('show')}function showSettings(){hideAllViews();qs('settingsView').classList.remove('hidden');setHeader('Paramètres','Voix, micro et apparence.')}function showContact(){hideAllViews();qs('contactView').classList.remove('hidden');setHeader(dashboard.contactButtonLabel||'Contacter le parent','Coordonnées.');renderProfileBoxes()}function showSpace(){hideAllViews();qs('spaceView').classList.remove('hidden');setHeader('Mon espace','Profil et compte.');renderProfileBoxes()}function showSubscription(){hideAllViews();qs('subscriptionView').classList.remove('hidden');setHeader('Mon abonnement','Formule et modules.');renderProfileBoxes()}function renderProfileBoxes(){if(!dashboard)return;const u=dashboard.user||{},p=dashboard.product||{},s=dashboard.subscription||{},usage=dashboard.usage||{},modules=dashboard.modules||[];qs('contactTitle').textContent=dashboard.contactButtonLabel||'Contacter le parent';qs('contactBox').innerHTML=profileRow('Nom',u.ParentName||'-')+profileRow('Relation',u.ParentRelation||'-')+profileRow('Téléphone',makePhoneLink(u.ParentPhone))+profileRow('WhatsApp',makeWhatsappLink(u.ParentWhatsapp||u.ParentPhone))+profileRow('Email',makeEmailLink(u.ParentEmail));qs('spaceBox').innerHTML=profileRow('Enfant',u.NomEnfant||'-')+profileRow('Âge',u.AgeEnfant||'-')+profileRow('Nounours',u.NomNounours||'-')+profileRow('Identifiant',u.Username||'-')+profileRow('Parent / tuteur',(u.ParentRelation||'')+' '+(u.ParentName||''))+profileRow('Interactions restantes',(usage.remaining||0)+' / '+(usage.limit||0));qs('subscriptionBox').innerHTML=profileRow('Produit',p.ProductName||'-')+profileRow('Description',p.ProductDescription||'-')+profileRow('Statut',s.Status||'-')+profileRow('Début',formatDateShort(s.StartDate))+profileRow('Fin',formatDateShort(s.EndDate))+profileRow('Limite quotidienne',(usage.limit||0)+' interactions')+profileRow('Modules inclus',modules.map(m=>'☑ '+(m.OptionName||m.OptionCode)).join('<br>')||'-')}function profileRow(label,value){return '<div class="profile-row"><strong>'+escapeHtml(label)+'</strong><div>'+(value||'-')+'</div></div>'}function makePhoneLink(phone){if(!phone)return'-';return '<a href="tel:'+escapeAttr(phone)+'">'+escapeHtml(phone)+'</a>'}function makeWhatsappLink(phone){if(!phone)return'-';const clean=String(phone).replace(/[^\d]/g,'');return '<a target="_blank" href="https://wa.me/'+clean+'">'+escapeHtml(phone)+'</a>'}function makeEmailLink(email){if(!email)return'-';return '<a href="mailto:'+escapeAttr(email)+'">'+escapeHtml(email)+'</a>'}function openPasswordModal(){qs('passwordModal').classList.add('show')}function closePasswordModal(){qs('passwordModal').classList.remove('show')}function changePassword(){const oldPassword=qs('oldPassword').value,newPassword=qs('newPassword').value,confirmPassword=qs('confirmPassword').value;if(!oldPassword||!newPassword){setAppStatus('Renseigne l’ancien et le nouveau mot de passe.');return}if(newPassword!==confirmPassword){setAppStatus('Les deux nouveaux mots de passe ne sont pas identiques.');return}callApi({api:'changePassword',token,oldPassword,newPassword}).then(res=>{setAppStatus(res.message||'Mot de passe traité.');if(res.ok)closePasswordModal()}).catch(err=>setAppStatus('Erreur : '+err.message))}function speak(text){if(!text||!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='fr-FR';u.rate=.95;u.pitch=1.15;u.volume=1;u.onstart=()=>{qs('chatBear').classList.add('speaking');qs('mainBear').classList.add('speaking')};u.onend=()=>{qs('chatBear').classList.remove('speaking');qs('mainBear').classList.remove('speaking')};u.onerror=u.onend;window.speechSynthesis.speak(u)}function sayLocal(text){setAppStatus(text);speak(text)}function testVoice(){speak('Bonjour. Je suis ton nounours BB Burkina Bear. Ma voix fonctionne.')}async function testMicOnly(){if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){setAppStatus('Micro non disponible.');return}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});stream.getTracks().forEach(t=>t.stop());setAppStatus('Micro autorisé.')}catch(e){setAppStatus('Micro bloqué : '+e.name)}}function escapeHtml(v){return String(v||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}function escapeAttr(v){return String(v||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;')}function formatDateShort(v){if(!v)return'-';try{const d=new Date(v);if(isNaN(d.getTime()))return v;return d.toLocaleDateString('fr-FR')}catch(e){return v}}
-</script>
+
+  <script>
+    /****************************************************
+     * IMPORTANT
+     * Remplace l’URL ci-dessous par ton URL Apps Script /exec.
+     * Elle doit finir par /exec
+     ****************************************************/
+    const APPS_SCRIPT_API_URL = 'https://script.google.com/macros/s/AKfycbzixCPGImtzIe1Vm-rFKcT4FX_Mil7BFToR6RQLsLr8id7jdmUPGkYHBkvYfpuTrQkf/exec';
+
+    const btnEnvoyer = document.getElementById('btnEnvoyer');
+    const btnMicro = document.getElementById('btnMicro');
+    const statut = document.getElementById('statut');
+    const question = document.getElementById('question');
+    const reponse = document.getElementById('reponse');
+    const peluche = document.getElementById('peluche');
+    const diagnostic = document.getElementById('diagnostic');
+    const messageTexte = document.getElementById('messageTexte');
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    function afficherStatut(message) {
+      statut.textContent = message;
+    }
+
+    function ajouterDiagnostic(titre, objet) {
+      const ancien = diagnostic.textContent === 'Aucun diagnostic pour le moment.'
+        ? ''
+        : diagnostic.textContent + '\n\n';
+
+      diagnostic.textContent = ancien + '--- ' + titre + ' ---\n' + JSON.stringify(objet, null, 2);
+    }
+
+    function bloquerBoutons(etat) {
+      btnEnvoyer.disabled = etat;
+      btnMicro.disabled = etat;
+    }
+
+    function testerAppsScript() {
+      afficherStatut('Test Apps Script en cours...');
+
+      appelerAppsScriptPing()
+        .then(function(data) {
+          ajouterDiagnostic('Test Apps Script', data);
+
+          if (data.ok) {
+            afficherStatut('Apps Script répond correctement.');
+          } else {
+            afficherStatut('Apps Script répond, mais signale une erreur.');
+          }
+        })
+        .catch(function(error) {
+          ajouterDiagnostic('Erreur Apps Script', {
+            ok: false,
+            erreur: error.message
+          });
+          afficherStatut('Impossible d’appeler Apps Script. Vérifie l’URL /exec.');
+        });
+    }
+
+    function envoyerTexte() {
+      const texte = messageTexte.value.trim();
+
+      if (!texte) {
+        afficherStatut('Écris d’abord un message.');
+        return;
+      }
+
+      question.textContent = texte;
+      reponse.textContent = '...';
+      afficherStatut('La peluche réfléchit...');
+      bloquerBoutons(true);
+
+      appelerAppsScriptAsk(texte)
+        .then(function(data) {
+          if (data.ok) {
+            reponse.textContent = data.reponse;
+            parler(data.reponse);
+            afficherStatut('La peluche a répondu.');
+          } else {
+            reponse.textContent = 'Erreur : ' + data.message;
+            ajouterDiagnostic('Erreur Apps Script', data);
+            afficherStatut('Erreur côté Apps Script.');
+          }
+
+          bloquerBoutons(false);
+        })
+        .catch(function(error) {
+          reponse.textContent = 'Erreur : ' + error.message;
+          ajouterDiagnostic('Erreur communication', {
+            ok: false,
+            erreur: error.message
+          });
+          afficherStatut('Erreur de communication avec Apps Script.');
+          bloquerBoutons(false);
+        });
+    }
+
+    function appelerAppsScriptPing() {
+      return appelerJsonp('ping', 'bonjour');
+    }
+
+    function appelerAppsScriptAsk(message) {
+      return appelerJsonp('ask', message);
+    }
+
+    function appelerJsonp(api, message) {
+      return new Promise(function(resolve, reject) {
+        if (!APPS_SCRIPT_API_URL || APPS_SCRIPT_API_URL === 'COLLE_ICI_URL_APPS_SCRIPT_EXEC') {
+          reject(new Error('URL Apps Script non configurée dans le fichier GitHub index.html.'));
+          return;
+        }
+
+        const callbackName = 'callbackPeluche_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+        const script = document.createElement('script');
+
+        const timeout = setTimeout(function() {
+          nettoyer();
+          reject(new Error('Temps d’attente dépassé. Apps Script ne répond pas.'));
+        }, 30000);
+
+        function nettoyer() {
+          clearTimeout(timeout);
+
+          if (script && script.parentNode) {
+            script.parentNode.removeChild(script);
+          }
+
+          try {
+            delete window[callbackName];
+          } catch (e) {
+            window[callbackName] = undefined;
+          }
+        }
+
+        window[callbackName] = function(data) {
+          nettoyer();
+          resolve(data);
+        };
+
+        script.onerror = function() {
+          nettoyer();
+          reject(new Error('Erreur de chargement JSONP vers Apps Script. Vérifie que l’URL /exec?api=ping&callback=test&q=bonjour affiche test({...});'));
+        };
+
+        const url = APPS_SCRIPT_API_URL +
+          '?api=' + encodeURIComponent(api) +
+          '&callback=' + encodeURIComponent(callbackName) +
+          '&q=' + encodeURIComponent(message);
+
+        script.src = url;
+        document.body.appendChild(script);
+      });
+    }
+
+    async function testerMicroSeul() {
+      afficherStatut('Test du micro en cours...');
+      const result = await diagnostiquerMicro();
+      ajouterDiagnostic('Micro navigateur', result);
+
+      if (result.ok) {
+        afficherStatut('Micro autorisé.');
+      } else {
+        afficherStatut('Micro bloqué. Voir diagnostic.');
+      }
+    }
+
+    async function diagnostiquerMicro() {
+      const result = {
+        ok: false,
+        navigateur: navigator.userAgent,
+        protocole: window.location.protocol,
+        origine: window.location.origin,
+        contexteSecurise: window.isSecureContext,
+        mediaDevicesDisponible: !!navigator.mediaDevices,
+        getUserMediaDisponible: !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
+        speechRecognitionDisponible: !!SpeechRecognition,
+        permissionMicro: 'non vérifiée',
+        erreur: null,
+        conseil: null
+      };
+
+      if (!window.isSecureContext) {
+        result.erreur = 'Contexte non sécurisé.';
+        result.conseil = 'La page doit être ouverte en HTTPS.';
+        return result;
+      }
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        result.erreur = 'getUserMedia indisponible.';
+        result.conseil = 'Utilise Google Chrome récent.';
+        return result;
+      }
+
+      if (navigator.permissions && navigator.permissions.query) {
+        try {
+          const permission = await navigator.permissions.query({ name: 'microphone' });
+          result.permissionMicro = permission.state;
+        } catch (e) {
+          result.permissionMicro = 'non supportée par ce navigateur';
+        }
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(function(track) { track.stop(); });
+        result.ok = true;
+        result.conseil = 'Le micro est accessible.';
+        return result;
+      } catch (e) {
+        result.ok = false;
+        result.erreur = e.name + ' : ' + e.message;
+        result.conseil = 'Autorise le micro dans Chrome et dans les paramètres de ton appareil.';
+        return result;
+      }
+    }
+
+    function demarrerMicro() {
+      if (!SpeechRecognition) {
+        afficherStatut('Reconnaissance vocale non disponible. Utilise Chrome.');
+        ajouterDiagnostic('SpeechRecognition', {
+          ok: false,
+          erreur: 'SpeechRecognition indisponible.'
+        });
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'fr-FR';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      bloquerBoutons(true);
+      afficherStatut('J’écoute. Parle maintenant...');
+
+      try {
+        recognition.start();
+      } catch (e) {
+        ajouterDiagnostic('Erreur démarrage micro', {
+          ok: false,
+          erreur: e.name + ' : ' + e.message
+        });
+        afficherStatut('Impossible de démarrer le micro.');
+        bloquerBoutons(false);
+        return;
+      }
+
+      recognition.onresult = function(event) {
+        const texte = event.results[0][0].transcript;
+        question.textContent = texte;
+        messageTexte.value = texte;
+        reponse.textContent = '...';
+        afficherStatut('Phrase reçue. La peluche réfléchit...');
+
+        appelerAppsScriptAsk(texte)
+          .then(function(data) {
+            if (data.ok) {
+              reponse.textContent = data.reponse;
+              parler(data.reponse);
+              afficherStatut('La peluche a répondu.');
+            } else {
+              reponse.textContent = 'Erreur : ' + data.message;
+              ajouterDiagnostic('Erreur Apps Script', data);
+              afficherStatut('Erreur côté Apps Script.');
+            }
+            bloquerBoutons(false);
+          })
+          .catch(function(error) {
+            reponse.textContent = 'Erreur : ' + error.message;
+            ajouterDiagnostic('Erreur communication', {
+              ok: false,
+              erreur: error.message
+            });
+            afficherStatut('Erreur de communication avec Apps Script.');
+            bloquerBoutons(false);
+          });
+      };
+
+      recognition.onerror = function(event) {
+        ajouterDiagnostic('Erreur reconnaissance vocale', {
+          ok: false,
+          erreur: event.error
+        });
+        afficherStatut('Erreur micro : ' + event.error);
+        bloquerBoutons(false);
+      };
+
+      recognition.onend = function() {
+        if (statut.textContent === 'J’écoute. Parle maintenant...') {
+          afficherStatut('Écoute terminée sans phrase détectée.');
+          bloquerBoutons(false);
+        }
+      };
+    }
+
+    function testerVoix() {
+      parler('Bonjour. Je suis ta peluche. Ma voix fonctionne.');
+    }
+
+    function parler(texte) {
+      if (!window.speechSynthesis) {
+        afficherStatut('Lecture vocale non supportée sur ce navigateur.');
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const voix = new SpeechSynthesisUtterance(texte);
+      voix.lang = 'fr-FR';
+      voix.rate = 0.95;
+      voix.pitch = 1.2;
+      voix.volume = 1;
+
+      voix.onstart = function() {
+        peluche.classList.add('parle');
+      };
+
+      voix.onend = function() {
+        peluche.classList.remove('parle');
+      };
+
+      voix.onerror = function(event) {
+        peluche.classList.remove('parle');
+        ajouterDiagnostic('Erreur voix', {
+          ok: false,
+          erreur: event.error || 'Erreur inconnue'
+        });
+      };
+
+      window.speechSynthesis.speak(voix);
+    }
+  </script>
 </body>
 </html>

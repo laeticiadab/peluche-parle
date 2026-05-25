@@ -1,53 +1,343 @@
-const GEMINI_TTS_MODEL = "gemini-3.1-flash-tts-preview";
-const GEMINI_VOICE_NAME = "Kore";
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Diagnostic BBbear TTS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --blue: #2563eb;
+      --dark: #374151;
+      --red: #b91c1c;
+      --green: #15803d;
+      --border: #d1d5db;
+    }
 
-function genererAudioGemini(texte) {
-  const apiKey = PropertiesService.getScriptProperties().getProperty("GEMINI_API_KEY");
+    * { box-sizing: border-box; }
 
-  const url =
-    "https://generativelanguage.googleapis.com/v1beta/models/" +
-    GEMINI_TTS_MODEL +
-    ":generateContent?key=" +
-    apiKey;
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 24px;
+    }
 
-  const payload = {
-    contents: [
-      {
-        parts: [
-          {
-            text:
-              "Lis ce texte en français, avec une voix douce, claire, stable et naturelle. " +
-              "Garde le même rythme, le même ton et la même personnalité vocale :\n\n" +
-              texte
-          }
-        ]
+    .box {
+      max-width: 980px;
+      margin: auto;
+      background: var(--card);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 12px 35px rgba(0,0,0,.08);
+    }
+
+    h1 { margin-top: 0; }
+
+    .note {
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 14px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+      box-sizing: border-box;
+      background: #fff;
+    }
+
+    textarea { min-height: 90px; resize: vertical; }
+
+    .buttons {
+      margin-top: 16px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 15px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--blue);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover { filter: brightness(1.06); }
+    button.secondary { background: var(--dark); }
+    button.danger { background: var(--red); }
+
+    pre {
+      background: #111827;
+      color: #e5e7eb;
+      padding: 16px;
+      border-radius: 14px;
+      overflow: auto;
+      white-space: pre-wrap;
+      min-height: 260px;
+      margin-top: 18px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .status {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #eef2ff;
+      color: #1e3a8a;
+      font-weight: bold;
+    }
+
+    .ok { background: #dcfce7; color: var(--green); }
+    .bad { background: #fee2e2; color: var(--red); }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Diagnostic BBbear / Apps Script / Gemini TTS</h1>
+
+    <div class="note">
+      Cette page teste séparément : l’URL Apps Script, le JSONP, le déploiement, les propriétés du script,
+      puis Gemini TTS côté serveur. Elle ne corrige rien. Elle sert uniquement à localiser la panne.
+    </div>
+
+    <label>URL Apps Script /exec</label>
+    <input id="appsUrl" value="https://script.google.com/macros/s/AKfycbzT5LVn8GUlvZSiii1sn4rgX4cTShl31xA75yXL5-f7RIfUQtyxyNKpnmDGbUeYkEe3Fw/exec">
+
+    <label>Modèle TTS</label>
+    <select id="model">
+      <option value="gemini-3.1-flash-tts-preview">gemini-3.1-flash-tts-preview</option>
+      <option value="gemini-2.5-flash-preview-tts">gemini-2.5-flash-preview-tts</option>
+      <option value="gemini-2.5-pro-preview-tts">gemini-2.5-pro-preview-tts</option>
+    </select>
+
+    <label>Voix</label>
+    <select id="voiceName">
+      <option>Kore</option>
+      <option>Sulafat</option>
+      <option>Achird</option>
+      <option>Despina</option>
+      <option>Puck</option>
+      <option>Zephyr</option>
+      <option>Aoede</option>
+      <option>Leda</option>
+      <option>Charon</option>
+      <option>Callirrhoe</option>
+      <option>Autonoe</option>
+      <option>Iapetus</option>
+      <option>Algieba</option>
+      <option>Vindemiatrix</option>
+    </select>
+
+    <label>Texte test</label>
+    <textarea id="testText">Bonjour. Ceci est un test de diagnostic de la voix Gemini pour BB Burkina Bear.</textarea>
+
+    <div class="buttons">
+      <button onclick="openRaw('ping')">Ouvrir ping</button>
+      <button onclick="openRaw('diag')">Ouvrir diag</button>
+      <button onclick="testJsonp('echo')">Tester echo JSONP</button>
+      <button onclick="testJsonp('ping')">Tester ping JSONP</button>
+      <button onclick="testJsonp('diag')">Tester diag JSONP</button>
+      <button onclick="testTtsDiag()">Tester ttsDiag JSONP</button>
+      <button class="secondary" onclick="runAll()">Tout tester</button>
+      <button class="danger" onclick="clearLog()">Effacer</button>
+    </div>
+
+    <div id="status" class="status">Prêt.</div>
+    <pre id="log">Prêt.</pre>
+  </div>
+
+  <script>
+    window.addEventListener('error', function(e) {
+      setStatus('Erreur JavaScript globale détectée.', false);
+      logLine('ERREUR JAVASCRIPT GLOBALE : ' + e.message);
+      if (e.filename) logLine('Fichier : ' + e.filename);
+      if (e.lineno) logLine('Ligne : ' + e.lineno);
+    });
+
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    function getBaseUrl() {
+      return $('appsUrl').value.trim();
+    }
+
+    function buildUrl(params) {
+      const base = getBaseUrl();
+      const q = new URLSearchParams(params);
+      return base + '?' + q.toString();
+    }
+
+    function setStatus(message, ok) {
+      const el = $('status');
+      el.textContent = message;
+      el.className = 'status';
+      if (ok === true) el.classList.add('ok');
+      if (ok === false) el.classList.add('bad');
+    }
+
+    function logLine(x) {
+      const box = $('log');
+      if (box.textContent === 'Prêt.') box.textContent = '';
+      box.textContent += x + '\n';
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function logObject(title, obj) {
+      logLine('\n--- ' + title + ' ---');
+      logLine(JSON.stringify(obj, null, 2));
+    }
+
+    function clearLog() {
+      $('log').textContent = 'Prêt.';
+      setStatus('Prêt.', null);
+    }
+
+    function openRaw(api) {
+      const url = buildUrl({ api: api, callback: 'testCallback' });
+      logLine('\nOuverture URL brute :');
+      logLine(url);
+      window.open(url, '_blank');
+    }
+
+    function testJsonp(api) {
+      setStatus('Test ' + api + ' en cours...', null);
+
+      return jsonpRequest({ api: api })
+        .then(function(res) {
+          logObject(api + ' OK', res);
+          setStatus(api + ' OK.', true);
+          return res;
+        })
+        .catch(function(err) {
+          logObject(api + ' ERREUR', { message: err.message || String(err) });
+          setStatus(api + ' échoue. Voir le journal.', false);
+          return null;
+        });
+    }
+
+    function testTtsDiag() {
+      setStatus('Test ttsDiag en cours...', null);
+
+      return jsonpRequest({
+        api: 'ttsDiag',
+        model: $('model').value,
+        voiceName: $('voiceName').value,
+        text: $('testText').value
+      }).then(function(res) {
+        logObject('ttsDiag RESULTAT', res);
+
+        if (res && res.ok) {
+          setStatus('TTS serveur opérationnel.', true);
+        } else {
+          setStatus('TTS serveur non opérationnel. Lire message/bodyPrefix.', false);
+        }
+
+        return res;
+      }).catch(function(err) {
+        logObject('ttsDiag ERREUR JSONP', { message: err.message || String(err) });
+        setStatus('ttsDiag échoue en JSONP. Voir le journal.', false);
+        return null;
+      });
+    }
+
+    async function runAll() {
+      clearLog();
+      setStatus('Diagnostic complet en cours...', null);
+
+      logLine('Début diagnostic complet...');
+      logLine('URL utilisée : ' + getBaseUrl());
+
+      const echo = await testJsonp('echo');
+      const ping = await testJsonp('ping');
+      const diag = await testJsonp('diag');
+      const tts = await testTtsDiag();
+
+      logLine('\n--- INTERPRETATION RAPIDE ---');
+
+      if (!echo) {
+        logLine('echo échoue => problème URL /exec, déploiement non public, mauvaise version Apps Script ou URL incorrecte.');
+      } else if (!diag) {
+        logLine('echo OK mais diag échoue => route diag absente ou nouvelle version Apps Script non déployée.');
+      } else if (!tts || !tts.ok) {
+        logLine('diag OK mais ttsDiag échoue => problème Gemini TTS, clé API, modèle, quota ou payload.');
+      } else {
+        logLine('echo, diag et ttsDiag OK => le serveur TTS marche. Si l’index échoue encore, le problème est dans index.html ou dans le cache GitHub.');
       }
-    ],
-    generationConfig: {
-      responseModalities: ["AUDIO"],
-      speechConfig: {
-        voiceConfig: {
-          prebuiltVoiceConfig: {
-            voiceName: GEMINI_VOICE_NAME
+
+      logLine('\nFin diagnostic.');
+      setStatus('Diagnostic terminé.', true);
+    }
+
+    function jsonpRequest(params) {
+      return new Promise(function(resolve, reject) {
+        const base = getBaseUrl();
+
+        if (!base || base.indexOf('/exec') === -1) {
+          reject(new Error('URL /exec invalide ou absente.'));
+          return;
+        }
+
+        const cb = 'diag_cb_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
+        const script = document.createElement('script');
+
+        const timer = setTimeout(function() {
+          cleanup();
+          reject(new Error('Timeout JSONP : aucun callback reçu après 30 secondes.'));
+        }, 30000);
+
+        function cleanup() {
+          clearTimeout(timer);
+
+          if (script.parentNode) {
+            script.parentNode.removeChild(script);
+          }
+
+          try {
+            delete window[cb];
+          } catch (e) {
+            window[cb] = undefined;
           }
         }
-      }
+
+        window[cb] = function(data) {
+          cleanup();
+          resolve(data);
+        };
+
+        script.onerror = function() {
+          cleanup();
+          reject(new Error('script.onerror : le script JSONP n’a pas pu être chargé.'));
+        };
+
+        params.callback = cb;
+
+        const url = buildUrl(params);
+        logLine('\nAppel JSONP :');
+        logLine(url);
+
+        script.src = url;
+        document.body.appendChild(script);
+      });
     }
-  };
-
-  const options = {
-    method: "post",
-    contentType: "application/json",
-    payload: JSON.stringify(payload),
-    muteHttpExceptions: true
-  };
-
-  const response = UrlFetchApp.fetch(url, options);
-  const data = JSON.parse(response.getContentText());
-
-  if (data.error) {
-    throw new Error(data.error.message);
-  }
-
-  return data.candidates[0].content.parts[0].inlineData.data;
-}
+  </script>
+</body>
+</html>

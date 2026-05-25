@@ -3,7 +3,7 @@
 <head>
   <base target="_top">
   <meta charset="UTF-8">
-  <title>BB Burkina Bear GitHub V3.29 - Gemini TTS</title>
+  <title>BB Burkina Bear GitHub V3.30 - Gemini TTS Voix paramétrable</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
@@ -58,7 +58,7 @@
     </section>
     <section id="screenSubscription" class="screen"><h2>Mon abonnement</h2><div class="status" id="subscriptionBox"></div><button class="btn gray small" onclick="showScreen('dashboard')">Retour</button></section>
     <section id="screenSpace" class="screen"><h2>Mon espace</h2><label>Nom du nounours</label><input id="spaceBearName"><label>Couleur</label><input id="spaceBearColor"><button class="btn green small" onclick="saveChildSpace()">Enregistrer</button><h3>Parent</h3><label>Nom parent</label><input id="spaceParentName"><label>Téléphone</label><input id="spaceParentPhone"><label>Email</label><input id="spaceParentEmail"><label>Mot de passe de confirmation</label><input id="spaceConfirmPassword" type="password"><button class="btn blue small" onclick="saveParentSpace()">Confirmer</button><button class="btn gray small" onclick="showScreen('dashboard')">Retour</button></section>
-    <section id="screenSettings" class="screen"><h2>Paramètres</h2><button class="btn blue small" onclick="testVoice()">Tester voix Gemini</button><button class="btn blue small" onclick="testMicroOnly()">Tester micro</button><div class="check"><input id="voiceEnabled" type="checkbox" checked><span>Lecture vocale Gemini</span></div><label>Modèle vocal Gemini</label><input id="geminiTtsModel" readonly><label>Voix choisie</label><input id="geminiVoiceName" readonly><label>Clé API Gemini pour test GitHub</label><input id="geminiTtsApiKey" type="password" placeholder="Colle ta clé API ici pour tester la voix"><div class="row"><button class="btn blue small" onclick="saveGeminiTtsKey()">Garder la clé pour cette session</button><button class="btn gray small" onclick="toggleGeminiTtsKey()">Afficher / masquer</button></div><p class="muted">Ne mets pas ta clé API directement dans ce fichier GitHub. Ce champ sert seulement aux tests. En production, il vaut mieux générer l’audio côté Apps Script.</p><label>Vitesse de secours navigateur</label><select id="voiceRate"><option value="0.85">Lente</option><option value="0.95" selected>Normale</option><option value="1.1">Rapide</option></select><button class="btn red small" onclick="clearGeminiTtsKey()">Effacer clé Gemini</button><button class="btn red small" onclick="clearRememberedAccess()">Effacer accès</button><button class="btn gray small" onclick="showScreen('dashboard')">Retour</button></section>
+    <section id="screenSettings" class="screen"><h2>Paramètres</h2><div class="check"><input id="voiceEnabled" type="checkbox" checked><span>Lecture vocale Gemini</span></div><label>Modèle vocal Gemini</label><select id="geminiTtsModel"><option value="gemini-3.1-flash-tts-preview">gemini-3.1-flash-tts-preview</option><option value="gemini-2.5-flash-preview-tts">gemini-2.5-flash-preview-tts</option><option value="gemini-2.5-pro-preview-tts">gemini-2.5-pro-preview-tts</option></select><label>Choisir la voix Gemini</label><select id="geminiVoiceName"></select><label>Style de lecture</label><textarea id="geminiTtsStyle" placeholder="Exemple : Lis avec une voix douce, claire et rassurante."></textarea><div class="row"><button class="btn green small" onclick="saveGeminiTtsSettings()">Enregistrer la voix</button><button class="btn blue small" onclick="testVoice()">Tester voix choisie</button></div><label>Clé API Gemini pour test GitHub</label><input id="geminiTtsApiKey" type="password" placeholder="Colle ta clé API ici pour tester la voix"><div class="row"><button class="btn blue small" onclick="saveGeminiTtsKey()">Garder la clé pour cette session</button><button class="btn gray small" onclick="toggleGeminiTtsKey()">Afficher / masquer</button></div><p class="muted">Ne mets pas ta clé API directement dans ce fichier GitHub. Ce champ sert seulement aux tests. La voix et le style sont enregistrés localement sur cet appareil.</p><label>Vitesse de secours navigateur</label><select id="voiceRate"><option value="0.85">Lente</option><option value="0.95" selected>Normale</option><option value="1.1">Rapide</option></select><button class="btn gray small" onclick="resetGeminiTtsSettings()">Réinitialiser voix</button><button class="btn red small" onclick="clearGeminiTtsKey()">Effacer clé Gemini</button><button class="btn red small" onclick="clearRememberedAccess()">Effacer accès</button><button class="btn gray small" onclick="showScreen('dashboard')">Retour</button></section>
     <div class="diag"><strong>Diagnostic test :</strong><pre id="diagnostic">Aucune erreur.</pre></div>
   </div>
 </div>
@@ -75,8 +75,43 @@ const APPS_SCRIPT_TIMEOUT_MS=120000;
 */
 const GEMINI_TTS_MODEL = "gemini-3.1-flash-tts-preview";
 const GEMINI_VOICE_NAME = "Kore";
+const GEMINI_TTS_MODEL_STORE = "BBBEAR_GEMINI_TTS_MODEL";
+const GEMINI_TTS_VOICE_STORE = "BBBEAR_GEMINI_TTS_VOICE";
+const GEMINI_TTS_STYLE_STORE = "BBBEAR_GEMINI_TTS_STYLE";
 const GEMINI_TTS_KEY_STORE = "BBBEAR_GEMINI_TTS_KEY_SESSION";
 const GEMINI_TTS_STYLE_PROMPT = "Lis en français avec une voix naturelle, claire, stable, douce et rassurante. Garde toujours le même ton.";
+const GEMINI_TTS_VOICES = [
+  {name:"Zephyr",desc:"Claire et vive"},
+  {name:"Puck",desc:"Dynamique"},
+  {name:"Charon",desc:"Posée et informative"},
+  {name:"Kore",desc:"Ferme"},
+  {name:"Fenrir",desc:"Expressive"},
+  {name:"Leda",desc:"Jeune"},
+  {name:"Orus",desc:"Solide"},
+  {name:"Aoede",desc:"Légère"},
+  {name:"Callirrhoe",desc:"Souple"},
+  {name:"Autonoe",desc:"Lumineuse"},
+  {name:"Enceladus",desc:"Soufflée"},
+  {name:"Iapetus",desc:"Claire"},
+  {name:"Umbriel",desc:"Calme"},
+  {name:"Algieba",desc:"Fluide"},
+  {name:"Despina",desc:"Douce"},
+  {name:"Erinome",desc:"Nette"},
+  {name:"Algenib",desc:"Grave texturée"},
+  {name:"Rasalgethi",desc:"Explicative"},
+  {name:"Laomedeia",desc:"Animée"},
+  {name:"Achernar",desc:"Très douce"},
+  {name:"Alnilam",desc:"Ferme"},
+  {name:"Schedar",desc:"Équilibrée"},
+  {name:"Gacrux",desc:"Mûre"},
+  {name:"Pulcherrima",desc:"Directe"},
+  {name:"Achird",desc:"Amicale"},
+  {name:"Zubenelgenubi",desc:"Naturelle"},
+  {name:"Vindemiatrix",desc:"Délicate"},
+  {name:"Sadachbia",desc:"Vivante"},
+  {name:"Sadaltager",desc:"Savante"},
+  {name:"Sulafat",desc:"Chaleureuse"}
+];
 const STORE_KEY='BBBEAR_REMEMBER_GITHUB_V327',TOKEN_KEY='BBBEAR_TOKEN_GITHUB_V327';const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;let token=localStorage.getItem(TOKEN_KEY)||'',currentUser=null,dashboard=null;const $=id=>document.getElementById(id);const MODULES=[{code:'TALK',label:'Parler avec nounours',icon:'🔊',style:'blue'},{code:'STORIES',label:'Écouter une histoire',icon:'📚',style:'orange'},{code:'BOOKS',label:'Lire un livre',icon:'📖',style:'green'},{code:'QUIZ',label:'Tester tes connaissances',icon:'❓',style:'pink'},{code:'MUSIC',label:'Musique',icon:'🎵',style:'gray'}];
 window.addEventListener('load',()=>{if(APPS_SCRIPT_URL==='COLLE_ICI_URL_APPS_SCRIPT_EXEC')diag('Configuration','Remplace APPS_SCRIPT_URL par ton URL Apps Script /exec avant de publier sur GitHub.');initGeminiTtsSettings();renderBattery(0);const r=remembered();if(r){$('loginUsername').value=r.username||'';$('loginPassword').value=r.password||''}$('hud').classList.add('hidden');if(token)clientMe().then(res=>{if(res.ok){afterData(res);showScreen('dashboard')}}).catch(e=>diag('Session',e.message||e))});
 
@@ -119,7 +154,7 @@ function jsonpRequest(params){
   });
 }
 
-function showScreen(n){['login','forgot','change','dashboard','talk','subscription','space','settings'].forEach(x=>$('screen'+cap(x)).classList.toggle('active',x===n));$('hud').classList.toggle('hidden',['login','forgot','change','dashboard'].includes(n));if(n==='dashboard')renderDashboard();if(n==='subscription')renderSubscription();if(n==='space')fillSpace();if(n==='talk')initTalkUi()}function cap(s){return s[0].toUpperCase()+s.slice(1)}function showLoader(t){$('loaderText').textContent=t||'Chargement...';$('loader').classList.add('show')}function hideLoader(){$('loader').classList.remove('show')}function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2500)}function diag(t,o){$('diagnostic').textContent=($('diagnostic').textContent==='Aucune erreur.'?'':$('diagnostic').textContent+'\n\n')+'--- '+t+' ---\n'+(typeof o==='string'?o:JSON.stringify(o,null,2))}
+function showScreen(n){['login','forgot','change','dashboard','talk','subscription','space','settings'].forEach(x=>$('screen'+cap(x)).classList.toggle('active',x===n));$('hud').classList.toggle('hidden',['login','forgot','change','dashboard'].includes(n));if(n==='dashboard')renderDashboard();if(n==='subscription')renderSubscription();if(n==='space')fillSpace();if(n==='talk')initTalkUi();if(n==='settings')initGeminiTtsSettings()}function cap(s){return s[0].toUpperCase()+s.slice(1)}function showLoader(t){$('loaderText').textContent=t||'Chargement...';$('loader').classList.add('show')}function hideLoader(){$('loader').classList.remove('show')}function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2500)}function diag(t,o){$('diagnostic').textContent=($('diagnostic').textContent==='Aucune erreur.'?'':$('diagnostic').textContent+'\n\n')+'--- '+t+' ---\n'+(typeof o==='string'?o:JSON.stringify(o,null,2))}
 async function login(){const u=$('loginUsername').value.trim(),p=$('loginPassword').value;if(!u||!p){toast('Identifiant et mot de passe obligatoires');return}showLoader('Connexion...');try{const res=await callServer('clientLogin',u,p);if(!res.ok){diag('Connexion',res);toast(res.message||'Connexion refusée');return}token=res.token;localStorage.setItem(TOKEN_KEY,token);if($('rememberMe').checked)localStorage.setItem(STORE_KEY,JSON.stringify({username:u,password:p}));afterData(res);if(res.mustChangePassword){$('oldPassword').value=p;showScreen('change')}else showScreen('dashboard')}catch(e){diag('Erreur connexion',e.message||String(e));toast('Voir diagnostic')}finally{hideLoader()}}
 async function clientMe(){return callServer('clientMe',token)}function afterData(res){currentUser=res.user||res.dashboard?.user||currentUser;dashboard=res.dashboard||dashboard;const child=currentUser?.NomEnfant||currentUser?.Username||'Mon ami',bear=currentUser?.NomNounours||'BB Bear';if($('helloTitle'))$('helloTitle').textContent='Bonjour '+child;if($('helloSub'))$('helloSub').textContent=bear+' est prêt.';if($('dashTitle'))$('dashTitle').textContent=bear;if($('contactBtn'))$('contactBtn').textContent=dashboard?.contactButtonLabel||'Contacter parent';updateBatteryFromUsage()}
 async function changePassword(){const o=$('oldPassword').value,n=$('newPassword').value,n2=$('newPassword2').value;if(!o||!n||n!==n2){toast('Vérifie les mots de passe');return}showLoader('Changement...');try{const res=await callServer('clientChangePassword',token,o,n);if(!res.ok){diag('Mot de passe',res);toast(res.message||'Erreur');return}const r=remembered();if(r)localStorage.setItem(STORE_KEY,JSON.stringify({username:r.username,password:n}));toast('Mot de passe changé');showScreen('dashboard')}catch(e){diag('Erreur mot de passe',e.message||e)}finally{hideLoader()}}
@@ -180,9 +215,11 @@ async function speak(t){
 
   try{
     const directKey = sessionStorage.getItem(GEMINI_TTS_KEY_STORE) || '';
+    const voiceName = getGeminiVoiceName();
+    const modelName = getGeminiTtsModel();
 
     if(directKey){
-      const audio = await generateGeminiTtsDirect(t, directKey);
+      const audio = await generateGeminiTtsDirect(t, directKey, voiceName, modelName);
       await playGeminiAudio(audio.base64, audio.mimeType);
       return;
     }
@@ -194,7 +231,7 @@ async function speak(t){
       Si elle n’existe pas encore, le code bascule automatiquement sur la voix navigateur.
     */
     try{
-      const res = await callServer('clientTts', token, t, GEMINI_VOICE_NAME, GEMINI_TTS_MODEL);
+      const res = await callServer('clientTts', token, t, voiceName, modelName);
       const finalRes = res && res.result ? res.result : res;
 
       if(finalRes && finalRes.ok && (finalRes.audioBase64 || finalRes.audio)){
@@ -243,15 +280,18 @@ function browserSpeakFallback(t){
   speechSynthesis.speak(u);
 }
 
-async function generateGeminiTtsDirect(text, apiKey){
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_TTS_MODEL}:generateContent`;
+async function generateGeminiTtsDirect(text, apiKey, voiceName, modelName){
+  const finalVoice = voiceName || getGeminiVoiceName();
+  const finalModel = modelName || getGeminiTtsModel();
+  const finalStyle = getGeminiTtsStyle();
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${finalModel}:generateContent`;
 
   const payload = {
     contents: [
       {
         parts: [
           {
-            text: `${GEMINI_TTS_STYLE_PROMPT}\n\nTexte à lire :\n${text}`
+            text: `${finalStyle}\n\nTexte à lire :\n${text}`
           }
         ]
       }
@@ -261,7 +301,7 @@ async function generateGeminiTtsDirect(text, apiKey){
       speechConfig: {
         voiceConfig: {
           prebuiltVoiceConfig: {
-            voiceName: GEMINI_VOICE_NAME
+            voiceName: finalVoice
           }
         }
       }
@@ -380,11 +420,52 @@ function writeString(view, offset, string){
 function initGeminiTtsSettings(){
   const modelInput=$('geminiTtsModel');
   const voiceInput=$('geminiVoiceName');
+  const styleInput=$('geminiTtsStyle');
   const keyInput=$('geminiTtsApiKey');
 
-  if(modelInput)modelInput.value=GEMINI_TTS_MODEL;
-  if(voiceInput)voiceInput.value=GEMINI_VOICE_NAME;
+  if(modelInput)modelInput.value=getGeminiTtsModel();
+
+  if(voiceInput){
+    if(!voiceInput.dataset.loaded){
+      voiceInput.innerHTML=GEMINI_TTS_VOICES.map(v=>'<option value="'+v.name+'">'+v.name+' — '+v.desc+'</option>').join('');
+      voiceInput.dataset.loaded='1';
+    }
+    voiceInput.value=getGeminiVoiceName();
+  }
+
+  if(styleInput)styleInput.value=getGeminiTtsStyle();
   if(keyInput)keyInput.value=sessionStorage.getItem(GEMINI_TTS_KEY_STORE)||'';
+}
+
+function getGeminiTtsModel(){
+  return localStorage.getItem(GEMINI_TTS_MODEL_STORE) || GEMINI_TTS_MODEL;
+}
+
+function getGeminiVoiceName(){
+  return localStorage.getItem(GEMINI_TTS_VOICE_STORE) || GEMINI_VOICE_NAME;
+}
+
+function getGeminiTtsStyle(){
+  return localStorage.getItem(GEMINI_TTS_STYLE_STORE) || GEMINI_TTS_STYLE_PROMPT;
+}
+
+function saveGeminiTtsSettings(){
+  const model=($('geminiTtsModel')?.value||GEMINI_TTS_MODEL).trim();
+  const voice=($('geminiVoiceName')?.value||GEMINI_VOICE_NAME).trim();
+  const style=($('geminiTtsStyle')?.value||GEMINI_TTS_STYLE_PROMPT).trim();
+
+  localStorage.setItem(GEMINI_TTS_MODEL_STORE,model);
+  localStorage.setItem(GEMINI_TTS_VOICE_STORE,voice);
+  localStorage.setItem(GEMINI_TTS_STYLE_STORE,style);
+  toast('Voix enregistrée : '+voice);
+}
+
+function resetGeminiTtsSettings(){
+  localStorage.removeItem(GEMINI_TTS_MODEL_STORE);
+  localStorage.removeItem(GEMINI_TTS_VOICE_STORE);
+  localStorage.removeItem(GEMINI_TTS_STYLE_STORE);
+  initGeminiTtsSettings();
+  toast('Voix réinitialisée sur '+GEMINI_VOICE_NAME+'.');
 }
 
 function saveGeminiTtsKey(){
@@ -409,7 +490,7 @@ function toggleGeminiTtsKey(){
   input.type=input.type==='password'?'text':'password';
 }
 
-function testVoice(){speak('Bonjour, ma voix Gemini fonctionne avec la voix Kore. Je garderai cette voix même si le modèle de conversation change.')}async function testMicroOnly(){showLoader('Test micro...');try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());toast('Micro autorisé')}catch(e){diag('Test micro',e.name+' : '+e.message);toast('Micro bloqué')}finally{hideLoader()}}
+function testVoice(){saveGeminiTtsSettings();speak('Bonjour, je suis ton nounours. Ceci est un test avec la voix '+getGeminiVoiceName()+'. Si cette voix te convient, elle restera utilisée pour les prochaines réponses.')}async function testMicroOnly(){showLoader('Test micro...');try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());toast('Micro autorisé')}catch(e){diag('Test micro',e.name+' : '+e.message);toast('Micro bloqué')}finally{hideLoader()}}
 function renderSubscription(){const s=dashboard?.subscription||{},p=dashboard?.product||{},u=dashboard?.usage||{};$('subscriptionBox').innerHTML='<div class="sub-item"><span>Formule</span><strong>'+esc(p.ProductName||'-')+'</strong></div><div class="sub-item"><span>Statut</span><strong>'+esc(s.Status||'-')+'</strong></div><div class="sub-item"><span>Début</span><strong>'+esc(s.StartDate||'-')+'</strong></div><div class="sub-item"><span>Fin</span><strong>'+esc(s.EndDate||'-')+'</strong></div><div class="sub-item"><span>Restant</span><strong>'+esc(u.remaining??'-')+' / '+esc(u.limit??'-')+'</strong></div>'}function fillSpace(){if(!currentUser)return;$('spaceBearName').value=currentUser.NomNounours||'';$('spaceBearColor').value=currentUser.NounoursColor||'';$('spaceParentName').value=currentUser.ParentName||'';$('spaceParentPhone').value=currentUser.ParentPhone||'';$('spaceParentEmail').value=currentUser.ParentEmail||''}async function saveChildSpace(){showLoader('Enregistrement...');try{const res=await callServer('clientUpdateMySpace',token,{NomNounours:$('spaceBearName').value,NounoursColor:$('spaceBearColor').value},'CHILD','');toast(res.message||'Enregistré')}catch(e){diag('Mon espace enfant',e.message||e);toast('Fonction serveur absente')}finally{hideLoader()}}async function saveParentSpace(){const pw=$('spaceConfirmPassword').value;if(!pw){toast('Mot de passe requis');return}showLoader('Confirmation...');try{const res=await callServer('clientUpdateMySpace',token,{ParentName:$('spaceParentName').value,ParentPhone:$('spaceParentPhone').value,ParentEmail:$('spaceParentEmail').value},'PARENT',pw);toast(res.message||'Enregistré')}catch(e){diag('Mon espace parent',e.message||e);toast('Erreur')}finally{hideLoader()}}
 function contactParent(){closeMenu();const p=currentUser?.ParentWhatsapp||currentUser?.ParentPhone||'';if(p)window.open('https://wa.me/'+String(p).replace(/\D/g,''),'_blank');else toast('Contact parent non configuré')}function openMenu(){$('drawerBg').classList.add('show')}function closeMenu(){$('drawerBg').classList.remove('show')}function goMenu(n){closeMenu();showScreen(n)}function logout(){localStorage.removeItem(TOKEN_KEY);token='';dashboard=null;currentUser=null;closeMenu();showScreen('login')}function clearRememberedAccess(){localStorage.removeItem(STORE_KEY);localStorage.removeItem(TOKEN_KEY);toast('Accès effacé')}function remembered(){try{return JSON.parse(localStorage.getItem(STORE_KEY)||'null')}catch(e){return null}}function esc(v){return String(v??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
 </script>

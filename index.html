@@ -3,7 +3,7 @@
 <head>
   <base target="_top">
   <meta charset="UTF-8">
-  <title>BB Burkina Bear GitHub V3.34 - Voix paramétrable + ratio USAGE_DAILY</title>
+  <title>BB Burkina Bear GitHub V3.36 - Voix paramétrable + ratio USAGE_DAILY</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
@@ -65,6 +65,7 @@
 <div id="drawerBg" class="drawer-bg" onclick="closeMenu()"><div class="drawer" onclick="event.stopPropagation()"><h2>Menu</h2><button class="btn yellow small" onclick="goMenu('dashboard')">Tableau</button><button class="btn green small" onclick="goMenu('subscription')">Abonnement</button><button class="btn blue small" onclick="goMenu('space')">Mon espace</button><button class="btn blue small" onclick="contactParent()" id="contactBtn">Parent</button><button class="btn yellow small" onclick="goMenu('settings')">Paramètres</button><button class="btn red small" onclick="logout()">Déconnexion</button></div></div>
 <div id="loader" class="loader"><div class="loader-card"><div class="spinner"></div><strong id="loaderText">Chargement...</strong></div></div><div id="toast" class="toast"></div>
 <script>
+const BB_GITHUB_VERSION='V3.36_QUIZ_DIAG';
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbziowYGZ2_2eL2uoKaWTH4Orh0DDK1Z79mUTjePwv6RKCI78r21J-qUokNaqOt6gNnmTg/exec';
 const APPS_SCRIPT_DEPLOYMENT_NOTE='Après chaque nouveau déploiement Apps Script, remplacer cette URL /exec dans index.html.';
 const APPS_SCRIPT_TIMEOUT_MS=120000;
@@ -114,7 +115,7 @@ const GEMINI_TTS_VOICES = [
   {name:"Sulafat",desc:"Chaleureuse"}
 ];
 const STORE_KEY='BBBEAR_REMEMBER_GITHUB_V334',TOKEN_KEY='BBBEAR_TOKEN_GITHUB_V334';const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;let token=localStorage.getItem(TOKEN_KEY)||'',currentUser=null,dashboard=null;const $=id=>document.getElementById(id);const MODULES=[{code:'TALK',label:'Parler avec nounours',icon:'🔊',style:'blue'},{code:'STORIES',label:'Écouter une histoire',icon:'📚',style:'orange'},{code:'BOOKS',label:'Lire un livre',icon:'📖',style:'green'},{code:'QUIZ',label:'Tester tes connaissances',icon:'❓',style:'pink'},{code:'MUSIC',label:'Musique',icon:'🎵',style:'gray'}];
-window.addEventListener('load',()=>{if(APPS_SCRIPT_URL==='COLLE_ICI_URL_APPS_SCRIPT_EXEC')diag('Configuration','Remplace APPS_SCRIPT_URL par ton URL Apps Script /exec avant de publier sur GitHub.');initGeminiTtsSettings();renderBattery(0);const r=remembered();if(r){$('loginUsername').value=r.username||'';$('loginPassword').value=r.password||''}$('hud').classList.add('hidden');if(token)clientMe().then(res=>{if(res.ok){afterData(res);showScreen('dashboard')}}).catch(e=>diag('Session',e.message||e))});
+window.addEventListener('load',()=>{diag('Version interface',{version:BB_GITHUB_VERSION, appsScriptUrl:APPS_SCRIPT_URL});if(APPS_SCRIPT_URL==='COLLE_ICI_URL_APPS_SCRIPT_EXEC')diag('Configuration','Remplace APPS_SCRIPT_URL par ton URL Apps Script /exec avant de publier sur GitHub.');initGeminiTtsSettings();renderBattery(0);const r=remembered();if(r){$('loginUsername').value=r.username||'';$('loginPassword').value=r.password||''}$('hud').classList.add('hidden');if(token)clientMe().then(res=>{if(res.ok){afterData(res);showScreen('dashboard')}}).catch(e=>diag('Session',e.message||e))});
 
 function callServer(fn,...args){
   const map={
@@ -122,6 +123,7 @@ function callServer(fn,...args){
     clientLogin:{api:'login',keys:['username','password']},
     clientMe:{api:'me',keys:['token']},
     clientGetDashboard:{api:'getDashboard',keys:['token']},
+    clientQuizDiag:{api:'quizDiag',keys:['token']},
     clientAsk:{api:'ask',keys:['token','q','moduleCode']},
     clientAskDebug:{api:'ask',keys:['token','q','moduleCode']},
     clientTts:{api:'tts',keys:['token','text','voiceName','model','style']},
@@ -161,7 +163,32 @@ async function clientMe(){return callServer('clientMe',token)}function afterData
 async function changePassword(){const o=$('oldPassword').value,n=$('newPassword').value,n2=$('newPassword2').value;if(!o||!n||n!==n2){toast('Vérifie les mots de passe');return}showLoader('Changement...');try{const res=await callServer('clientChangePassword',token,o,n);if(!res.ok){diag('Mot de passe',res);toast(res.message||'Erreur');return}const r=remembered();if(r)localStorage.setItem(STORE_KEY,JSON.stringify({username:r.username,password:n}));toast('Mot de passe changé');showScreen('dashboard')}catch(e){diag('Erreur mot de passe',e.message||e)}finally{hideLoader()}}
 async function forgotPassword(){const u=$('forgotUsername').value.trim()||$('loginUsername').value.trim();if(!u){toast('Saisis identifiant');return}showLoader('Demande...');try{const res=await callServer('clientForgotPassword',u);toast(res.message||'Demande envoyée');diag('Mot de passe oublié',res)}catch(e){diag('Mot de passe oublié',e.message||e);toast('Fonction serveur absente')}finally{hideLoader()}}
 function renderDashboard(){if(!dashboard)return;const u=dashboard.usage||{},p=dashboard.product||{},sub=dashboard.subscription;const pct=updateBatteryFromUsage();$('quotaBar').style.width=pct+'%';$('dashStatus').innerHTML='<b>Formule :</b> '+esc(p.ProductName||'-')+'<br><b>Restant :</b> '+esc(u.remaining??'-')+' / '+esc(u.limit??'-');const active=!!sub&&String(sub.Status||'').toUpperCase()==='ACTIF'&&!dashboard.quotaReached;const allowed=(dashboard.modules||[]).map(m=>String(m.OptionCode).toUpperCase());$('modulesList').innerHTML='';MODULES.forEach(m=>{const ok=active&&allowed.includes(m.code);const d=document.createElement('div');d.className='module-row '+(ok?'':'lock');d.innerHTML='<div class="dot '+(ok?'on':'off')+'"></div><div class="dash-pill '+m.style+'"><span class="pill-icon">'+m.icon+'</span><span class="pill-label">'+m.label+'</span></div>';d.onclick=()=>openModule(m,ok);$('modulesList').appendChild(d)})}
-function updateBatteryFromUsage(){const u=dashboard?.usage||{};const remaining=Number(u.remaining??0);const limit=Number(u.limit??0);const ratio=limit>0?Math.max(0,Math.min(1,remaining/limit)):0;const pct=Math.round(ratio*100);renderBatteryRatio(ratio,remaining,limit);return pct}function renderBattery(p){const ratio=Math.max(0,Math.min(1,Number(p||0)/100));renderBatteryRatio(ratio,null,null)}function renderBatteryRatio(ratio,remaining,limit){const total=10;const lit=ratio<=0?0:Math.max(1,Math.ceil(ratio*total));let cls='on';if(ratio<=0.2)cls='critical';else if(ratio<=0.4)cls='low';const label=(remaining!=null&&limit!=null&&limit>0)?`${remaining}/${limit}`:`${Math.round(ratio*100)}%`;const html=Array.from({length:total},(_,i)=>'<span class="bat-seg '+(i<lit?cls:'')+'"></span>').join('')+'<span class="battery-label">'+label+'</span>';['battery','dashboardBattery'].forEach(id=>{const el=$(id);if(el){el.innerHTML=html;el.title='Interactions restantes : '+label}})}function openModule(m,ok){showLoader('Ouverture...');setTimeout(()=>{hideLoader();if(!ok){toast('Module verrouillé');return}if(m.code==='TALK')showScreen('talk');else if(m.code==='STORIES')openStoryLink();else toast('Module en préparation')},250)}function openStoryLink(){const st=(dashboard.modules||[]).find(x=>String(x.OptionCode).toUpperCase()==='STORIES');if(st&&st.ContentLink)window.open(st.ContentLink,'_blank');else{toast('Lien histoire non configuré');diag('Histoire','ContentLink manquant pour STORIES')}}function setTalkState(state,bearText,userText){const shell=$('talkShell');if(shell){shell.classList.remove('idle','listening','thinking');shell.classList.add(state||'idle')}if(bearText!=null&&$('talkBearText'))$('talkBearText').textContent=bearText;if(userText!=null&&$('talkUserText'))$('talkUserText').textContent=userText}
+function updateBatteryFromUsage(){const u=dashboard?.usage||{};const remaining=Number(u.remaining??0);const limit=Number(u.limit??0);const ratio=limit>0?Math.max(0,Math.min(1,remaining/limit)):0;const pct=Math.round(ratio*100);renderBatteryRatio(ratio,remaining,limit);return pct}function renderBattery(p){const ratio=Math.max(0,Math.min(1,Number(p||0)/100));renderBatteryRatio(ratio,null,null)}function renderBatteryRatio(ratio,remaining,limit){const total=10;const lit=ratio<=0?0:Math.max(1,Math.ceil(ratio*total));let cls='on';if(ratio<=0.2)cls='critical';else if(ratio<=0.4)cls='low';const label=(remaining!=null&&limit!=null&&limit>0)?`${remaining}/${limit}`:`${Math.round(ratio*100)}%`;const html=Array.from({length:total},(_,i)=>'<span class="bat-seg '+(i<lit?cls:'')+'"></span>').join('')+'<span class="battery-label">'+label+'</span>';['battery','dashboardBattery'].forEach(id=>{const el=$(id);if(el){el.innerHTML=html;el.title='Interactions restantes : '+label}})}function openModule(m,ok){
+  const code=String((m&&m.code)||'').trim().toUpperCase();
+  const label=String((m&&m.label)||'').trim();
+  diag('Clic module',{version:BB_GITHUB_VERSION, code:code, label:label, autorise:ok, tokenPresent:!!token, modulesDashboard:(dashboard&&dashboard.modules)||[], appsScriptUrl:APPS_SCRIPT_URL});
+  showLoader('Ouverture...');
+  setTimeout(()=>{
+    hideLoader();
+    if(!ok){toast('Module verrouillé');diag('Module verrouillé',{code:code,label:label,message:'Vérifier PRODUCT_OPTIONS et abonnement actif.'});return}
+    if(code==='TALK')showScreen('talk');
+    else if(code==='STORIES')openStoryLink();
+    else if(code==='QUIZ'||code==='QUIZZ'||label.toUpperCase().includes('CONNAISS'))openQuizModule();
+    else{toast('Module non relié : '+code);diag('Module non relié',{code:code,label:label,solution:'Ajouter la route dans openModule.'})}
+  },250)
+}
+async function openQuizModule(){
+  if(!token){toast('Session absente');diag('QUIZ',{message:'Token absent'});return}
+  try{
+    const d=await callServer('clientQuizDiag',token);
+    diag('Diagnostic accès QUIZ avant ouverture',d);
+    if(d && d.access && d.access.quizAllowed===false){toast('QUIZ verrouillé pour cette formule');return}
+  }catch(e){diag('Diagnostic QUIZ indisponible',e.message||String(e))}
+  const url=APPS_SCRIPT_URL+'?page=quiz&token='+encodeURIComponent(token)+'&v=336';
+  diag('Ouverture QUIZ',{url:url,tokenPresent:!!token});
+  window.open(url,'_blank')
+}
+function openStoryLink(){const st=(dashboard.modules||[]).find(x=>String(x.OptionCode).toUpperCase()==='STORIES');if(st&&st.ContentLink)window.open(st.ContentLink,'_blank');else{toast('Lien histoire non configuré');diag('Histoire','ContentLink manquant pour STORIES')}}function setTalkState(state,bearText,userText){const shell=$('talkShell');if(shell){shell.classList.remove('idle','listening','thinking');shell.classList.add(state||'idle')}if(bearText!=null&&$('talkBearText'))$('talkBearText').textContent=bearText;if(userText!=null&&$('talkUserText'))$('talkUserText').textContent=userText}
 function initTalkUi(){setTalkState('idle','Le nounours est prêt à t’écouter.','Appuie sur le micro ou écris ton message.')}
 async function sendText(forceText){
   const txt=(forceText||$('messageText').value).trim();

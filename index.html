@@ -25,7 +25,7 @@
   </style>
 </head>
 <body>
-<div class="phone">
+<div class="phone"><div id="versionBanner" style="background:#0b5ea8;color:#fff;text-align:center;font-weight:900;padding:8px;font-size:13px;letter-spacing:.5px">BB Burkina Bear — Interface V3.37 QUIZ ACTIF</div>
   <div id="hud" class="hud hidden"><button class="hud-btn" onclick="showScreen('dashboard')">⌂</button><div id="battery" class="battery"></div><div class="sound">🔊</div><button class="hud-btn hud-close" onclick="logout()">×</button></div>
   <div class="panel">
     <section id="screenLogin" class="screen active"><div class="center"><div class="bear-box"><div class="peluche"><div class="oreille gauche"></div><div class="oreille droite"></div><div class="oeil gauche"></div><div class="oeil droite"></div><div class="museau"><div class="nez"></div><div class="bouche"></div></div></div></div><h2>Connexion</h2><p class="muted">Entre d’abord dans ton espace nounours.</p></div><label>Identifiant</label><input id="loginUsername" autocomplete="username"><label>Mot de passe</label><input id="loginPassword" type="password"><div class="check"><input id="rememberMe" type="checkbox" checked><span>Se souvenir de moi</span></div><button class="btn blue" onclick="login()">START</button><div class="center"><button class="link" onclick="showScreen('forgot')">Mot de passe oublié ?</button></div></section>
@@ -65,8 +65,8 @@
 <div id="drawerBg" class="drawer-bg" onclick="closeMenu()"><div class="drawer" onclick="event.stopPropagation()"><h2>Menu</h2><button class="btn yellow small" onclick="goMenu('dashboard')">Tableau</button><button class="btn green small" onclick="goMenu('subscription')">Abonnement</button><button class="btn blue small" onclick="goMenu('space')">Mon espace</button><button class="btn blue small" onclick="contactParent()" id="contactBtn">Parent</button><button class="btn yellow small" onclick="goMenu('settings')">Paramètres</button><button class="btn red small" onclick="logout()">Déconnexion</button></div></div>
 <div id="loader" class="loader"><div class="loader-card"><div class="spinner"></div><strong id="loaderText">Chargement...</strong></div></div><div id="toast" class="toast"></div>
 <script>
-const BB_GITHUB_VERSION='V3.36_QUIZ_DIAG';
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwhff2R6Qm-vnmg1nT2S4_X7dkv4DCHjtY6hvQsc07lqJHvLOQmeymsmOwNT34fyXOeog/exec';
+const BB_GITHUB_VERSION='V3.37_QUIZ_FORCE_OPEN';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxagF1z6Lg1NBJkCquSFwV_C40nHeC_0rpvno-UgnyEKoskhQ33RQqAZheXd0ej1com/exec';
 const APPS_SCRIPT_DEPLOYMENT_NOTE='Après chaque nouveau déploiement Apps Script, remplacer cette URL /exec dans index.html.';
 const APPS_SCRIPT_TIMEOUT_MS=120000;
 
@@ -164,31 +164,67 @@ async function changePassword(){const o=$('oldPassword').value,n=$('newPassword'
 async function forgotPassword(){const u=$('forgotUsername').value.trim()||$('loginUsername').value.trim();if(!u){toast('Saisis identifiant');return}showLoader('Demande...');try{const res=await callServer('clientForgotPassword',u);toast(res.message||'Demande envoyée');diag('Mot de passe oublié',res)}catch(e){diag('Mot de passe oublié',e.message||e);toast('Fonction serveur absente')}finally{hideLoader()}}
 function renderDashboard(){if(!dashboard)return;const u=dashboard.usage||{},p=dashboard.product||{},sub=dashboard.subscription;const pct=updateBatteryFromUsage();$('quotaBar').style.width=pct+'%';$('dashStatus').innerHTML='<b>Formule :</b> '+esc(p.ProductName||'-')+'<br><b>Restant :</b> '+esc(u.remaining??'-')+' / '+esc(u.limit??'-');const active=!!sub&&String(sub.Status||'').toUpperCase()==='ACTIF'&&!dashboard.quotaReached;const allowed=(dashboard.modules||[]).map(m=>String(m.OptionCode).toUpperCase());$('modulesList').innerHTML='';MODULES.forEach(m=>{const ok=active&&allowed.includes(m.code);const d=document.createElement('div');d.className='module-row '+(ok?'':'lock');d.innerHTML='<div class="dot '+(ok?'on':'off')+'"></div><div class="dash-pill '+m.style+'"><span class="pill-icon">'+m.icon+'</span><span class="pill-label">'+m.label+'</span></div>';d.onclick=()=>openModule(m,ok);$('modulesList').appendChild(d)})}
 function updateBatteryFromUsage(){const u=dashboard?.usage||{};const remaining=Number(u.remaining??0);const limit=Number(u.limit??0);const ratio=limit>0?Math.max(0,Math.min(1,remaining/limit)):0;const pct=Math.round(ratio*100);renderBatteryRatio(ratio,remaining,limit);return pct}function renderBattery(p){const ratio=Math.max(0,Math.min(1,Number(p||0)/100));renderBatteryRatio(ratio,null,null)}function renderBatteryRatio(ratio,remaining,limit){const total=10;const lit=ratio<=0?0:Math.max(1,Math.ceil(ratio*total));let cls='on';if(ratio<=0.2)cls='critical';else if(ratio<=0.4)cls='low';const label=(remaining!=null&&limit!=null&&limit>0)?`${remaining}/${limit}`:`${Math.round(ratio*100)}%`;const html=Array.from({length:total},(_,i)=>'<span class="bat-seg '+(i<lit?cls:'')+'"></span>').join('')+'<span class="battery-label">'+label+'</span>';['battery','dashboardBattery'].forEach(id=>{const el=$(id);if(el){el.innerHTML=html;el.title='Interactions restantes : '+label}})}function openModule(m,ok){
-  const code=String((m&&m.code)||'').trim().toUpperCase();
+  const rawCode=String((m&&m.code)||'').trim();
+  const code=rawCode.toUpperCase();
   const label=String((m&&m.label)||'').trim();
-  diag('Clic module',{version:BB_GITHUB_VERSION, code:code, label:label, autorise:ok, tokenPresent:!!token, modulesDashboard:(dashboard&&dashboard.modules)||[], appsScriptUrl:APPS_SCRIPT_URL});
+  const labelUpper=label.toUpperCase();
+
+  diag('Clic module V3.37',{version:BB_GITHUB_VERSION, code:code, label:label, autorise:ok, tokenPresent:!!token, modulesDashboard:(dashboard&&dashboard.modules)||[], appsScriptUrl:APPS_SCRIPT_URL});
+
   showLoader('Ouverture...');
   setTimeout(()=>{
     hideLoader();
-    if(!ok){toast('Module verrouillé');diag('Module verrouillé',{code:code,label:label,message:'Vérifier PRODUCT_OPTIONS et abonnement actif.'});return}
-    if(code==='TALK')showScreen('talk');
-    else if(code==='STORIES')openStoryLink();
-    else if(code==='QUIZ'||code==='QUIZZ'||label.toUpperCase().includes('CONNAISS'))openQuizModule();
-    else{toast('Module non relié : '+code);diag('Module non relié',{code:code,label:label,solution:'Ajouter la route dans openModule.'})}
+
+    if(!ok){
+      toast('Module verrouillé');
+      diag('Module verrouillé',{code:code,label:label,message:'Le module existe, mais il n’est pas autorisé dans la formule active.'});
+      return;
+    }
+
+    if(code==='TALK'){
+      showScreen('talk');
+      return;
+    }
+
+    if(code==='STORIES'){
+      openStoryLink();
+      return;
+    }
+
+    if(code==='QUIZ' || code==='QUIZZ' || labelUpper.includes('CONNAISS') || labelUpper.includes('QUIZ')){
+      openQuizModule();
+      return;
+    }
+
+    // V3.37 : on n’affiche plus “Module en préparation” pour le QUIZ.
+    toast('Module non encore relié : '+code);
+    diag('Module non relié V3.37',{code:code,label:label,solution:'Ce message ne doit pas apparaître pour QUIZ. Si tu vois “Module en cours de préparation”, GitHub charge encore un ancien index.html.'});
   },250)
 }
+
 async function openQuizModule(){
-  if(!token){toast('Session absente');diag('QUIZ',{message:'Token absent'});return}
+  if(!token){
+    toast('Session absente');
+    diag('QUIZ',{message:'Token absent. Reconnecte-toi.'});
+    return;
+  }
+
+  const url=APPS_SCRIPT_URL+'?page=quiz&token='+encodeURIComponent(token)+'&v=337';
+  diag('Ouverture QUIZ V3.37',{version:BB_GITHUB_VERSION,url:url,tokenPresent:!!token});
+
+  // V3.37 : ouverture forcée même si le diagnostic JSONP échoue.
+  // Cela permet de séparer un problème de diagnostic d’un problème d’accès réel à la page QUIZ.
+  window.open(url,'_blank');
+
   try{
     const d=await callServer('clientQuizDiag',token);
-    diag('Diagnostic accès QUIZ avant ouverture',d);
-    if(d && d.access && d.access.quizAllowed===false){toast('QUIZ verrouillé pour cette formule');return}
-  }catch(e){diag('Diagnostic QUIZ indisponible',e.message||String(e))}
-  const url=APPS_SCRIPT_URL+'?page=quiz&token='+encodeURIComponent(token)+'&v=336';
-  diag('Ouverture QUIZ',{url:url,tokenPresent:!!token});
-  window.open(url,'_blank')
+    diag('Diagnostic accès QUIZ après ouverture',d);
+  }catch(e){
+    diag('Diagnostic QUIZ non bloquant',e.message||String(e));
+  }
 }
-function openStoryLink(){const st=(dashboard.modules||[]).find(x=>String(x.OptionCode).toUpperCase()==='STORIES');if(st&&st.ContentLink)window.open(st.ContentLink,'_blank');else{toast('Lien histoire non configuré');diag('Histoire','ContentLink manquant pour STORIES')}}function setTalkState(state,bearText,userText){const shell=$('talkShell');if(shell){shell.classList.remove('idle','listening','thinking');shell.classList.add(state||'idle')}if(bearText!=null&&$('talkBearText'))$('talkBearText').textContent=bearText;if(userText!=null&&$('talkUserText'))$('talkUserText').textContent=userText}
+
+function setTalkState(state,bearText,userText){const shell=$('talkShell');if(shell){shell.classList.remove('idle','listening','thinking');shell.classList.add(state||'idle')}if(bearText!=null&&$('talkBearText'))$('talkBearText').textContent=bearText;if(userText!=null&&$('talkUserText'))$('talkUserText').textContent=userText}
 function initTalkUi(){setTalkState('idle','Le nounours est prêt à t’écouter.','Appuie sur le micro ou écris ton message.')}
 async function sendText(forceText){
   const txt=(forceText||$('messageText').value).trim();

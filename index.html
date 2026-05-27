@@ -25,7 +25,7 @@
   </style>
 </head>
 <body>
-<div class="phone"><div id="versionBanner" style="background:#0b5ea8;color:#fff;text-align:center;font-weight:900;padding:8px;font-size:13px;letter-spacing:.5px">BB Burkina Bear — Interface V3.37 QUIZ ACTIF</div>
+<div class="phone"><div id="versionBanner" style="background:#0b5ea8;color:#fff;text-align:center;font-weight:900;padding:8px;font-size:13px;letter-spacing:.5px">BB Burkina Bear — Interface V3.38 QUIZ EXTERNE</div>
   <div id="hud" class="hud hidden"><button class="hud-btn" onclick="showScreen('dashboard')">⌂</button><div id="battery" class="battery"></div><div class="sound">🔊</div><button class="hud-btn hud-close" onclick="logout()">×</button></div>
   <div class="panel">
     <section id="screenLogin" class="screen active"><div class="center"><div class="bear-box"><div class="peluche"><div class="oreille gauche"></div><div class="oreille droite"></div><div class="oeil gauche"></div><div class="oeil droite"></div><div class="museau"><div class="nez"></div><div class="bouche"></div></div></div></div><h2>Connexion</h2><p class="muted">Entre d’abord dans ton espace nounours.</p></div><label>Identifiant</label><input id="loginUsername" autocomplete="username"><label>Mot de passe</label><input id="loginPassword" type="password"><div class="check"><input id="rememberMe" type="checkbox" checked><span>Se souvenir de moi</span></div><button class="btn blue" onclick="login()">START</button><div class="center"><button class="link" onclick="showScreen('forgot')">Mot de passe oublié ?</button></div></section>
@@ -65,8 +65,8 @@
 <div id="drawerBg" class="drawer-bg" onclick="closeMenu()"><div class="drawer" onclick="event.stopPropagation()"><h2>Menu</h2><button class="btn yellow small" onclick="goMenu('dashboard')">Tableau</button><button class="btn green small" onclick="goMenu('subscription')">Abonnement</button><button class="btn blue small" onclick="goMenu('space')">Mon espace</button><button class="btn blue small" onclick="contactParent()" id="contactBtn">Parent</button><button class="btn yellow small" onclick="goMenu('settings')">Paramètres</button><button class="btn red small" onclick="logout()">Déconnexion</button></div></div>
 <div id="loader" class="loader"><div class="loader-card"><div class="spinner"></div><strong id="loaderText">Chargement...</strong></div></div><div id="toast" class="toast"></div>
 <script>
-const BB_GITHUB_VERSION='V3.37_QUIZ_FORCE_OPEN';
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxagF1z6Lg1NBJkCquSFwV_C40nHeC_0rpvno-UgnyEKoskhQ33RQqAZheXd0ej1com/exec';
+const BB_GITHUB_VERSION='V3.38_QUIZ_EXTERNE';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbw6m3LGIgi9k8JVC9KTW8S2zAbvudyXK5Ty9-CsNOGazrTTp-L-Xjx6SGah36O955qT/exec';
 const APPS_SCRIPT_DEPLOYMENT_NOTE='Après chaque nouveau déploiement Apps Script, remplacer cette URL /exec dans index.html.';
 const APPS_SCRIPT_TIMEOUT_MS=120000;
 
@@ -124,6 +124,7 @@ function callServer(fn,...args){
     clientMe:{api:'me',keys:['token']},
     clientGetDashboard:{api:'getDashboard',keys:['token']},
     clientQuizDiag:{api:'quizDiag',keys:['token']},
+    clientPrepareQuizAccess:{api:'prepareQuizAccess',keys:['token']},
     clientAsk:{api:'ask',keys:['token','q','moduleCode']},
     clientAskDebug:{api:'ask',keys:['token','q','moduleCode']},
     clientTts:{api:'tts',keys:['token','text','voiceName','model','style']},
@@ -205,22 +206,27 @@ function updateBatteryFromUsage(){const u=dashboard?.usage||{};const remaining=N
 async function openQuizModule(){
   if(!token){
     toast('Session absente');
-    diag('QUIZ',{message:'Token absent. Reconnecte-toi.'});
+    diag('QUIZ externe',{message:'Token absent. Reconnecte-toi.'});
     return;
   }
 
-  const url=APPS_SCRIPT_URL+'?page=quiz&token='+encodeURIComponent(token)+'&v=337';
-  diag('Ouverture QUIZ V3.37',{version:BB_GITHUB_VERSION,url:url,tokenPresent:!!token});
-
-  // V3.37 : ouverture forcée même si le diagnostic JSONP échoue.
-  // Cela permet de séparer un problème de diagnostic d’un problème d’accès réel à la page QUIZ.
-  window.open(url,'_blank');
-
+  showLoader('Préparation du Quiz...');
   try{
-    const d=await callServer('clientQuizDiag',token);
-    diag('Diagnostic accès QUIZ après ouverture',d);
+    const res=await callServer('clientPrepareQuizAccess',token);
+    diag('Préparation QUIZ externe V3.38',res);
+
+    if(!res || !res.ok || !res.quizUrl){
+      toast((res&&res.message)||'Accès Quiz impossible');
+      return;
+    }
+
+    window.open(res.quizUrl,'_blank');
+    toast('Ouverture du Quiz');
   }catch(e){
-    diag('Diagnostic QUIZ non bloquant',e.message||String(e));
+    diag('Erreur préparation QUIZ externe',e.message||String(e));
+    toast('Voir diagnostic');
+  }finally{
+    hideLoader();
   }
 }
 

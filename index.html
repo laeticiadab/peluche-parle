@@ -259,7 +259,11 @@ async function openQuizStandaloneModule(){
     }
 
     toast('Accès Quiz prêt. Connexion avec le même identifiant.');
-    const info='Identifiant Quiz : '+(res.username||'')+'\nMot de passe : même mot de passe BBbear\nFin accès : '+(res.dateFinAcces||'-')+'\nSynchronisation : '+((res.sync&&res.sync.message)||'-')+'\nURL Quiz : '+(res.quizUrl||'-');
+    const info='Identifiant Quiz : '+(res.username||'')+'
+Mot de passe : même mot de passe BBbear
+Fin accès : '+(res.dateFinAcces||'-')+'
+Synchronisation : '+((res.sync&&res.sync.message)||'-')+'
+URL Quiz : '+(res.quizUrl||'-');
     diag('Identifiants Quiz',info);
 
     if(!res.quizUrl){

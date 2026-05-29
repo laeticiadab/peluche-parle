@@ -1,288 +1,4304 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <title>BB Burkina Bear V4.01 - Discussion diagnostic</title>
-  <style>
-    :root{--blue:#58a6d7;--cream:#fffaf1;--sand:#f6e7bd;--green:#23d400;--red:#b71e1e;--text:#24170e;--line:#d9c6ac;--shadow:0 14px 34px rgba(40,22,10,.18)}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,sans-serif;background:#fff;color:var(--text);display:flex;justify-content:center;padding:24px 0}.phone{width:min(96vw,720px);min-height:calc(100vh - 48px);background:var(--blue);padding:0 0 28px;box-shadow:var(--shadow);border-radius:34px;overflow:hidden}.hud{display:flex;align-items:center;gap:12px;margin:16px 16px 12px}.hud-btn{width:56px;height:56px;border-radius:14px;border:0;background:#fff;color:#111;font-size:34px;font-weight:900;box-shadow:0 5px 0 #111;display:flex;align-items:center;justify-content:center;cursor:pointer}.hud-close{background:#b91f1f;color:#fff;border-radius:50%;box-shadow:0 5px 0 #111}.battery{flex:1;height:45px;border:5px solid #111;background:#fff;padding:4px;display:flex;gap:3px;position:relative}.battery:after{content:'';position:absolute;right:-15px;top:10px;width:10px;height:18px;background:#111}.battery-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#111;text-shadow:0 1px 0 #fff;pointer-events:none}.bat-seg{flex:1;background:#e2e2e2}.bat-seg.on{background:#18d900}.bat-seg.low{background:#ffbb21}.bat-seg.critical{background:#e93a2b}.sound{font-size:26px;margin-left:6px}.panel{background:var(--blue);border-radius:0;min-height:calc(100vh - 116px);padding:18px;position:relative;overflow:hidden}.version{background:#fff3cd;border:1px solid #d8b547;border-radius:12px;padding:8px 10px;margin-bottom:10px;font-weight:900;text-align:center;color:#5b4300}.muted{color:#6e6257;line-height:1.45}.hidden{display:none!important}
-    .bear-box{width:218px;height:218px;border-radius:28px;background:#fff;display:flex;align-items:center;justify-content:center;margin:8px auto 16px;border:1px solid #eadfce;box-shadow:0 8px 18px rgba(45,24,8,.08),inset 0 0 0 6px #fffaf1}.peluche{width:170px;height:170px;margin:0 auto;background:transparent;border-radius:50%;position:relative;transform-origin:center bottom}.peluche:before{content:'';position:absolute;inset:0;background:#c48a5a;border-radius:50%;box-shadow:inset 0 -10px 0 rgba(0,0,0,.08),0 8px 16px rgba(65,35,12,.12);z-index:1}.oreille{width:72px;height:72px;background:#c48a5a;border-radius:50%;position:absolute;top:-12px;z-index:0;box-shadow:inset 0 -6px 0 rgba(0,0,0,.06)}.oreille:after{content:'';width:32px;height:32px;background:#e2b48d;border-radius:50%;position:absolute;left:20px;top:20px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.05)}.oreille.gauche{left:2px}.oreille.droite{right:2px}.oeil{width:16px;height:16px;background:#222;border-radius:50%;position:absolute;top:65px;z-index:2}.oeil.gauche{left:52px}.oeil.droite{right:52px}.museau{width:72px;height:50px;background:#f2d2b6;border-radius:50%;position:absolute;left:49px;top:88px;z-index:2}.nez{width:22px;height:16px;background:#3a2318;border-radius:50%;position:absolute;left:25px;top:8px}.bouche{width:28px;height:8px;background:#3a2318;border-radius:0 0 20px 20px;position:absolute;left:22px;top:30px}.talking .bouche{animation:bouche .25s infinite alternate}.talking .peluche{animation:pelucheTalk .34s infinite alternate ease-in-out}@keyframes bouche{from{height:6px}to{height:20px}}@keyframes pelucheTalk{from{transform:translateY(0)}to{transform:translateY(-2px)}}
-    button{cursor:pointer;border:0;font-weight:900;transition:transform .08s,filter .15s}.btn{width:100%;min-height:58px;border-radius:999px;color:#fff;font-size:21px;text-transform:uppercase;text-shadow:0 2px 0 rgba(0,0,0,.24);border:3px solid rgba(255,255,255,.8);box-shadow:0 7px 0 #5c3a1f,0 12px 20px rgba(0,0,0,.16),inset 0 12px 0 rgba(255,255,255,.25);margin:9px 0}.green{background:linear-gradient(#9bf442,#45ad12)}.blue{background:linear-gradient(#54d1ff,#168cb9)}.red{background:linear-gradient(#ff6359,#c91f1f)}.yellow{background:linear-gradient(#ffe56b,#d99a04)}.gray{background:linear-gradient(#9fa8ad,#65727a);color:#2d363c;text-shadow:none}.small{font-size:15px;min-height:46px;border-radius:18px}
-    .status{background:#f6ebd3;border:1px solid #d5bd98;border-radius:16px;padding:12px;text-align:left;color:#5a3b1e;font-size:14px;line-height:1.45;margin:10px 0}.chat{display:none}.bubble{padding:10px 12px;border-radius:16px;margin:7px 0;line-height:1.45}.me{background:#e6f5dd}.bot{background:#f3dfbf}.talk-shell{display:grid;gap:18px}.talk-head{background:#ececec;border-radius:34px;padding:18px;position:relative;overflow:hidden}.talk-topline{display:flex;justify-content:space-between;align-items:flex-start;gap:22px}.talk-bear .bear-box{width:160px;height:160px;margin:0;border-radius:22px;background:transparent;border:0;box-shadow:none}.talk-bear .peluche{transform:scale(.88);transform-origin:left top}.talk-thought{width:220px;min-height:128px;border-radius:24px;background:#d7d2c7;display:none;align-items:center;justify-content:center;position:relative;flex-shrink:0;margin-left:26px}.talk-thought .gear{font-size:54px;line-height:1;display:inline-block;animation:gearSpin 1.7s linear infinite}.talk-thought .gear.small{font-size:44px;margin-left:-8px;animation-duration:1.1s}.talk-thought:before,.talk-thought:after{content:'';position:absolute;border-radius:50%;background:#d7d2c7}.talk-thought:before{width:30px;height:30px;left:-42px;top:46px}.talk-thought:after{width:18px;height:18px;left:-66px;top:76px}.talk-pill{min-height:62px;border-radius:999px;padding:18px 26px;display:flex;align-items:center;font-size:16px;font-weight:800;line-height:1.35;color:#5c4a37;overflow:hidden}.talk-pill:empty{display:none}.talk-pill.bear{background:#efe2b5;margin-top:18px}.talk-pill.user{background:#d8e8f5;margin:18px 28px 0 28px}.compose-wrap{margin-top:18px;background:#f6f4ef;border:2px solid #d5b08b;border-radius:30px;padding:18px;display:grid;grid-template-columns:minmax(0,1fr) 114px;gap:16px}.compose-wrap textarea{min-height:220px;border:0;background:transparent;padding:0;margin:0;font-size:17px;resize:none}.compose-wrap textarea:focus{outline:none}.compose-actions{display:grid;gap:16px;align-content:center}.compose-icon{width:100%;height:112px;background:#ffd100;border:8px solid #000;border-radius:26px;display:flex;align-items:center;justify-content:center;font-size:54px;font-weight:900;box-shadow:0 6px 0 rgba(0,0,0,.18)}.compose-icon.mic{font-size:52px}.talk-shell.listening .compose-icon.mic{animation:micPulse .9s infinite}.talk-shell.thinking .talk-thought{display:flex}.talk-shell.thinking .talk-bear .peluche{animation:thinkBob 1.4s infinite ease-in-out}.talk-shell.listening .talk-user{box-shadow:0 0 0 5px rgba(84,209,255,.22)}@keyframes gearSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}@keyframes micPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}@keyframes thinkBob{0%,100%{transform:scale(.88) translateY(0)}50%{transform:scale(.88) translateY(-4px)}}
-    .loader{position:fixed;inset:0;background:rgba(0,0,0,.34);display:none;align-items:center;justify-content:center;z-index:30}.loader.show{display:flex}.loader-card{background:#fff6e8;border-radius:24px;padding:24px;text-align:center;box-shadow:var(--shadow)}.spinner{width:58px;height:58px;border-radius:50%;border:7px solid #e2c69c;border-top-color:#5a3b1e;margin:0 auto 12px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}pre{background:#111;color:#eee;border-radius:12px;padding:12px;max-height:220px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-size:12px;text-align:left}.diag{margin-top:14px}.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#3b2615;color:#fff;padding:12px 15px;border-radius:14px;z-index:50;display:none}.toast.show{display:block}
-    @media(max-width:420px){body{padding:10px 0}.phone{padding:0;width:min(96vw,720px);min-height:calc(100vh - 20px);border-radius:24px}.panel{padding:14px}.hud-btn{width:46px;height:46px;font-size:26px}.battery{height:36px}.talk-topline{display:block}.talk-thought{width:100%;margin:10px 0 0 0}.compose-wrap{grid-template-columns:1fr}.compose-actions{grid-template-columns:1fr 1fr;align-content:initial}.compose-icon{height:86px}}
-  </style>
-</head>
-<body>
-<div class="phone">
-  <div class="hud"><button class="hud-btn" onclick="window.close()">⌂</button><div id="battery" class="battery"></div><div class="sound">🔊</div><button class="hud-btn hud-close" onclick="window.close()">×</button></div>
-  <div class="panel">
-    <div class="version">Module discussion BBbear V4.01 — Diagnostic JSONP/TTS</div>
-    <div id="talkShell" class="talk-shell idle">
-      <div class="talk-head">
-        <div class="talk-topline">
-          <div class="talk-bear">
-            <div class="bear-box"><div class="peluche"><div class="oreille gauche"></div><div class="oreille droite"></div><div class="oeil gauche"></div><div class="oeil droite"></div><div class="museau"><div class="nez"></div><div class="bouche"></div></div></div></div>
-          </div>
-          <div class="talk-thought"><span class="gear">⚙</span><span class="gear small">⚙</span></div>
-        </div>
-        <div id="talkBearText" class="talk-pill bear">Le nounours est prêt à t’écouter.</div>
-        <div id="talkUserText" class="talk-pill user talk-user">Appuie sur le micro ou écris ton message.</div>
-        <div class="compose-wrap">
-          <textarea id="messageText" placeholder="Écris ton message..."></textarea>
-          <div class="compose-actions">
-            <button class="compose-icon" onclick="sendText()" title="Envoyer">↩</button>
-            <button id="talkMicBtn" class="compose-icon mic" onclick="startMicro()" title="Micro">🎙</button>
-          </div>
-        </div>
-      </div>
-      <div id="chatBox" class="chat"><div class="bubble bot">Je t’écoute.</div></div>
-    </div>
-    <div class="status" id="statusBox">Initialisation...</div>
-    <button class="btn blue small" onclick="runConnectionDiagnostic()">DIAGNOSTIC CONNEXION</button>
-    <button class="btn green small" onclick="runTtsDiagnostic()">DIAGNOSTIC VOIX KORE</button>
-    <button class="btn gray small" onclick="clearDiagnostic()">EFFACER DIAGNOSTIC</button>
-    <div class="diag"><strong>Diagnostic :</strong><pre id="diagnostic">Aucune erreur.</pre></div>
-  </div>
-</div>
-<div id="loader" class="loader"><div class="loader-card"><div class="spinner"></div><strong id="loaderText">Chargement...</strong></div></div><div id="toast" class="toast"></div>
-<script>
-const DEFAULT_TIMEOUT_MS=120000;
-const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
-let token='',apiUrl='',username='',childName='',bearName='BB Burkina Bear',dashboard=null;
-const $=id=>document.getElementById(id);
+/****************************************************
+ * BB BURKINA BEAR - CODE.GS V4.01
+ * Apps Script + Google Sheet unique + Gemini + Abonnements + Robot + QUIZ intégré
+ *
+ * À coller entièrement dans Code.gs - V4.01 : diagnostic JSONP/TTS Gemini + fallback modèles TTS.
+ *
+ * Propriétés du script obligatoires :
+ * - GEMINI_API_KEY
+ * - PELUCHE_SHEET_ID
+ *
+ * Propriétés recommandées :
+ * - GITHUB_TALK_URL : URL GitHub du module discussion uniquement
+ * - BBBEAR_APP_URL  : URL /exec du déploiement BBbear, utile pour GitHub discussion
+ ****************************************************/
 
-const GEMINI_TTS_MODEL='gemini-3.1-flash-tts-preview';
-const GEMINI_VOICE_NAME='Kore';
-const GEMINI_TTS_STYLE_PROMPT='[warmly, gently, natural pace] Lis le texte en français avec une voix vivante, douce, claire, rassurante et naturelle. Fais des pauses naturelles. Ne récite pas comme un robot.';
-const GEMINI_TTS_MODEL_STORE='BBBEAR_GEMINI_TTS_MODEL';
-const GEMINI_TTS_VOICE_STORE='BBBEAR_GEMINI_TTS_VOICE';
-const GEMINI_TTS_STYLE_STORE='BBBEAR_GEMINI_TTS_STYLE';
+const BBBEAR_BACKEND_VERSION = 'V4.01_TTS_JSONP_DIAG_2026_05_29';
 
-window.addEventListener('load',init);
-function init(){
-  const params=parseHash();
-  token=params.token||'';
-  apiUrl=params.apiUrl||params.api||'';
-  username=params.username||'';
-  childName=params.child||'';
-  bearName=params.bear||'BB Burkina Bear';
-  renderBattery(0);
-  setTalkState('idle',bearName+' est prêt à t’écouter.', childName ? 'Bonjour '+childName+'. Écris ou parle.' : 'Écris ou parle.');
-  if(!token||!apiUrl){
-    setStatus('Lien incomplet. Ouvre la discussion depuis BBbear Apps Script.');
-    diag('Configuration', {tokenPresent:!!token, apiUrlPresent:!!apiUrl});
-    return;
+/****************************************************
+ * NOMS DES ONGLETS
+ ****************************************************/
+
+const SHEET_USERS = 'USERS';
+const SHEET_PRODUCTS = 'PRODUCTS';
+const SHEET_PRODUCT_OPTIONS = 'PRODUCT_OPTIONS';
+const SHEET_USER_SUBSCRIPTIONS = 'USER_SUBSCRIPTIONS';
+const SHEET_ROBOT_SETTINGS = 'ROBOT_SETTINGS';
+const SHEET_ROBOT_LOGS = 'ROBOT_LOGS';
+const SHEET_CONTENT_LINKS = 'CONTENT_LINKS';
+const SHEET_MESSAGES = 'MESSAGES';
+const SHEET_USAGE_DAILY = 'USAGE_DAILY';
+const SHEET_SESSIONS = 'SESSIONS';
+const SHEET_SETTINGS = 'SETTINGS';
+const SHEET_CENSORSHIP_RULES = 'CENSORSHIP_RULES';
+const SHEET_ALERTS = 'ALERTS';
+const SHEET_DAILY_SUMMARIES = 'DAILY_SUMMARIES';
+const SHEET_BEAR_SETTINGS = 'BEAR_SETTINGS';
+const SHEET_QUIZ_THEMES = 'QUIZ_THEMES';
+const SHEET_QUIZ_QUESTIONS = 'QUIZ_QUESTIONS';
+const SHEET_QUIZ_PARAMS = 'QUIZ_PARAMS';
+const SHEET_QUIZ_HISTORY = 'QUIZ_HISTORY';
+const SHEET_QUIZ_IMPORT_QUESTIONS = 'QUIZ_IMPORT_QUESTIONS';
+const SHEET_QUIZ_CATEGORIES = 'QUIZ_CATEGORIES';
+const SHEET_QUIZ_DOMAINES_EXPERTS = 'QUIZ_DOMAINES_EXPERTS';
+
+/****************************************************
+ * EN-TÊTES ATTENDUS
+ ****************************************************/
+
+const HEADERS = {};
+
+HEADERS[SHEET_USERS] = [
+  'UserID',
+  'Username',
+  'Password',
+  'Role',
+  'Status',
+  'NomEnfant',
+  'AgeEnfant',
+  'NomNounours',
+  'NounoursColor',
+  'NounoursHat',
+  'NounoursMoustache',
+  'ParentName',
+  'ParentRelation',
+  'ParentPhone',
+  'ParentWhatsapp',
+  'ParentEmail',
+  'PreferredContact',
+  'ProductID',
+  'DailyLimitCustom',
+  'FirstLoginMessage',
+  'FirstLoginDone',
+  'MustChangePassword',
+  'SystemInstruction',
+  'Memoire',
+  'QuizCategorie',
+  'QuizDomaineExpertID',
+  'CreatedAt',
+  'LastLoginAt',
+  'LastUsedAt'
+];
+
+HEADERS[SHEET_PRODUCTS] = [
+  'ProductID',
+  'ProductName',
+  'ProductDescription',
+  'Status',
+  'Price',
+  'DurationDays',
+  'DefaultDailyLimit',
+  'Notes'
+];
+
+HEADERS[SHEET_PRODUCT_OPTIONS] = [
+  'ProductID',
+  'OptionCode',
+  'OptionName',
+  'Enabled',
+  'LimitValue',
+  'ContentLink',
+  'Notes'
+];
+
+HEADERS[SHEET_USER_SUBSCRIPTIONS] = [
+  'SubscriptionID',
+  'UserID',
+  'ProductID',
+  'Status',
+  'StartMode',
+  'StartDate',
+  'EndDate',
+  'DurationDays',
+  'AutoDisableAtEnd',
+  'ReminderEnabled',
+  'ReminderDaysBefore',
+  'LastReminderSentAt',
+  'CreatedAt',
+  'ActivatedAt',
+  'ExpiredAt',
+  'Notes'
+];
+
+HEADERS[SHEET_ROBOT_SETTINGS] = [
+  'UserID',
+  'SubscriptionWatchEnabled',
+  'AutoDisableEnabled',
+  'ReminderEnabled',
+  'ReminderDaysBefore',
+  'ReminderEmail',
+  'SummaryEnabled',
+  'SummaryFrequency',
+  'SummaryHour',
+  'SummaryEmail',
+  'CensorshipAlertEnabled',
+  'CensorshipAlertEmail',
+  'UpdatedAt',
+  'Notes'
+];
+
+HEADERS[SHEET_ROBOT_LOGS] = [
+  'LogID',
+  'RunDate',
+  'ActionType',
+  'UserID',
+  'SubscriptionID',
+  'Status',
+  'Message',
+  'CreatedAt'
+];
+
+HEADERS[SHEET_CONTENT_LINKS] = [
+  'ContentID',
+  'ModuleCode',
+  'Title',
+  'Description',
+  'ImageUrl',
+  'ContentUrl',
+  'Status',
+  'ProductID',
+  'UserID',
+  'CreatedAt',
+  'Notes'
+];
+
+HEADERS[SHEET_MESSAGES] = [
+  'MessageID',
+  'UserID',
+  'Role',
+  'Message',
+  'CreatedAt',
+  'ModuleCode',
+  'SafetyStatus',
+  'AlertCreated',
+  'Notes'
+];
+
+HEADERS[SHEET_USAGE_DAILY] = [
+  'DateKey',
+  'UserID',
+  'Username',
+  'NomEnfant',
+  'Count',
+  'DailyLimit',
+  'Remaining',
+  'LastUsedAt'
+];
+
+HEADERS[SHEET_SESSIONS] = [
+  'SessionToken',
+  'UserID',
+  'Role',
+  'CreatedAt',
+  'ExpiresAt',
+  'Status'
+];
+
+HEADERS[SHEET_SETTINGS] = [
+  'Key',
+  'Value',
+  'Description'
+];
+
+HEADERS[SHEET_CENSORSHIP_RULES] = [
+  'RuleID',
+  'Keyword',
+  'Category',
+  'Severity',
+  'Enabled',
+  'ChildMessage',
+  'NotifyParent',
+  'Notes'
+];
+
+HEADERS[SHEET_ALERTS] = [
+  'AlertID',
+  'UserID',
+  'MessageID',
+  'Category',
+  'Severity',
+  'OriginalMessage',
+  'ChildResponse',
+  'ParentEmail',
+  'ParentPhone',
+  'NotificationStatus',
+  'CreatedAt',
+  'SentAt',
+  'Notes'
+];
+
+HEADERS[SHEET_DAILY_SUMMARIES] = [
+  'SummaryID',
+  'DateKey',
+  'UserID',
+  'NomEnfant',
+  'ParentEmail',
+  'InteractionsCount',
+  'ModulesUsed',
+  'MainTopics',
+  'AlertsCount',
+  'SummaryText',
+  'SendStatus',
+  'CreatedAt',
+  'SentAt'
+];
+
+HEADERS[SHEET_BEAR_SETTINGS] = [
+  'UserID',
+  'BearName',
+  'Color',
+  'Hat',
+  'Moustache',
+  'VoiceLang',
+  'VoiceRate',
+  'VoicePitch',
+  'VoiceVolume',
+  'UpdatedAt'
+];
+
+HEADERS[SHEET_QUIZ_CATEGORIES] = [
+  'Categorie',
+  'Libelle',
+  'Description',
+  'Actif',
+  'Ordre'
+];
+
+HEADERS[SHEET_QUIZ_DOMAINES_EXPERTS] = [
+  'DomaineID',
+  'NomDomaine',
+  'Description',
+  'Actif',
+  'Ordre',
+  'CreatedAt',
+  'UpdatedAt',
+  'Notes'
+];
+
+HEADERS[SHEET_QUIZ_THEMES] = [
+  'IdTheme',
+  'NomTheme',
+  'EnfantAutorise',
+  'AdulteAutorise',
+  'ExpertAutorise',
+  'DomaineExpertID',
+  'Description',
+  'Actif',
+  'Ordre'
+];
+
+HEADERS[SHEET_QUIZ_QUESTIONS] = [
+  'IdQuestion',
+  'IdTheme',
+  'NomTheme',
+  'Question',
+  'RepA',
+  'RepB',
+  'RepC',
+  'RepD',
+  'BonneReponse',
+  'Explication',
+  'Actif',
+  'Niveau',
+  'CreatedAt',
+  'UpdatedAt'
+];
+
+HEADERS[SHEET_QUIZ_PARAMS] = [
+  'Categorie',
+  'Cle',
+  'Valeur',
+  'Description'
+];
+
+HEADERS[SHEET_QUIZ_HISTORY] = [
+  'SessionID',
+  'DateSession',
+  'UserID',
+  'Username',
+  'QuizCategorie',
+  'QuizDomaineExpertID',
+  'IdTheme',
+  'NomTheme',
+  'Score',
+  'TotalQuestions',
+  'Pourcentage',
+  'DureeSecondes',
+  'DetailsJSON'
+];
+
+HEADERS[SHEET_QUIZ_IMPORT_QUESTIONS] = [
+  'IdTheme',
+  'NomTheme',
+  'Question',
+  'RepA',
+  'RepB',
+  'RepC',
+  'RepD',
+  'BonneReponse',
+  'Explication',
+  'Actif',
+  'Niveau'
+];
+
+/****************************************************
+ * PARAMÈTRES PAR DÉFAUT
+ ****************************************************/
+
+const DEFAULT_SETTINGS = {
+  APP_NAME: 'BB Burkina Bear',
+  DEFAULT_DAILY_LIMIT: '20',
+  ENABLE_DAILY_LIMITS: 'TRUE',
+  QUOTA_TIMEZONE: 'Africa/Ouagadougou',
+  MAX_HISTORY_MESSAGES: '6',
+  MAX_OUTPUT_TOKENS: '150',
+  GEMINI_MODELS: 'gemini-2.5-flash-lite,gemini-2.5-flash,gemini-3-flash-preview',
+  ENABLE_CENSORSHIP: 'TRUE',
+  ENABLE_PARENT_EMAIL_ALERT: 'TRUE',
+  ENABLE_DAILY_SUMMARY: 'TRUE',
+  DAILY_SUMMARY_HOUR: '20',
+  YOUTUBE_REDIRECT_WHEN_LIMIT_REACHED: '',
+  CLIENT_QUOTA_MESSAGE: 'Le nounours est fatigué pour aujourd’hui. Il revient demain.',
+  CLIENT_CREDITS_MESSAGE: 'Le service du nounours est momentanément indisponible. Contacte l’administrateur.',
+  CLIENT_SERVICE_DOWN_MESSAGE: 'Le nounours est momentanément indisponible. Réessaie plus tard.',
+  CLIENT_CENSORSHIP_MESSAGE: 'Je préfère qu’on parle d’un sujet plus doux. Tu veux une histoire ou un quiz ?',
+  SESSION_DURATION_HOURS: '24',
+  GITHUB_TALK_URL: '',
+  BBBEAR_APP_URL: ''
+};
+
+/****************************************************
+ * ROUTAGE WEB
+ ****************************************************/
+
+function doGet(e) {
+  e = e || {};
+  e.parameter = e.parameter || {};
+
+  const api = e.parameter.api || '';
+  const page = e.parameter.page || '';
+
+  if (api === 'ping') return jsonpPing_(e);
+  if (api === 'echo') return jsonpEcho_(e);
+  if (api === 'diag') return jsonpDiag_(e);
+  if (api === 'ttsDiag') return jsonpTtsDiag_(e);
+  if (api === 'ttsDebug') return jsonpTtsDebug_(e);
+  if (api === 'tts') return jsonpTts_(e);
+  if (api === 'login') return jsonpLogin_(e);
+  if (api === 'ask') return jsonpAsk_(e);
+  if (api === 'changePassword') return jsonpChangePassword_(e);
+  if (api === 'forgotPassword') return jsonpForgotPassword_(e);
+  if (api === 'updateMySpace') return jsonpUpdateMySpace_(e);
+  if (api === 'quizAccess') return jsonpQuizAccess_(e);
+  if (api === 'talkAccess') return jsonpTalkAccess_(e);
+  if (api === 'me') return jsonpMe_(e);
+  if (api === 'getDashboard') return jsonpDashboard_(e);
+
+  if (api) {
+    return jsonp_(cleanCallback_(e.parameter.callback || 'callback'), {
+      ok: false,
+      message: 'API inconnue : ' + api,
+      backendVersion: BBBEAR_BACKEND_VERSION,
+      routesDisponibles: ['ping','echo','diag','ttsDiag','ttsDebug','tts','login','ask','changePassword','forgotPassword','updateMySpace','talkAccess','me','getDashboard']
+    });
   }
-  setStatus('Discussion connectée à BBbear.');
-  refreshMe().catch(e=>diag('Chargement profil',e.message||String(e)));
+
+  if (page === 'admin') {
+    return HtmlService
+      .createHtmlOutputFromFile('admin')
+      .setTitle('Administration BB Burkina Bear')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  }
+
+  return HtmlService
+    .createHtmlOutputFromFile('Index')
+    .setTitle('Serveur BB Burkina Bear')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
-function parseHash(){const h=(location.hash||'').replace(/^#/,'');const p=new URLSearchParams(h);const o={};p.forEach((v,k)=>o[k]=v);return o}
-function setStatus(t){$('statusBox').textContent=t}
-function showLoader(t){$('loaderText').textContent=t||'Chargement...';$('loader').classList.add('show')}
-function hideLoader(){$('loader').classList.remove('show')}
-function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2500)}
-function diag(t,o){$('diagnostic').textContent=($('diagnostic').textContent==='Aucune erreur.'?'':$('diagnostic').textContent+'\n\n')+'--- '+t+' ---\n'+(typeof o==='string'?o:JSON.stringify(o,null,2))}
-function setTalkState(state,bearText,userText){const shell=$('talkShell');if(shell){shell.classList.remove('idle','listening','thinking');shell.classList.add(state||'idle')}if(bearText!=null)$('talkBearText').textContent=bearText;if(userText!=null)$('talkUserText').textContent=userText}
-function addBubble(c,t){const d=document.createElement('div');d.className='bubble '+c;d.textContent=t;$('chatBox').appendChild(d)}
 
-function callServer(fn,...args){
-  const map={
-    clientPing:{api:'ping',keys:[]},
-    clientTtsDebug:{api:'ttsDebug',keys:['token','text','voiceName','model','style','includeAudio']},
-    clientMe:{api:'me',keys:['token']},
-    clientAsk:{api:'ask',keys:['token','q','moduleCode']},
-    clientTts:{api:'tts',keys:['token','text','voiceName','model','style']}
-  };
-  const cfg=map[fn];
-  if(!cfg)return Promise.reject(new Error('API discussion non configurée : '+fn));
-  const params={api:cfg.api};
-  cfg.keys.forEach((k,i)=>{const v=args[i];params[k]=v==null?'':(typeof v==='object'?JSON.stringify(v):v)});
-  return jsonpRequest(params);
+/****************************************************
+ * API JSONP CLIENT
+ ****************************************************/
+
+function jsonpPing_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
+
+  let result;
+
+  try {
+    ensureAllSheets_();
+
+    result = {
+      ok: true,
+      message: 'Serveur BB Burkina Bear actif.',
+      backendVersion: BBBEAR_BACKEND_VERSION,
+      routesDisponibles: ['ping','echo','diag','ttsDiag','ttsDebug','tts','login','ask','changePassword','forgotPassword','updateMySpace','talkAccess','me','getDashboard'],
+      sheetIdPresent: !!getSheetId_(),
+      quizIntegre: true,
+      githubTalkUrlPresent: !!getGithubTalkUrl_(),
+      bbbearAppUrlPresent: !!getBbbearAppUrl_(),
+      geminiKeyPresent: !!getGeminiApiKey_(),
+      dateServeur: new Date().toISOString()
+    };
+
+  } catch (err) {
+    result = {
+      ok: false,
+      message: err.message || String(err)
+    };
+  }
+
+  return jsonp_(callback, result);
 }
-function jsonpRequest(params){
-  return new Promise((resolve,reject)=>{
-    const cb='bbbear_talk_cb_'+Date.now()+'_'+Math.floor(Math.random()*1000000);
-    const script=document.createElement('script');
-    const startedAt=Date.now();
-    const q=new URLSearchParams();
 
-    Object.keys(params||{}).forEach(k=>q.set(k,params[k]));
-    q.set('callback',cb);
+function jsonpLogin_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
 
-    const src=apiUrl+(apiUrl.includes('?')?'&':'?')+q.toString();
-    const timer=setTimeout(()=>{
-      cleanup();
-      reject(new Error('JSONP_TIMEOUT api='+(params.api||'-')+' elapsedMs='+(Date.now()-startedAt)+' urlLength='+src.length+' apiUrl='+maskUrl(apiUrl)));
-    },DEFAULT_TIMEOUT_MS);
+  let result;
 
-    function cleanup(){
-      clearTimeout(timer);
-      if(script.parentNode)script.parentNode.removeChild(script);
-      try{delete window[cb]}catch(e){window[cb]=undefined}
+  try {
+    result = loginUser_(e.parameter.username || '', e.parameter.password || '');
+  } catch (err) {
+    result = {
+      ok: false,
+      message: clientErrorMessage_(err.message || String(err))
+    };
+  }
+
+  return jsonp_(callback, result);
+}
+
+function jsonpMe_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
+
+  let result;
+
+  try {
+    const session = getSessionFromToken_(e.parameter.token || '');
+    const user = getUserById_(session.UserID);
+
+    result = {
+      ok: true,
+      user: publicUser_(user),
+      dashboard: buildDashboardData_(user)
+    };
+
+  } catch (err) {
+    result = {
+      ok: false,
+      message: clientErrorMessage_(err.message || String(err))
+    };
+  }
+
+  return jsonp_(callback, result);
+}
+
+function jsonpDashboard_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
+
+  let result;
+
+  try {
+    const session = getSessionFromToken_(e.parameter.token || '');
+    const user = getUserById_(session.UserID);
+
+    result = {
+      ok: true,
+      dashboard: buildDashboardData_(user)
+    };
+
+  } catch (err) {
+    result = {
+      ok: false,
+      message: clientErrorMessage_(err.message || String(err))
+    };
+  }
+
+  return jsonp_(callback, result);
+}
+
+function jsonpAsk_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
+
+  let result;
+
+  try {
+    result = askBear_(e.parameter.token || '', e.parameter.q || '', e.parameter.moduleCode || 'TALK');
+
+  } catch (err) {
+    const raw = err.message || String(err);
+    Logger.log('ERREUR ASK : ' + raw);
+
+    result = {
+      ok: false,
+      message: clientErrorMessage_(raw)
+    };
+  }
+
+  return jsonp_(callback, result);
+}
+
+function jsonpChangePassword_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
+
+  let result;
+
+  try {
+    result = changePassword_(
+      e.parameter.token || '',
+      e.parameter.oldPassword || e.parameter.currentPassword || '',
+      e.parameter.newPassword || ''
+    );
+
+  } catch (err) {
+    result = {
+      ok: false,
+      message: clientErrorMessage_(err.message || String(err))
+    };
+  }
+
+  return jsonp_(callback, result);
+}
+
+
+
+/****************************************************
+ * API JSONP COMPLEMENTAIRE CLIENT
+ ****************************************************/
+
+function jsonpForgotPassword_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
+
+  let result;
+
+  try {
+    result = clientForgotPassword(e.parameter.username || '');
+  } catch (err) {
+    result = {
+      ok: false,
+      message: err.message || String(err)
+    };
+  }
+
+  return jsonp_(callback, result);
+}
+
+function jsonpUpdateMySpace_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
+
+  let result;
+
+  try {
+    let data = {};
+    try {
+      data = e.parameter.data ? JSON.parse(e.parameter.data) : {};
+    } catch (parseErr) {
+      data = {};
     }
 
-    window[cb]=data=>{
-      cleanup();
-      if(data&&data.backendVersion)diag('Backend version',data.backendVersion);
-      resolve(data);
-    };
+    result = clientUpdateMySpace(
+      e.parameter.token || '',
+      data,
+      e.parameter.scope || 'CHILD',
+      e.parameter.confirmPassword || ''
+    );
 
-    script.onerror=()=>{
-      cleanup();
-      reject(new Error('JSONP_SCRIPT_ERROR api='+(params.api||'-')+' urlLength='+src.length+' online='+navigator.onLine+' apiUrl='+maskUrl(apiUrl)+' srcStart='+src.substring(0,220)));
+  } catch (err) {
+    result = {
+      ok: false,
+      message: err.message || String(err)
     };
+  }
 
-    script.src=src;
-    document.body.appendChild(script);
+  return jsonp_(callback, result);
+}
+
+/****************************************************
+ * API JSONP TTS GEMINI
+ * Génération vocale côté Apps Script.
+ * La clé GEMINI_API_KEY reste dans les propriétés du script.
+ ****************************************************/
+
+function jsonpTts_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
+
+  let result;
+
+  try {
+    const token = e.parameter.token || '';
+    getSessionFromToken_(token);
+
+    const texte = String(e.parameter.text || e.parameter.q || '').trim();
+    const model = normalizeGeminiTtsModel_(e.parameter.model || e.parameter.ttsModel || 'gemini-3.1-flash-tts-preview');
+    const voiceName = normalizeGeminiTtsVoice_(e.parameter.voiceName || e.parameter.voice || 'Kore');
+    const style = String(
+      e.parameter.style ||
+      '[warmly, gently, natural pace] Lis le texte en français avec une voix vivante, douce, claire, rassurante et naturelle. Fais des pauses naturelles. Ne récite pas comme un robot.'
+    ).trim();
+
+    if (!texte) throw new Error('TEXTE_TTS_VIDE');
+
+    result = genererAudioGeminiTts_(texte, model, voiceName, style);
+    result.backendVersion = BBBEAR_BACKEND_VERSION;
+
+  } catch (err) {
+    result = {
+      ok: false,
+      message: err.message || String(err),
+      backendVersion: BBBEAR_BACKEND_VERSION,
+      diagnostic: 'Le navigateur utilise la voix par défaut seulement quand cette route TTS renvoie ok:false ou si le lecteur audio échoue.'
+    };
+  }
+
+  return jsonp_(callback, result);
+}
+
+function genererAudioGeminiTts_(texte, model, voiceName, style) {
+  const apiKey = getGeminiApiKey_();
+
+  if (!apiKey) throw new Error('CLE_GEMINI_MANQUANTE');
+
+  texte = String(texte || '').trim();
+  style = String(style || '').trim();
+
+  const maxChars = Number(getSetting_('GEMINI_TTS_MAX_CHARS', 900));
+  if (texte.length > maxChars) texte = texte.substring(0, maxChars) + '...';
+  if (style.length > 700) style = style.substring(0, 700);
+
+  model = normalizeGeminiTtsModel_(model);
+  voiceName = normalizeGeminiTtsVoice_(voiceName);
+
+  const models = getGeminiTtsCandidateModels_(model);
+  const attempts = [];
+  let lastError = '';
+
+  for (let i = 0; i < models.length; i++) {
+    const candidateModel = models[i];
+
+    for (let retry = 0; retry < 2; retry++) {
+      const attempt = fetchGeminiTtsAttempt_(apiKey, texte, candidateModel, voiceName, style, false);
+      attempts.push(attempt);
+
+      if (attempt.ok && attempt.audioBase64) {
+        return {
+          ok: true,
+          model: candidateModel,
+          requestedModel: model,
+          voiceName: voiceName,
+          requestedVoiceName: voiceName,
+          mimeType: attempt.mimeType || 'audio/l16; rate=24000; channels=1',
+          audioBase64: attempt.audioBase64,
+          base64: attempt.audioBase64,
+          audioBase64Length: String(attempt.audioBase64 || '').length,
+          attempts: summarizeTtsAttempts_(attempts)
+        };
+      }
+
+      lastError = attempt.error || attempt.bodyExcerpt || ('HTTP ' + attempt.httpCode);
+
+      if (attempt.httpCode !== 500 && attempt.httpCode !== 503 && attempt.httpCode !== 429) {
+        break;
+      }
+
+      Utilities.sleep(700 + retry * 900);
+    }
+  }
+
+  throw new Error('TTS_ALL_MODELS_FAILED : ' + JSON.stringify({
+    requestedModel: model,
+    voiceName: voiceName,
+    lastError: String(lastError || '').substring(0, 500),
+    attempts: summarizeTtsAttempts_(attempts)
+  }));
+}
+
+function extractGeminiInlineAudio_(data) {
+  if (!data || !data.candidates || !data.candidates.length) return null;
+
+  const candidate = data.candidates[0];
+  const parts = candidate && candidate.content && candidate.content.parts ? candidate.content.parts : [];
+
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i].inlineData) return parts[i].inlineData;
+    if (parts[i].inline_data) return parts[i].inline_data;
+  }
+
+  return null;
+}
+
+function getGeminiTtsCandidateModels_(preferredModel) {
+  preferredModel = normalizeGeminiTtsModel_(preferredModel);
+
+  const configured = String(getSetting_('GEMINI_TTS_MODELS', '') || '')
+    .split(',')
+    .map(function(s) { return normalizeGeminiTtsModel_(s); })
+    .filter(function(s) { return !!s; });
+
+  const defaults = [
+    preferredModel,
+    'gemini-3.1-flash-tts-preview',
+    'gemini-2.5-flash-preview-tts',
+    'gemini-2.5-pro-preview-tts'
+  ];
+
+  const seen = {};
+  return configured.concat(defaults).filter(function(m) {
+    if (!m || seen[m]) return false;
+    seen[m] = true;
+    return true;
   });
 }
-function maskUrl(url){
-  url=String(url||'');
-  if(!url)return '';
-  return url.length>90 ? url.substring(0,55)+'...'+url.substring(url.length-18) : url;
-}
-function clearDiagnostic(){
-  $('diagnostic').textContent='Aucune erreur.';
-}
-async function runConnectionDiagnostic(){
-  showLoader('Diagnostic connexion...');
-  const info={
-    pageUrl: location.href.split('#')[0],
-    tokenPresent: !!token,
-    tokenLength: token ? token.length : 0,
-    apiUrlPresent: !!apiUrl,
-    apiUrl: maskUrl(apiUrl),
-    online: navigator.onLine,
-    secureContext: window.isSecureContext,
-    userAgent: navigator.userAgent,
-    startedAt: new Date().toISOString()
+
+function fetchGeminiTtsAttempt_(apiKey, texte, model, voiceName, style, omitAudio) {
+  const startedAt = new Date();
+  const t0 = Date.now();
+
+  const url =
+    'https://generativelanguage.googleapis.com/v1beta/models/' +
+    encodeURIComponent(model) +
+    ':generateContent';
+
+  const payloadText = style ? (style + '\n\nTexte à lire exactement :\n' + texte) : texte;
+
+  const payload = {
+    contents: [
+      {
+        parts: [
+          {
+            text: payloadText
+          }
+        ]
+      }
+    ],
+    generationConfig: {
+      responseModalities: ['AUDIO'],
+      speechConfig: {
+        voiceConfig: {
+          prebuiltVoiceConfig: {
+            voiceName: voiceName
+          }
+        }
+      }
+    }
   };
-  diag('Diagnostic local GitHub',info);
-  try{
-    const ping=await callServer('clientPing');
-    diag('Ping BBbear',ping);
-    if(ping&&ping.ok)toast('Connexion BBbear OK');
-    else toast('Ping reçu mais non OK');
-  }catch(e){
-    diag('Erreur ping BBbear',e.message||String(e));
-    toast('Connexion BBbear échouée');
-  }finally{
-    hideLoader();
+
+  let code = 0;
+  let body = '';
+
+  try {
+    const response = UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json; charset=utf-8',
+      headers: {
+        'x-goog-api-key': apiKey
+      },
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
+    });
+
+    code = response.getResponseCode();
+    body = response.getContentText();
+  } catch (err) {
+    return {
+      ok: false,
+      startedAt: startedAt.toISOString(),
+      elapsedMs: Date.now() - t0,
+      model: model,
+      voiceName: voiceName,
+      httpCode: 0,
+      error: 'UrlFetchApp.fetch error: ' + (err.message || String(err)),
+      textLength: String(texte || '').length,
+      styleLength: String(style || '').length,
+      payloadLength: JSON.stringify(payload).length
+    };
   }
+
+  const result = {
+    ok: false,
+    startedAt: startedAt.toISOString(),
+    elapsedMs: Date.now() - t0,
+    model: model,
+    voiceName: voiceName,
+    httpCode: code,
+    bodyLength: String(body || '').length,
+    bodyExcerpt: String(body || '').substring(0, 700),
+    textLength: String(texte || '').length,
+    styleLength: String(style || '').length,
+    payloadLength: JSON.stringify(payload).length
+  };
+
+  if (code < 200 || code >= 300) {
+    result.error = 'HTTP_' + code;
+    return result;
+  }
+
+  let data;
+  try {
+    data = JSON.parse(body);
+  } catch (err) {
+    result.error = 'JSON_PARSE_ERROR: ' + (err.message || String(err));
+    return result;
+  }
+
+  if (data.error) {
+    result.error = data.error.message || JSON.stringify(data.error);
+    return result;
+  }
+
+  const inlineData = extractGeminiInlineAudio_(data);
+
+  if (!inlineData || !inlineData.data) {
+    result.error = 'REPONSE_GEMINI_TTS_SANS_AUDIO';
+    result.candidatesCount = data.candidates ? data.candidates.length : 0;
+    return result;
+  }
+
+  result.ok = true;
+  result.mimeType = inlineData.mimeType || inlineData.mime_type || 'audio/l16; rate=24000; channels=1';
+  result.audioBase64Length = String(inlineData.data || '').length;
+  result.bodyExcerpt = '';
+
+  if (!omitAudio) {
+    result.audioBase64 = inlineData.data;
+  }
+
+  return result;
 }
-async function runTtsDiagnostic(){
-  showLoader('Diagnostic voix Kore...');
-  const text='Bonjour, ceci est un test court de la voix Kore.';
-  try{
-    const res=await callServer('clientTtsDebug',token,text,getGeminiVoiceName(),getGeminiTtsModel(),getGeminiTtsStyle(),'0');
-    diag('Diagnostic TTS Kore',res);
-    if(res&&res.ok){
-      toast('TTS Gemini OK. Test audio en cours.');
-      const audio=await generateGeminiTtsServer(text,getGeminiVoiceName(),getGeminiTtsModel());
-      await playGeminiAudio(audio.base64,audio.mimeType);
-    }else{
-      toast('TTS Gemini non OK. Voir diagnostic.');
+
+function summarizeTtsAttempts_(attempts) {
+  return (attempts || []).map(function(a) {
+    return {
+      ok: !!a.ok,
+      model: a.model,
+      voiceName: a.voiceName,
+      httpCode: a.httpCode,
+      elapsedMs: a.elapsedMs,
+      textLength: a.textLength,
+      payloadLength: a.payloadLength,
+      audioBase64Length: a.audioBase64Length || 0,
+      error: a.error || '',
+      bodyExcerpt: a.bodyExcerpt ? String(a.bodyExcerpt).substring(0, 300) : ''
+    };
+  });
+}
+
+function maskSecret_(value) {
+  value = String(value || '');
+  if (!value) return '';
+  if (value.length <= 8) return '****';
+  return value.substring(0, 4) + '...' + value.substring(value.length - 4);
+}
+
+function normalizeGeminiTtsModel_(model) {
+  model = String(model || '').trim();
+
+  const allowed = [
+    'gemini-3.1-flash-tts-preview',
+    'gemini-2.5-flash-preview-tts',
+    'gemini-2.5-pro-preview-tts'
+  ];
+
+  if (allowed.indexOf(model) !== -1) return model;
+
+  return 'gemini-3.1-flash-tts-preview';
+}
+
+function normalizeGeminiTtsVoice_(voiceName) {
+  voiceName = String(voiceName || '').trim();
+
+  const allowed = [
+    'Zephyr','Puck','Charon','Kore','Fenrir','Leda','Orus','Aoede','Callirrhoe','Autonoe',
+    'Enceladus','Iapetus','Umbriel','Algieba','Despina','Erinome','Algenib','Rasalgethi',
+    'Laomedeia','Achernar','Alnilam','Schedar','Gacrux','Pulcherrima','Achird',
+    'Zubenelgenubi','Vindemiatrix','Sadachbia','Sadaltager','Sulafat'
+  ];
+
+  if (allowed.indexOf(voiceName) !== -1) return voiceName;
+
+  return 'Kore';
+}
+
+/****************************************************
+ * CONNEXION / SESSION
+ ****************************************************/
+
+function loginUser_(username, password) {
+  username = String(username || '').trim().toLowerCase();
+  password = String(password || '');
+
+  if (!username || !password) {
+    return {
+      ok: false,
+      message: 'Identifiant et mot de passe obligatoires.'
+    };
+  }
+
+  const user = getUserByUsername_(username);
+
+  if (!user) {
+    return {
+      ok: false,
+      message: 'Identifiants incorrects.'
+    };
+  }
+
+  if (String(user.Password || '') !== password) {
+    return {
+      ok: false,
+      message: 'Identifiants incorrects.'
+    };
+  }
+
+  if (String(user.Status || '').toUpperCase() !== 'ACTIF') {
+    return {
+      ok: false,
+      message: 'Ce compte n’est pas actif.'
+    };
+  }
+
+  activateSubscriptionIfNeeded_(user);
+
+  const subscription = getActiveSubscriptionForUser_(user.UserID);
+
+  if (!subscription || String(subscription.Status).toUpperCase() !== 'ACTIF') {
+    return {
+      ok: false,
+      message: 'Aucun abonnement actif.'
+    };
+  }
+
+  if (isSubscriptionExpired_(subscription)) {
+    expireSubscriptionAndMaybeUser_(user, subscription);
+    return {
+      ok: false,
+      message: 'Abonnement expiré.'
+    };
+  }
+
+  trySyncQuizAccessForUser_(user.UserID);
+
+  const firstLoginMessage = bool_(user.FirstLoginDone) ? '' : String(user.FirstLoginMessage || '');
+
+  updateUser_(user.UserID, {
+    LastLoginAt: new Date(),
+    FirstLoginDone: firstLoginMessage ? true : bool_(user.FirstLoginDone)
+  });
+
+  const token = createSession_(user);
+
+  return {
+    ok: true,
+    token: token,
+    user: publicUser_(user),
+    mustChangePassword: bool_(user.MustChangePassword),
+    firstLoginMessage: firstLoginMessage,
+    dashboard: buildDashboardData_(getUserById_(user.UserID))
+  };
+}
+
+function changePassword_(token, oldPassword, newPassword) {
+  const session = getSessionFromToken_(token);
+  const user = getUserById_(session.UserID);
+
+  oldPassword = String(oldPassword || '');
+  newPassword = String(newPassword || '');
+
+  if (!oldPassword || !newPassword) {
+    return {
+      ok: false,
+      message: 'Ancien et nouveau mot de passe obligatoires.'
+    };
+  }
+
+  if (newPassword.length < 6) {
+    return {
+      ok: false,
+      message: 'Le nouveau mot de passe doit contenir au moins 6 caractères.'
+    };
+  }
+
+  if (String(user.Password || '') !== oldPassword) {
+    return {
+      ok: false,
+      message: 'Ancien mot de passe incorrect.'
+    };
+  }
+
+  updateUser_(user.UserID, {
+    Password: newPassword,
+    MustChangePassword: false
+  });
+
+  const quizSync = trySyncQuizAccessForUser_(user.UserID);
+
+  return {
+    ok: true,
+    message: 'Mot de passe changé.',
+    quizSync: quizSync
+  };
+}
+
+function createSession_(user) {
+  const token = Utilities.getUuid() + '-' + Utilities.getUuid();
+  const now = new Date();
+  const hours = Number(getSetting_('SESSION_DURATION_HOURS', 24));
+  const expires = new Date(now.getTime() + hours * 60 * 60 * 1000);
+
+  appendObject_(SHEET_SESSIONS, {
+    SessionToken: token,
+    UserID: user.UserID,
+    Role: user.Role || 'USER',
+    CreatedAt: now,
+    ExpiresAt: expires,
+    Status: 'ACTIF'
+  });
+
+  return token;
+}
+
+function getSessionFromToken_(token) {
+  token = String(token || '').trim();
+
+  if (!token) {
+    throw new Error('SESSION_MANQUANTE');
+  }
+
+  const sessions = getRows_(SHEET_SESSIONS);
+
+  for (let i = sessions.length - 1; i >= 0; i--) {
+    const s = sessions[i];
+
+    if (String(s.SessionToken) === token) {
+      if (String(s.Status || '').toUpperCase() !== 'ACTIF') {
+        throw new Error('SESSION_EXPIREE');
+      }
+
+      if (new Date(s.ExpiresAt) < new Date()) {
+        updateRowByKey_(SHEET_SESSIONS, 'SessionToken', token, {
+          Status: 'EXPIREE'
+        });
+
+        throw new Error('SESSION_EXPIREE');
+      }
+
+      return s;
     }
-  }catch(e){
-    diag('Erreur diagnostic TTS',e.message||String(e));
-    toast('Diagnostic TTS échoué');
-  }finally{
-    hideLoader();
   }
+
+  throw new Error('SESSION_INVALIDE');
 }
-async function refreshMe(){
-  const res=await callServer('clientMe',token);
-  if(res&&res.ok){dashboard=res.dashboard||{};updateBatteryFromUsage();const u=res.user||{};childName=u.NomEnfant||childName;bearName=u.NomNounours||bearName;setStatus('Connecté : '+(childName||u.Username||username||'utilisateur')+' · '+bearName)}
-  else if(res){diag('clientMe',res);setStatus(res.message||'Session non chargée.')}
-}
-async function sendText(forceText){
-  const txt=(forceText||$('messageText').value).trim();
-  if(!txt){toast('Écris un message');return}
-  addBubble('me',txt);
-  $('messageText').value='';
-  setTalkState('thinking','',txt);
-  showLoader('BB réfléchit...');
-  try{
-    const res=await callServer('clientAsk',token,txt,'TALK');
-    const finalRes=res&&res.result?res.result:res;
-    if(!finalRes||!finalRes.ok){diag('Discussion',res);toast((finalRes&&finalRes.message)||'Erreur');setTalkState('idle','Je n’ai pas pu répondre pour le moment.',txt);return}
-    if(finalRes.usage){dashboard=dashboard||{};dashboard.usage=finalRes.usage;updateBatteryFromUsage()}
-    const rep=finalRes.reponse||finalRes.response||finalRes.answer||finalRes.message||'';
-    if(!rep){diag('Réponse vide',res);toast('Réponse vide. Voir diagnostic.');setTalkState('idle','Réponse vide reçue.',txt);return}
-    addBubble('bot',rep);
-    setTalkState('idle',rep,txt);
-    speak(rep);
-    refreshMe().catch(()=>{});
-  }catch(e){diag('Erreur discussion',e.message||String(e));setTalkState('idle','Une erreur est survenue.',txt)}finally{hideLoader()}
-}
-function startMicro(){
-  if(!SpeechRecognition){toast('Micro indisponible. Utilise Chrome.');return}
-  const r=new SpeechRecognition();
-  r.lang='fr-FR';
-  r.continuous=false;
-  r.interimResults=false;
-  setTalkState('listening','Le nounours écoute...','Parle maintenant.');
-  showLoader('J’écoute...');
-  r.onresult=e=>{const t=e.results[0][0].transcript||'';$('messageText').value=t;hideLoader();sendText(t)};
-  r.onerror=e=>{hideLoader();diag('Micro',e.error);toast('Erreur micro');setTalkState('idle','Je n’ai pas bien entendu.','Réessaie avec le micro ou le clavier.')};
-  r.onend=()=>hideLoader();
-  try{r.start()}catch(e){hideLoader();diag('Micro',e.message);setTalkState('idle','Le micro ne peut pas démarrer.','Réessaie encore.')}
-}
-async function speak(t){
-  if(!t)return;
-  stopAllAudio();
-  setBearTalking(true);
-  try{
-    const audio=await generateGeminiTtsServer(t,getGeminiVoiceName(),getGeminiTtsModel());
-    diag('Gemini TTS OK',{model:audio.model||getGeminiTtsModel(),voiceName:audio.voiceName||getGeminiVoiceName(),mimeType:audio.mimeType,base64Length:String(audio.base64||'').length});
-    await playGeminiAudio(audio.base64,audio.mimeType);
-  }catch(e){
-    diag('Gemini TTS', e.message||String(e));
-    try{
-      const debug=await callServer('clientTtsDebug',token,'Test court Kore',getGeminiVoiceName(),getGeminiTtsModel(),getGeminiTtsStyle(),'0');
-      diag('Auto diagnostic TTS après échec',debug);
-    }catch(debugErr){
-      diag('Auto diagnostic TTS impossible',debugErr.message||String(debugErr));
+
+function invalidateSessionsForUser_(userId) {
+  const sheet = getSheet_(SHEET_SESSIONS);
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return;
+
+  const headers = data[0];
+  const idxUser = headers.indexOf('UserID');
+  const idxStatus = headers.indexOf('Status');
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][idxUser]) === String(userId)) {
+      sheet.getRange(i + 1, idxStatus + 1).setValue('FERMEE');
     }
-    browserSpeakFallback(t);
   }
 }
-function stopAllAudio(){try{speechSynthesis&&speechSynthesis.cancel()}catch(e){}if(window.__bbbearAudio){try{window.__bbbearAudio.pause()}catch(e){}window.__bbbearAudio=null}}
-function setBearTalking(isTalking){document.querySelectorAll('.bear-box').forEach(x=>x.classList.toggle('talking',!!isTalking))}
-function browserSpeakFallback(t){
-  diag('Voix de secours navigateur','La voix par défaut est utilisée parce que Gemini TTS n’a pas renvoyé un audio jouable.');
-  if(!speechSynthesis||!t){setBearTalking(false);return}
-  speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(t);
-  u.lang='fr-FR';
-  u.rate=.95;
-  u.onend=()=>setBearTalking(false);
-  u.onerror=()=>setBearTalking(false);
-  speechSynthesis.speak(u)
+
+/****************************************************
+ * TABLEAU DE BORD CLIENT
+ ****************************************************/
+
+function buildDashboardData_(user) {
+  const subscription = getActiveSubscriptionForUser_(user.UserID);
+  const product = subscription ? getProductById_(subscription.ProductID) : null;
+  const modules = subscription ? getModulesForProduct_(subscription.ProductID) : [];
+  const daily = getUsageInfoForUser_(user);
+
+  const parentRelation = String(user.ParentRelation || 'parent').trim();
+
+  return {
+    user: publicUser_(user),
+    subscription: publicSubscription_(subscription),
+    product: publicProduct_(product),
+    modules: modules,
+    usage: daily,
+    contactButtonLabel: buildContactLabel_(parentRelation),
+    quotaReached: daily.remaining <= 0,
+    redirectWhenLimitReached: getSetting_('YOUTUBE_REDIRECT_WHEN_LIMIT_REACHED', '')
+  };
 }
-async function generateGeminiTtsServer(text,voiceName,modelName){
-  const res=await callServer('clientTts',token,String(text||''),voiceName||getGeminiVoiceName(),modelName||getGeminiTtsModel(),getGeminiTtsStyle());
-  if(!res||!res.ok){
-    throw new Error((res&&res.message?res.message:'Erreur TTS serveur.')+' | backend='+(res&&res.backendVersion?res.backendVersion:'?'));
+
+function buildContactLabel_(relation) {
+  relation = String(relation || '').trim();
+
+  if (!relation) return 'Contacter le parent';
+
+  const lower = relation.toLowerCase();
+
+  if (lower === 'maman') return 'Contacter Maman';
+  if (lower === 'papa') return 'Contacter Papa';
+  if (lower === 'tata' || lower === 'tante') return 'Contacter Tata';
+  if (lower === 'tuteur') return 'Contacter le tuteur';
+
+  return 'Contacter ' + relation;
+}
+
+function publicUser_(user) {
+  return {
+    UserID: user.UserID || '',
+    Username: user.Username || '',
+    Role: user.Role || '',
+    Status: user.Status || '',
+    NomEnfant: user.NomEnfant || '',
+    AgeEnfant: user.AgeEnfant || '',
+    NomNounours: user.NomNounours || '',
+    NounoursColor: user.NounoursColor || '',
+    NounoursHat: user.NounoursHat || '',
+    NounoursMoustache: user.NounoursMoustache || '',
+    ParentName: user.ParentName || '',
+    ParentRelation: user.ParentRelation || '',
+    ParentPhone: user.ParentPhone || '',
+    ParentWhatsapp: user.ParentWhatsapp || '',
+    ParentEmail: user.ParentEmail || '',
+    PreferredContact: user.PreferredContact || '',
+    ProductID: user.ProductID || '',
+    QuizCategorie: getUserQuizCategorie_(user),
+    QuizDomaineExpertID: user.QuizDomaineExpertID || ''
+  };
+}
+
+function publicSubscription_(s) {
+  if (!s) return null;
+
+  return {
+    SubscriptionID: s.SubscriptionID,
+    UserID: s.UserID,
+    ProductID: s.ProductID,
+    Status: s.Status,
+    StartMode: s.StartMode,
+    StartDate: formatDate_(s.StartDate),
+    EndDate: formatDate_(s.EndDate),
+    DurationDays: Number(s.DurationDays || 31)
+  };
+}
+
+function publicProduct_(p) {
+  if (!p) return null;
+
+  return {
+    ProductID: p.ProductID,
+    ProductName: p.ProductName,
+    ProductDescription: p.ProductDescription,
+    Price: p.Price,
+    DurationDays: p.DurationDays,
+    DefaultDailyLimit: p.DefaultDailyLimit
+  };
+}
+
+/****************************************************
+ * CHAT / GEMINI / CENSURE / QUOTA
+ ****************************************************/
+
+function askBear_(token, question, moduleCode) {
+  const session = getSessionFromToken_(token);
+  const user = getUserById_(session.UserID);
+
+  if (String(user.Status || '').toUpperCase() !== 'ACTIF') {
+    throw new Error('ACCES_NON_ACTIF');
   }
-  return{base64:res.audioBase64||res.base64,mimeType:res.mimeType||'audio/l16; rate=24000; channels=1',model:res.model,voiceName:res.voiceName,attempts:res.attempts||[]}
+
+  if (bool_(user.MustChangePassword)) {
+    throw new Error('MOT_DE_PASSE_A_CHANGER');
+  }
+
+  const subscription = getActiveSubscriptionForUser_(user.UserID);
+
+  if (!subscription || isSubscriptionExpired_(subscription)) {
+    if (subscription) expireSubscriptionAndMaybeUser_(user, subscription);
+    throw new Error('ABONNEMENT_EXPIRE');
+  }
+
+  if (!isModuleAllowed_(subscription.ProductID, moduleCode || 'TALK')) {
+    throw new Error('MODULE_NON_AUTORISE');
+  }
+
+  const q = String(question || '').trim();
+
+  if (!q) {
+    return {
+      ok: false,
+      message: 'Message vide.'
+    };
+  }
+
+  const usage = getUsageInfoForUser_(user);
+
+  if (usage.remaining <= 0) {
+    throw new Error('QUOTA_USER_DEPASSE');
+  }
+
+  const safety = checkCensorship_(q);
+  let messageId;
+
+  if (safety.blocked) {
+    messageId = appendMessage_(user.UserID, 'user', q, moduleCode || 'TALK', 'BLOCKED', true);
+    createCensorshipAlert_(user, messageId, safety, q);
+    incrementUsage_(user);
+
+    return {
+      ok: true,
+      censored: true,
+      question: q,
+      reponse: safety.childMessage || getSetting_('CLIENT_CENSORSHIP_MESSAGE', DEFAULT_SETTINGS.CLIENT_CENSORSHIP_MESSAGE),
+      usage: getUsageInfoForUser_(user)
+    };
+  }
+
+  messageId = appendMessage_(user.UserID, 'user', q, moduleCode || 'TALK', 'OK', false);
+
+  const answer = callGeminiForUser_(user, q);
+
+  appendMessage_(user.UserID, 'assistant', answer, moduleCode || 'TALK', 'OK', false);
+  incrementUsage_(user);
+
+  updateUser_(user.UserID, {
+    LastUsedAt: new Date()
+  });
+
+  return {
+    ok: true,
+    question: q,
+    reponse: answer,
+    usage: getUsageInfoForUser_(user)
+  };
 }
-async function playGeminiAudio(base64Audio,mimeType){if(!base64Audio)throw new Error('Audio Gemini vide.');let blob;if(String(mimeType||'').toLowerCase().includes('wav')){const bytes=base64ToUint8Array(base64Audio);blob=new Blob([bytes],{type:'audio/wav'})}else{const pcmBytes=base64ToUint8Array(base64Audio);blob=pcm16ToWavBlob(pcmBytes,extractSampleRate(mimeType)||24000,1)}const url=URL.createObjectURL(blob);const audio=new Audio(url);window.__bbbearAudio=audio;audio.onended=()=>{setBearTalking(false);URL.revokeObjectURL(url)};audio.onerror=()=>{setBearTalking(false);URL.revokeObjectURL(url)};await audio.play()}
-function base64ToUint8Array(base64){const binary=atob(base64);const len=binary.length;const bytes=new Uint8Array(len);for(let i=0;i<len;i++)bytes[i]=binary.charCodeAt(i);return bytes}
-function extractSampleRate(mimeType){const m=String(mimeType||'').match(/rate=(\d+)/i);return m?Number(m[1]):null}
-function pcm16ToWavBlob(pcmBytes,sampleRate,channels){const bytesPerSample=2;const blockAlign=channels*bytesPerSample;const byteRate=sampleRate*blockAlign;const wavHeaderSize=44;const wavBuffer=new ArrayBuffer(wavHeaderSize+pcmBytes.length);const view=new DataView(wavBuffer);writeString(view,0,'RIFF');view.setUint32(4,36+pcmBytes.length,true);writeString(view,8,'WAVE');writeString(view,12,'fmt ');view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,channels,true);view.setUint32(24,sampleRate,true);view.setUint32(28,byteRate,true);view.setUint16(32,blockAlign,true);view.setUint16(34,16,true);writeString(view,36,'data');view.setUint32(40,pcmBytes.length,true);const wavBytes=new Uint8Array(wavBuffer);wavBytes.set(pcmBytes,wavHeaderSize);return new Blob([wavBytes],{type:'audio/wav'})}
-function writeString(view,offset,string){for(let i=0;i<string.length;i++)view.setUint8(offset+i,string.charCodeAt(i))}
-function getGeminiTtsModel(){return localStorage.getItem(GEMINI_TTS_MODEL_STORE)||GEMINI_TTS_MODEL}
-function getGeminiVoiceName(){return localStorage.getItem(GEMINI_TTS_VOICE_STORE)||GEMINI_VOICE_NAME}
-function getGeminiTtsStyle(){return localStorage.getItem(GEMINI_TTS_STYLE_STORE)||GEMINI_TTS_STYLE_PROMPT}
-function updateBatteryFromUsage(){const u=dashboard?.usage||{};const remaining=Number(u.remaining??0);const limit=Number(u.limit??0);const ratio=limit>0?Math.max(0,Math.min(1,remaining/limit)):0;renderBatteryRatio(ratio,remaining,limit)}
-function renderBattery(p){renderBatteryRatio(Math.max(0,Math.min(1,Number(p||0)/100)),null,null)}
-function renderBatteryRatio(ratio,remaining,limit){const total=10;const lit=ratio<=0?0:Math.max(1,Math.ceil(ratio*total));let cls='on';if(ratio<=0.2)cls='critical';else if(ratio<=0.4)cls='low';const label=(remaining!=null&&limit!=null&&limit>0)?`${remaining}/${limit}`:`${Math.round(ratio*100)}%`;$('battery').innerHTML=Array.from({length:total},(_,i)=>'<span class="bat-seg '+(i<lit?cls:'')+'"></span>').join('')+'<span class="battery-label">'+label+'</span>'}
-</script>
-</body>
-</html>
+
+function callGeminiForUser_(user, question) {
+  const instruction = buildSystemInstruction_(user);
+  const history = getRecentHistory_(user.UserID);
+
+  const prompt =
+    history +
+    '\n\nQuestion actuelle de l’enfant :\n' +
+    question;
+
+  return callGeminiWithFallback_(prompt, instruction);
+}
+
+function buildSystemInstruction_(user) {
+  let instruction =
+    "Tu es un nounours interactif doux, protecteur, rassurant et adapté aux enfants. " +
+    "Tu parles en français simple. Tu réponds court. " +
+    "Tu ne donnes jamais de conseil dangereux. " +
+    "Tu évites les détails violents, sexuels ou anxiogènes. " +
+    "Tu encourages l’enfant avec bienveillance.";
+
+  if (user.NomNounours) {
+    instruction += "\nTon nom est : " + user.NomNounours + ".";
+  }
+
+  if (user.NomEnfant) {
+    instruction += "\nTu parles à : " + user.NomEnfant + ".";
+  }
+
+  if (user.SystemInstruction) {
+    instruction += "\n\nInstructions personnalisées :\n" + user.SystemInstruction;
+  }
+
+  if (user.Memoire) {
+    instruction += "\n\nMémoire personnalisée :\n" + user.Memoire;
+  }
+
+  return instruction;
+}
+
+function getRecentHistory_(userId) {
+  const limit = Number(getSetting_('MAX_HISTORY_MESSAGES', 6));
+  const messages = getRows_(SHEET_MESSAGES)
+    .filter(function(m) {
+      return String(m.UserID) === String(userId) && String(m.SafetyStatus || '').toUpperCase() !== 'BLOCKED';
+    })
+    .slice(-limit);
+
+  if (!messages.length) {
+    return 'Historique récent : aucun.';
+  }
+
+  return messages.map(function(m) {
+    const role = String(m.Role) === 'assistant' ? 'Nounours' : 'Enfant';
+    return role + ' : ' + m.Message;
+  }).join('\n');
+}
+
+function callGeminiWithFallback_(prompt, systemInstruction) {
+  const models = getGeminiModels_();
+  const errors = [];
+  const maxOutput = Number(getSetting_('MAX_OUTPUT_TOKENS', 150));
+
+  for (let i = 0; i < models.length; i++) {
+    try {
+      return callGeminiModel_(models[i], prompt, systemInstruction, maxOutput);
+    } catch (err) {
+      errors.push({
+        modele: models[i],
+        erreur: err.message || String(err)
+      });
+
+      Utilities.sleep(700);
+    }
+  }
+
+  const text = JSON.stringify(errors);
+  Logger.log('ERREURS GEMINI : ' + text);
+
+  if (
+    text.indexOf('prepayment credits are depleted') !== -1 ||
+    text.indexOf('RESOURCE_EXHAUSTED') !== -1 ||
+    text.indexOf('HTTP 429') !== -1
+  ) {
+    throw new Error('CREDITS_GEMINI_EPUISES');
+  }
+
+  if (
+    text.indexOf('HTTP 503') !== -1 ||
+    text.indexOf('UNAVAILABLE') !== -1 ||
+    text.indexOf('high demand') !== -1
+  ) {
+    throw new Error('GEMINI_TEMPORAIREMENT_INDISPONIBLE');
+  }
+
+  throw new Error('GEMINI_INDISPONIBLE');
+}
+
+function callGeminiModel_(model, prompt, systemInstruction, maxOutputTokens) {
+  const key = getGeminiApiKey_();
+
+  if (!key) {
+    throw new Error('CLE_GEMINI_MANQUANTE');
+  }
+
+  const url =
+    'https://generativelanguage.googleapis.com/v1beta/models/' +
+    encodeURIComponent(model) +
+    ':generateContent';
+
+  const generationConfig = {
+    temperature: 0.8,
+    maxOutputTokens: maxOutputTokens || 150
+  };
+
+  if (String(model).indexOf('gemini-2.5') !== -1) {
+    generationConfig.thinkingConfig = {
+      thinkingBudget: 0
+    };
+  }
+
+  const payload = {
+    system_instruction: {
+      parts: [{ text: systemInstruction }]
+    },
+    contents: [
+      {
+        role: 'user',
+        parts: [{ text: prompt }]
+      }
+    ],
+    generationConfig: generationConfig
+  };
+
+  const response = UrlFetchApp.fetch(url, {
+    method: 'post',
+    contentType: 'application/json',
+    headers: {
+      'x-goog-api-key': key
+    },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  });
+
+  const code = response.getResponseCode();
+  const body = response.getContentText();
+
+  if (code < 200 || code >= 300) {
+    throw new Error('Erreur Gemini HTTP ' + code + ' avec ' + model + ' : ' + body);
+  }
+
+  const data = JSON.parse(body);
+  const text = extractGeminiText_(data);
+
+  if (!text) {
+    throw new Error('REPONSE_GEMINI_SANS_TEXTE : ' + body);
+  }
+
+  return text.trim();
+}
+
+function extractGeminiText_(data) {
+  if (!data || !data.candidates || !data.candidates.length) return '';
+
+  const candidate = data.candidates[0];
+
+  if (!candidate.content || !candidate.content.parts) return '';
+
+  return candidate.content.parts
+    .filter(function(p) {
+      return p && p.text && !p.thought;
+    })
+    .map(function(p) {
+      return p.text;
+    })
+    .join('\n')
+    .trim();
+}
+
+/****************************************************
+ * CENSURE / ALERTES
+ ****************************************************/
+
+function checkCensorship_(message) {
+  if (!bool_(getSetting_('ENABLE_CENSORSHIP', 'TRUE'))) {
+    return {
+      blocked: false
+    };
+  }
+
+  const text = String(message || '').toLowerCase();
+  const rules = getRows_(SHEET_CENSORSHIP_RULES);
+
+  for (let i = 0; i < rules.length; i++) {
+    const r = rules[i];
+
+    if (!bool_(r.Enabled)) continue;
+
+    const keyword = String(r.Keyword || '').trim().toLowerCase();
+
+    if (!keyword) continue;
+
+    if (text.indexOf(keyword) !== -1) {
+      return {
+        blocked: true,
+        category: r.Category || 'SENSIBLE',
+        severity: r.Severity || 'MOYEN',
+        childMessage: r.ChildMessage || getSetting_('CLIENT_CENSORSHIP_MESSAGE', DEFAULT_SETTINGS.CLIENT_CENSORSHIP_MESSAGE),
+        notifyParent: bool_(r.NotifyParent)
+      };
+    }
+  }
+
+  return {
+    blocked: false
+  };
+}
+
+function createCensorshipAlert_(user, messageId, safety, originalMessage) {
+  const robot = getRobotSettingsForUser_(user);
+
+  const parentEmail =
+    robot.CensorshipAlertEmail ||
+    user.ParentEmail ||
+    '';
+
+  const notify = bool_(robot.CensorshipAlertEnabled) && (bool_(safety.notifyParent) || bool_(getSetting_('ENABLE_PARENT_EMAIL_ALERT', 'TRUE')));
+
+  appendObject_(SHEET_ALERTS, {
+    AlertID: 'A-' + Utilities.getUuid(),
+    UserID: user.UserID,
+    MessageID: messageId,
+    Category: safety.category || 'SENSIBLE',
+    Severity: safety.severity || 'MOYEN',
+    OriginalMessage: originalMessage,
+    ChildResponse: safety.childMessage || '',
+    ParentEmail: parentEmail,
+    ParentPhone: user.ParentPhone || '',
+    NotificationStatus: notify ? 'PENDING' : 'DISABLED',
+    CreatedAt: new Date(),
+    SentAt: '',
+    Notes: ''
+  });
+
+  if (notify && parentEmail) {
+    sendPendingCensorshipAlertsForUser_(user.UserID);
+  }
+}
+
+function sendPendingCensorshipAlertsForUser_(userId) {
+  const alerts = getRows_(SHEET_ALERTS)
+    .filter(function(a) {
+      return String(a.UserID) === String(userId) &&
+        String(a.NotificationStatus || '').toUpperCase() === 'PENDING';
+    });
+
+  for (let i = 0; i < alerts.length; i++) {
+    sendAlertEmail_(alerts[i]);
+  }
+}
+
+function sendAlertEmail_(alert) {
+  if (!alert.ParentEmail) return;
+
+  try {
+    MailApp.sendEmail({
+      to: alert.ParentEmail,
+      subject: 'Alerte de sécurité - BB Burkina Bear',
+      body:
+        'Bonjour,\n\n' +
+        'Un message sensible a été détecté.\n\n' +
+        'Catégorie : ' + alert.Category + '\n' +
+        'Sévérité : ' + alert.Severity + '\n' +
+        'Message : ' + alert.OriginalMessage + '\n' +
+        'Date : ' + formatDate_(alert.CreatedAt) + '\n\n' +
+        'BB Burkina Bear'
+    });
+
+    updateRowByKey_(SHEET_ALERTS, 'AlertID', alert.AlertID, {
+      NotificationStatus: 'SENT',
+      SentAt: new Date()
+    });
+
+  } catch (err) {
+    updateRowByKey_(SHEET_ALERTS, 'AlertID', alert.AlertID, {
+      NotificationStatus: 'ERROR',
+      Notes: err.message || String(err)
+    });
+  }
+}
+
+/****************************************************
+ * ABONNEMENTS / PRODUITS / MODULES
+ ****************************************************/
+
+function activateSubscriptionIfNeeded_(user) {
+  let subscription = getActiveOrPendingSubscriptionForUser_(user.UserID);
+
+  if (!subscription) {
+    subscription = createDefaultSubscriptionForUser_(user);
+  }
+
+  if (!subscription) return null;
+
+  if (
+    String(subscription.Status || '').toUpperCase() === 'EN_ATTENTE' ||
+    !subscription.StartDate
+  ) {
+    if (String(subscription.StartMode || 'FIRST_LOGIN').toUpperCase() === 'FIRST_LOGIN') {
+      const now = new Date();
+      const duration = Number(subscription.DurationDays || getProductDurationDays_(subscription.ProductID) || 31);
+      const end = addDays_(now, duration);
+
+      updateRowByKey_(SHEET_USER_SUBSCRIPTIONS, 'SubscriptionID', subscription.SubscriptionID, {
+        Status: 'ACTIF',
+        StartDate: now,
+        EndDate: end,
+        DurationDays: duration,
+        ActivatedAt: now
+      });
+
+      logRobot_('SUBSCRIPTION_ACTIVATED', user.UserID, subscription.SubscriptionID, 'OK', 'Abonnement activé à la première connexion.');
+    }
+  }
+
+  return getActiveSubscriptionForUser_(user.UserID);
+}
+
+function createDefaultSubscriptionForUser_(user) {
+  const productId = user.ProductID || getFirstActiveProductId_();
+
+  if (!productId) return null;
+
+  const duration = getProductDurationDays_(productId) || 31;
+  const subId = 'S-' + Utilities.getUuid();
+
+  appendObject_(SHEET_USER_SUBSCRIPTIONS, {
+    SubscriptionID: subId,
+    UserID: user.UserID,
+    ProductID: productId,
+    Status: 'EN_ATTENTE',
+    StartMode: 'FIRST_LOGIN',
+    StartDate: '',
+    EndDate: '',
+    DurationDays: duration,
+    AutoDisableAtEnd: true,
+    ReminderEnabled: true,
+    ReminderDaysBefore: 3,
+    LastReminderSentAt: '',
+    CreatedAt: new Date(),
+    ActivatedAt: '',
+    ExpiredAt: '',
+    Notes: 'Créé automatiquement à la connexion.'
+  });
+
+  return getSubscriptionById_(subId);
+}
+
+function getActiveSubscriptionForUser_(userId) {
+  const rows = getRows_(SHEET_USER_SUBSCRIPTIONS)
+    .filter(function(s) {
+      return String(s.UserID) === String(userId) && String(s.Status || '').toUpperCase() === 'ACTIF';
+    });
+
+  if (!rows.length) return null;
+
+  rows.sort(function(a, b) {
+    return new Date(b.CreatedAt) - new Date(a.CreatedAt);
+  });
+
+  return rows[0];
+}
+
+function getActiveOrPendingSubscriptionForUser_(userId) {
+  const rows = getRows_(SHEET_USER_SUBSCRIPTIONS)
+    .filter(function(s) {
+      const st = String(s.Status || '').toUpperCase();
+      return String(s.UserID) === String(userId) && (st === 'ACTIF' || st === 'EN_ATTENTE');
+    });
+
+  if (!rows.length) return null;
+
+  rows.sort(function(a, b) {
+    return new Date(b.CreatedAt) - new Date(a.CreatedAt);
+  });
+
+  return rows[0];
+}
+
+function getSubscriptionById_(id) {
+  return getRows_(SHEET_USER_SUBSCRIPTIONS)
+    .filter(function(s) {
+      return String(s.SubscriptionID) === String(id);
+    })[0] || null;
+}
+
+function getProductById_(productId) {
+  return getRows_(SHEET_PRODUCTS)
+    .filter(function(p) {
+      return String(p.ProductID) === String(productId);
+    })[0] || null;
+}
+
+function getFirstActiveProductId_() {
+  const p = getRows_(SHEET_PRODUCTS)
+    .filter(function(row) {
+      return String(row.Status || '').toUpperCase() === 'ACTIF';
+    })[0];
+
+  return p ? p.ProductID : '';
+}
+
+function getProductDurationDays_(productId) {
+  const product = getProductById_(productId);
+  return product ? Number(product.DurationDays || 31) : 31;
+}
+
+function getModulesForProduct_(productId) {
+  return getRows_(SHEET_PRODUCT_OPTIONS)
+    .filter(function(o) {
+      return String(o.ProductID) === String(productId) && bool_(o.Enabled);
+    })
+    .map(function(o) {
+      return {
+        ProductID: o.ProductID,
+        OptionCode: o.OptionCode,
+        OptionName: o.OptionName,
+        Enabled: bool_(o.Enabled),
+        LimitValue: o.LimitValue,
+        ContentLink: o.ContentLink,
+        Notes: o.Notes
+      };
+    });
+}
+
+function isModuleAllowed_(productId, moduleCode) {
+  moduleCode = String(moduleCode || '').toUpperCase();
+
+  return getModulesForProduct_(productId)
+    .some(function(o) {
+      return String(o.OptionCode || '').toUpperCase() === moduleCode;
+    });
+}
+
+function isSubscriptionExpired_(subscription) {
+  if (!subscription || !subscription.EndDate) return false;
+
+  const end = new Date(subscription.EndDate);
+
+  return end < new Date();
+}
+
+function expireSubscriptionAndMaybeUser_(user, subscription) {
+  updateRowByKey_(SHEET_USER_SUBSCRIPTIONS, 'SubscriptionID', subscription.SubscriptionID, {
+    Status: 'EXPIRE',
+    ExpiredAt: new Date()
+  });
+
+  if (bool_(subscription.AutoDisableAtEnd)) {
+    updateUser_(user.UserID, {
+      Status: 'BLOQUE'
+    });
+
+    invalidateSessionsForUser_(user.UserID);
+  }
+
+  logRobot_('SUBSCRIPTION_EXPIRED', user.UserID, subscription.SubscriptionID, 'OK', 'Abonnement expiré et accès traité.');
+}
+
+/****************************************************
+ * QUOTA / USAGE
+ ****************************************************/
+
+function getUsageInfoForUser_(user) {
+  const dateKey = quotaDateKey_();
+  const limit = getDailyLimitForUser_(user);
+  const rows = getRows_(SHEET_USAGE_DAILY);
+
+  let usage = rows.filter(function(r) {
+    return normalizeDateKey_(r.DateKey) === String(dateKey) && String(r.UserID) === String(user.UserID);
+  })[0];
+
+  let count = usage ? Number(usage.Count || 0) : 0;
+  if (isNaN(count) || count < 0) count = 0;
+
+  let remaining = Math.max(0, Number(limit || 0) - count);
+
+  // V3.32 : la ligne du jour est créée dès que le tableau de bord est demandé.
+  // Cela permet de voir immédiatement Count / DailyLimit / Remaining dans USAGE_DAILY,
+  // même avant la première interaction Gemini.
+  if (!usage) {
+    appendObject_(SHEET_USAGE_DAILY, {
+      DateKey: dateKey,
+      UserID: user.UserID,
+      Username: user.Username || '',
+      NomEnfant: user.NomEnfant || '',
+      Count: 0,
+      DailyLimit: limit,
+      Remaining: remaining,
+      LastUsedAt: ''
+    });
+
+    SpreadsheetApp.flush();
+
+  } else {
+    const storedLimit = Number(usage.DailyLimit || 0);
+    const storedRemaining = Number(usage.Remaining || 0);
+    const storedUsername = String(usage.Username || '');
+    const storedNomEnfant = String(usage.NomEnfant || '');
+
+    if (
+      storedLimit !== Number(limit || 0) ||
+      storedRemaining !== Number(remaining || 0) ||
+      storedUsername !== String(user.Username || '') ||
+      storedNomEnfant !== String(user.NomEnfant || '')
+    ) {
+      updateRowByCompositeKeys_(SHEET_USAGE_DAILY, {
+        DateKey: dateKey,
+        UserID: user.UserID
+      }, {
+        Username: user.Username || '',
+        NomEnfant: user.NomEnfant || '',
+        Count: count,
+        DailyLimit: limit,
+        Remaining: remaining
+      });
+
+      SpreadsheetApp.flush();
+    }
+  }
+
+  const remainingRatio = limit > 0 ? remaining / limit : 0;
+  const usedRatio = limit > 0 ? count / limit : 0;
+
+  return {
+    dateKey: dateKey,
+    limit: limit,
+    count: count,
+    remaining: remaining,
+    remainingRatio: Math.max(0, Math.min(1, remainingRatio)),
+    usedRatio: Math.max(0, Math.min(1, usedRatio))
+  };
+}
+
+function getDailyLimitForUser_(user) {
+  if (!bool_(getSetting_('ENABLE_DAILY_LIMITS', 'TRUE'))) {
+    return 999999;
+  }
+
+  if (user.DailyLimitCustom) {
+    const custom = Number(user.DailyLimitCustom);
+    if (custom > 0) return custom;
+  }
+
+  const subscription = getActiveSubscriptionForUser_(user.UserID);
+
+  if (subscription) {
+    const product = getProductById_(subscription.ProductID);
+
+    if (product && Number(product.DefaultDailyLimit || 0) > 0) {
+      return Number(product.DefaultDailyLimit);
+    }
+
+    const talkOption = getModulesForProduct_(subscription.ProductID)
+      .filter(function(o) {
+        return String(o.OptionCode || '').toUpperCase() === 'TALK';
+      })[0];
+
+    if (talkOption && Number(talkOption.LimitValue || 0) > 0) {
+      return Number(talkOption.LimitValue);
+    }
+  }
+
+  return Number(getSetting_('DEFAULT_DAILY_LIMIT', 20));
+}
+
+function incrementUsage_(user) {
+  const dateKey = quotaDateKey_();
+  const limit = getDailyLimitForUser_(user);
+  const rows = getRows_(SHEET_USAGE_DAILY);
+
+  const existing = rows.filter(function(r) {
+    return normalizeDateKey_(r.DateKey) === String(dateKey) && String(r.UserID) === String(user.UserID);
+  })[0];
+
+  if (existing) {
+    const nextCount = Number(existing.Count || 0) + 1;
+    const remaining = Math.max(0, Number(limit || 0) - nextCount);
+
+    updateRowByCompositeKeys_(SHEET_USAGE_DAILY, {
+      DateKey: dateKey,
+      UserID: user.UserID
+    }, {
+      Username: user.Username || '',
+      NomEnfant: user.NomEnfant || '',
+      Count: nextCount,
+      DailyLimit: limit,
+      Remaining: remaining,
+      LastUsedAt: new Date()
+    });
+
+  } else {
+    appendObject_(SHEET_USAGE_DAILY, {
+      DateKey: dateKey,
+      UserID: user.UserID,
+      Username: user.Username || '',
+      NomEnfant: user.NomEnfant || '',
+      Count: 1,
+      DailyLimit: limit,
+      Remaining: Math.max(0, Number(limit || 0) - 1),
+      LastUsedAt: new Date()
+    });
+  }
+
+  SpreadsheetApp.flush();
+}
+
+function quotaDateKey_() {
+  return Utilities.formatDate(new Date(), getSetting_('QUOTA_TIMEZONE', 'Africa/Ouagadougou'), 'yyyy-MM-dd');
+}
+
+function normalizeDateKey_(value) {
+  if (!value) return '';
+
+  if (Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value.getTime())) {
+    return Utilities.formatDate(value, getSetting_('QUOTA_TIMEZONE', 'Africa/Ouagadougou'), 'yyyy-MM-dd');
+  }
+
+  const s = String(value).trim();
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+
+  const d = new Date(s);
+  if (!isNaN(d.getTime())) {
+    return Utilities.formatDate(d, getSetting_('QUOTA_TIMEZONE', 'Africa/Ouagadougou'), 'yyyy-MM-dd');
+  }
+
+  return s;
+}
+
+function getUsageStatsToday_() {
+  const dateKey = quotaDateKey_();
+  const rows = getRows_(SHEET_USAGE_DAILY)
+    .filter(function(r) {
+      return normalizeDateKey_(r.DateKey) === String(dateKey);
+    });
+
+  const total = rows.reduce(function(sum, r) {
+    return sum + Number(r.Count || 0);
+  }, 0);
+
+  return {
+    dateKey: dateKey,
+    total: total,
+    rows: rows
+  };
+}
+
+
+/****************************************************
+ * DEBUG / SYNCHRONISATION USAGE_DAILY V3.32
+ ****************************************************/
+
+function testUsageDailyDirect(username) {
+  try {
+    ensureAllSheets_();
+
+    username = String(username || '').trim().toLowerCase();
+    if (!username) throw new Error('Renseigne un username, exemple : testUsageDailyDirect("bbbear0001")');
+
+    const user = getUserByUsername_(username);
+    if (!user) throw new Error('Utilisateur introuvable : ' + username);
+
+    const usage = getUsageInfoForUser_(user);
+    SpreadsheetApp.flush();
+
+    Logger.log('USAGE_DAILY TEST = ' + JSON.stringify(usage));
+
+    return {
+      ok: true,
+      message: 'USAGE_DAILY mis à jour pour ' + username,
+      usage: usage
+    };
+
+  } catch (err) {
+    Logger.log('ERREUR testUsageDailyDirect = ' + (err.message || String(err)));
+    return {
+      ok: false,
+      message: err.message || String(err)
+    };
+  }
+}
+
+function forceUpdateUsageDailyForAllUsers() {
+  try {
+    ensureAllSheets_();
+
+    const users = getRows_(SHEET_USERS).filter(function(u) {
+      return String(u.Role || '').toUpperCase() !== 'ADMIN' && String(u.Status || '').toUpperCase() === 'ACTIF';
+    });
+
+    const results = [];
+
+    users.forEach(function(user) {
+      try {
+        const usage = getUsageInfoForUser_(user);
+        results.push({
+          username: user.Username,
+          ok: true,
+          usage: usage
+        });
+      } catch (err) {
+        results.push({
+          username: user.Username,
+          ok: false,
+          message: err.message || String(err)
+        });
+      }
+    });
+
+    SpreadsheetApp.flush();
+
+    Logger.log('FORCE USAGE_DAILY RESULTS = ' + JSON.stringify(results));
+
+    return {
+      ok: true,
+      count: results.length,
+      results: results
+    };
+
+  } catch (err) {
+    Logger.log('ERREUR forceUpdateUsageDailyForAllUsers = ' + (err.message || String(err)));
+    return {
+      ok: false,
+      message: err.message || String(err)
+    };
+  }
+}
+
+/****************************************************
+ * ROBOT : ABONNEMENTS / RAPPELS / RÉSUMÉS / ALERTES
+ ****************************************************/
+
+function robotSurveillanceAbonnements() {
+  ensureAllSheets_();
+
+  const users = getRows_(SHEET_USERS);
+  const subs = getRows_(SHEET_USER_SUBSCRIPTIONS);
+  const now = new Date();
+
+  for (let i = 0; i < subs.length; i++) {
+    const sub = subs[i];
+    const user = users.filter(function(u) {
+      return String(u.UserID) === String(sub.UserID);
+    })[0];
+
+    if (!user) continue;
+
+    const robot = getRobotSettingsForUser_(user);
+
+    if (!bool_(robot.SubscriptionWatchEnabled)) continue;
+
+    traiterRappelExpiration_(user, sub, robot, now);
+    traiterExpirationAbonnement_(user, sub, robot, now);
+  }
+
+  traiterAlertesCensureEnAttente_();
+  traiterResumesPeriodiques_();
+
+  logRobot_('ROBOT_RUN', '', '', 'OK', 'Surveillance robot exécutée.');
+}
+
+function traiterRappelExpiration_(user, sub, robot, now) {
+  if (String(sub.Status || '').toUpperCase() !== 'ACTIF') return;
+  if (!sub.EndDate) return;
+  if (!bool_(robot.ReminderEnabled)) return;
+
+  const daysBefore = Number(robot.ReminderDaysBefore || sub.ReminderDaysBefore || 3);
+  const daysLeft = diffDays_(now, new Date(sub.EndDate));
+
+  if (daysLeft < 0 || daysLeft > daysBefore) return;
+
+  const last = sub.LastReminderSentAt ? Utilities.formatDate(new Date(sub.LastReminderSentAt), 'UTC', 'yyyy-MM-dd') : '';
+  const today = Utilities.formatDate(now, 'UTC', 'yyyy-MM-dd');
+
+  if (last === today) return;
+
+  const email = robot.ReminderEmail || user.ParentEmail || '';
+
+  if (!email) return;
+
+  const product = getProductById_(sub.ProductID);
+
+  MailApp.sendEmail({
+    to: email,
+    subject: 'Rappel abonnement - BB Burkina Bear',
+    body:
+      'Bonjour,\n\n' +
+      'L’abonnement de ' + (user.NomEnfant || user.Username) + ' expire dans ' + daysLeft + ' jour(s).\n' +
+      'Formule : ' + (product ? product.ProductName : sub.ProductID) + '\n' +
+      'Date de fin : ' + formatDate_(sub.EndDate) + '\n\n' +
+      'BB Burkina Bear'
+  });
+
+  updateRowByKey_(SHEET_USER_SUBSCRIPTIONS, 'SubscriptionID', sub.SubscriptionID, {
+    LastReminderSentAt: now
+  });
+
+  logRobot_('REMINDER_SENT', user.UserID, sub.SubscriptionID, 'OK', 'Rappel expiration envoyé.');
+}
+
+function traiterExpirationAbonnement_(user, sub, robot, now) {
+  if (String(sub.Status || '').toUpperCase() !== 'ACTIF') return;
+  if (!sub.EndDate) return;
+  if (new Date(sub.EndDate) >= now) return;
+
+  updateRowByKey_(SHEET_USER_SUBSCRIPTIONS, 'SubscriptionID', sub.SubscriptionID, {
+    Status: 'EXPIRE',
+    ExpiredAt: now
+  });
+
+  if (bool_(robot.AutoDisableEnabled) || bool_(sub.AutoDisableAtEnd)) {
+    updateUser_(user.UserID, {
+      Status: 'BLOQUE'
+    });
+
+    invalidateSessionsForUser_(user.UserID);
+  }
+
+  const email = robot.ReminderEmail || user.ParentEmail || '';
+
+  if (email) {
+    MailApp.sendEmail({
+      to: email,
+      subject: 'Abonnement expiré - BB Burkina Bear',
+      body:
+        'Bonjour,\n\n' +
+        'L’abonnement de ' + (user.NomEnfant || user.Username) + ' est arrivé à expiration.\n' +
+        'Le compte a été désactivé automatiquement si cette option est active.\n\n' +
+        'BB Burkina Bear'
+    });
+  }
+
+  logRobot_('SUBSCRIPTION_EXPIRED', user.UserID, sub.SubscriptionID, 'OK', 'Abonnement expiré.');
+}
+
+function traiterAlertesCensureEnAttente_() {
+  const alerts = getRows_(SHEET_ALERTS)
+    .filter(function(a) {
+      return String(a.NotificationStatus || '').toUpperCase() === 'PENDING';
+    });
+
+  for (let i = 0; i < alerts.length; i++) {
+    sendAlertEmail_(alerts[i]);
+  }
+}
+
+function traiterResumesPeriodiques_() {
+  if (!bool_(getSetting_('ENABLE_DAILY_SUMMARY', 'TRUE'))) return;
+
+  const users = getRows_(SHEET_USERS);
+
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    const robot = getRobotSettingsForUser_(user);
+
+    if (!bool_(robot.SummaryEnabled)) continue;
+    if (String(robot.SummaryFrequency || 'DAILY').toUpperCase() === 'OFF') continue;
+
+    envoyerResumeSiNecessaire_(user, robot);
+  }
+}
+
+function envoyerResumeSiNecessaire_(user, robot) {
+  const dateKey = Utilities.formatDate(new Date(), getSetting_('QUOTA_TIMEZONE', 'Africa/Ouagadougou'), 'yyyy-MM-dd');
+  const email = robot.SummaryEmail || user.ParentEmail || '';
+
+  if (!email) return;
+
+  const existing = getRows_(SHEET_DAILY_SUMMARIES)
+    .filter(function(s) {
+      return String(s.DateKey) === dateKey && String(s.UserID) === String(user.UserID) && String(s.SendStatus) === 'SENT';
+    })[0];
+
+  if (existing) return;
+
+  const messages = getRows_(SHEET_MESSAGES)
+    .filter(function(m) {
+      return String(m.UserID) === String(user.UserID) &&
+        Utilities.formatDate(new Date(m.CreatedAt), getSetting_('QUOTA_TIMEZONE', 'Africa/Ouagadougou'), 'yyyy-MM-dd') === dateKey;
+    });
+
+  const alerts = getRows_(SHEET_ALERTS)
+    .filter(function(a) {
+      return String(a.UserID) === String(user.UserID) &&
+        Utilities.formatDate(new Date(a.CreatedAt), getSetting_('QUOTA_TIMEZONE', 'Africa/Ouagadougou'), 'yyyy-MM-dd') === dateKey;
+    });
+
+  const summaryText =
+    'Résumé du jour pour ' + (user.NomEnfant || user.Username) + '\n\n' +
+    'Nombre d’interactions : ' + messages.length + '\n' +
+    'Alertes : ' + alerts.length + '\n\n' +
+    'Sujets principaux : conversation avec le nounours, quiz, histoires ou activités disponibles selon les modules utilisés.\n\n' +
+    'BB Burkina Bear';
+
+  try {
+    MailApp.sendEmail({
+      to: email,
+      subject: 'Résumé quotidien - BB Burkina Bear',
+      body: summaryText
+    });
+
+    appendObject_(SHEET_DAILY_SUMMARIES, {
+      SummaryID: 'SUM-' + Utilities.getUuid(),
+      DateKey: dateKey,
+      UserID: user.UserID,
+      NomEnfant: user.NomEnfant || '',
+      ParentEmail: email,
+      InteractionsCount: messages.length,
+      ModulesUsed: '',
+      MainTopics: '',
+      AlertsCount: alerts.length,
+      SummaryText: summaryText,
+      SendStatus: 'SENT',
+      CreatedAt: new Date(),
+      SentAt: new Date()
+    });
+
+    logRobot_('SUMMARY_SENT', user.UserID, '', 'OK', 'Résumé quotidien envoyé.');
+
+  } catch (err) {
+    appendObject_(SHEET_DAILY_SUMMARIES, {
+      SummaryID: 'SUM-' + Utilities.getUuid(),
+      DateKey: dateKey,
+      UserID: user.UserID,
+      NomEnfant: user.NomEnfant || '',
+      ParentEmail: email,
+      InteractionsCount: messages.length,
+      ModulesUsed: '',
+      MainTopics: '',
+      AlertsCount: alerts.length,
+      SummaryText: summaryText,
+      SendStatus: 'ERROR',
+      CreatedAt: new Date(),
+      SentAt: '',
+      Notes: err.message || String(err)
+    });
+
+    logRobot_('SUMMARY_ERROR', user.UserID, '', 'ERROR', err.message || String(err));
+  }
+}
+
+function getRobotSettingsForUser_(user) {
+  const row = getRows_(SHEET_ROBOT_SETTINGS)
+    .filter(function(r) {
+      return String(r.UserID) === String(user.UserID);
+    })[0];
+
+  return row || {
+    UserID: user.UserID,
+    SubscriptionWatchEnabled: true,
+    AutoDisableEnabled: true,
+    ReminderEnabled: true,
+    ReminderDaysBefore: 3,
+    ReminderEmail: user.ParentEmail || '',
+    SummaryEnabled: true,
+    SummaryFrequency: 'DAILY',
+    SummaryHour: 20,
+    SummaryEmail: user.ParentEmail || '',
+    CensorshipAlertEnabled: true,
+    CensorshipAlertEmail: user.ParentEmail || ''
+  };
+}
+
+function logRobot_(actionType, userId, subscriptionId, status, message) {
+  appendObject_(SHEET_ROBOT_LOGS, {
+    LogID: 'LOG-' + Utilities.getUuid(),
+    RunDate: new Date(),
+    ActionType: actionType,
+    UserID: userId || '',
+    SubscriptionID: subscriptionId || '',
+    Status: status || '',
+    Message: message || '',
+    CreatedAt: new Date()
+  });
+}
+
+function installerDeclencheurRobotQuotidien() {
+  const triggers = ScriptApp.getProjectTriggers();
+
+  for (let i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === 'robotSurveillanceAbonnements') {
+      ScriptApp.deleteTrigger(triggers[i]);
+    }
+  }
+
+  ScriptApp.newTrigger('robotSurveillanceAbonnements')
+    .timeBased()
+    .everyDays(1)
+    .atHour(Number(getSetting_('DAILY_SUMMARY_HOUR', 20)))
+    .create();
+
+  return {
+    ok: true,
+    message: 'Déclencheur quotidien installé.'
+  };
+}
+
+/****************************************************
+ * ADMIN - FONCTIONS UTILISÉES PAR admin.html
+ ****************************************************/
+
+function adminLogin(username, password) {
+  const login = loginUser_(username, password);
+
+  if (!login.ok) return login;
+
+  if (!login.user || String(login.user.Role || '').toUpperCase() !== 'ADMIN') {
+    return {
+      ok: false,
+      message: 'Accès administrateur refusé.'
+    };
+  }
+
+  return login;
+}
+
+function adminLogout(token) {
+  try {
+    const session = getSessionFromToken_(token);
+    updateRowByKey_(SHEET_SESSIONS, 'SessionToken', token, {
+      Status: 'FERMEE'
+    });
+  } catch (err) {}
+
+  return {
+    ok: true,
+    message: 'Déconnecté.'
+  };
+}
+
+function adminListUsers(token) {
+  requireAdmin_(token);
+
+  return {
+    ok: true,
+    users: getRows_(SHEET_USERS).map(publicAdminUser_)
+  };
+}
+
+function adminCreateUser(token, data) {
+  requireAdmin_(token);
+  data = data || {};
+
+  if (!data.Username || !data.Password) {
+    return {
+      ok: false,
+      message: 'Identifiant et mot de passe obligatoires.'
+    };
+  }
+
+  if (getUserByUsername_(data.Username)) {
+    return {
+      ok: false,
+      message: 'Cet identifiant existe déjà.'
+    };
+  }
+
+  const quizCategorie = normaliserQuizCategorie_(data.QuizCategorie || proposerQuizCategorieParAge_(data.AgeEnfant));
+  const quizDomaine = String(data.QuizDomaineExpertID || '').trim();
+
+  if (quizCategorie === 'Expert' && !quizDomaine) {
+    return {
+      ok: false,
+      message: 'Le domaine expert est obligatoire pour une catégorie Quiz Expert.'
+    };
+  }
+
+  const userId = generateSequentialUserId_();
+
+  const user = {
+    UserID: userId,
+    Username: String(data.Username).trim().toLowerCase(),
+    Password: data.Password,
+    Role: data.Role || 'USER',
+    Status: data.Status || 'EN_ATTENTE',
+    NomEnfant: data.NomEnfant || data.NomClient || '',
+    AgeEnfant: data.AgeEnfant || '',
+    NomNounours: data.NomNounours || data.NomPeluche || 'BB Burkina Bear',
+    NounoursColor: data.NounoursColor || 'marron',
+    NounoursHat: data.NounoursHat || 'FALSE',
+    NounoursMoustache: data.NounoursMoustache || 'FALSE',
+    ParentName: data.ParentName || '',
+    ParentRelation: data.ParentRelation || '',
+    ParentPhone: data.ParentPhone || '',
+    ParentWhatsapp: data.ParentWhatsapp || '',
+    ParentEmail: data.ParentEmail || '',
+    PreferredContact: data.PreferredContact || '',
+    ProductID: data.ProductID || getFirstActiveProductId_(),
+    DailyLimitCustom: data.DailyLimitCustom || '',
+    FirstLoginMessage: data.FirstLoginMessage || '',
+    FirstLoginDone: false,
+    MustChangePassword: true,
+    SystemInstruction: data.SystemInstruction || '',
+    Memoire: data.Memoire || '',
+    QuizCategorie: quizCategorie,
+    QuizDomaineExpertID: quizDomaine,
+    CreatedAt: new Date(),
+    LastLoginAt: '',
+    LastUsedAt: ''
+  };
+
+  appendObject_(SHEET_USERS, user);
+  createDefaultSubscriptionForUser_(user);
+
+  return {
+    ok: true,
+    message: 'Utilisateur créé.',
+    user: publicAdminUser_(getUserById_(user.UserID))
+  };
+}
+
+function adminUpdateUser(token, userId, data) {
+  requireAdmin_(token);
+  data = data || {};
+
+  const allowed = [
+    'Role',
+    'Status',
+    'NomEnfant',
+    'AgeEnfant',
+    'NomNounours',
+    'NounoursColor',
+    'NounoursHat',
+    'NounoursMoustache',
+    'ParentName',
+    'ParentRelation',
+    'ParentPhone',
+    'ParentWhatsapp',
+    'ParentEmail',
+    'PreferredContact',
+    'ProductID',
+    'DailyLimitCustom',
+    'FirstLoginMessage',
+    'FirstLoginDone',
+    'MustChangePassword',
+    'SystemInstruction',
+    'Memoire',
+    'QuizCategorie',
+    'QuizDomaineExpertID'
+  ];
+
+  const fields = {};
+
+  allowed.forEach(function(key) {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      fields[key] = data[key];
+    }
+  });
+
+  if (Object.prototype.hasOwnProperty.call(fields, 'QuizCategorie')) {
+    fields.QuizCategorie = normaliserQuizCategorie_(fields.QuizCategorie);
+  }
+
+  if (String(fields.QuizCategorie || getUserById_(userId).QuizCategorie || '').trim() === 'Expert' && !String(fields.QuizDomaineExpertID || getUserById_(userId).QuizDomaineExpertID || '').trim()) {
+    return { ok: false, message: 'Le domaine expert est obligatoire pour une catégorie Quiz Expert.' };
+  }
+
+  updateUser_(userId, fields);
+
+  if (fields.Status === 'BLOQUE' || fields.Status === 'REVOQUE') {
+    invalidateSessionsForUser_(userId);
+  }
+
+  const quizSync = trySyncQuizAccessForUser_(userId);
+
+  return {
+    ok: true,
+    message: 'Utilisateur mis à jour.',
+    quizSync: quizSync
+  };
+}
+
+function adminSetStatus(token, userId, status) {
+  requireAdmin_(token);
+
+  updateUser_(userId, {
+    Status: status
+  });
+
+  if (status === 'BLOQUE' || status === 'REVOQUE') {
+    invalidateSessionsForUser_(userId);
+  }
+
+  const quizSync = trySyncQuizAccessForUser_(userId);
+
+  return {
+    ok: true,
+    message: 'Statut mis à jour.',
+    quizSync: quizSync
+  };
+}
+
+function adminResetPassword(token, userId, newPassword) {
+  requireAdmin_(token);
+
+  if (!newPassword || String(newPassword).length < 6) {
+    return {
+      ok: false,
+      message: 'Le mot de passe doit contenir au moins 6 caractères.'
+    };
+  }
+
+  updateUser_(userId, {
+    Password: newPassword,
+    MustChangePassword: true
+  });
+
+  invalidateSessionsForUser_(userId);
+
+  const quizSync = trySyncQuizAccessForUser_(userId);
+
+  return {
+    ok: true,
+    message: 'Mot de passe réinitialisé.',
+    quizSync: quizSync
+  };
+}
+
+function adminDeleteMessagesForUser(token, userId) {
+  requireAdmin_(token);
+
+  deleteRowsWhere_(SHEET_MESSAGES, function(row) {
+    return String(row.UserID) === String(userId);
+  });
+
+  return {
+    ok: true,
+    message: 'Historique supprimé.'
+  };
+}
+
+function adminGetSettings(token) {
+  requireAdmin_(token);
+
+  return {
+    ok: true,
+    settings: getSettingsMap_(),
+    usage: getUsageStatsToday_()
+  };
+}
+
+function adminSaveSettings(token, data) {
+  requireAdmin_(token);
+
+  const allowed = [
+    'APP_NAME',
+    'DEFAULT_DAILY_LIMIT',
+    'ENABLE_DAILY_LIMITS',
+    'QUOTA_TIMEZONE',
+    'MAX_HISTORY_MESSAGES',
+    'MAX_OUTPUT_TOKENS',
+    'GEMINI_MODELS',
+    'ENABLE_CENSORSHIP',
+    'ENABLE_PARENT_EMAIL_ALERT',
+    'ENABLE_DAILY_SUMMARY',
+    'DAILY_SUMMARY_HOUR',
+    'YOUTUBE_REDIRECT_WHEN_LIMIT_REACHED',
+    'CLIENT_QUOTA_MESSAGE',
+    'CLIENT_CREDITS_MESSAGE',
+    'CLIENT_SERVICE_DOWN_MESSAGE',
+    'CLIENT_CENSORSHIP_MESSAGE',
+    'SESSION_DURATION_HOURS'
+  ];
+
+  allowed.forEach(function(key) {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      setSetting_(key, data[key]);
+    }
+  });
+
+  return {
+    ok: true,
+    message: 'Paramètres enregistrés.',
+    settings: getSettingsMap_(),
+    usage: getUsageStatsToday_()
+  };
+}
+
+function adminGetUsageToday(token) {
+  requireAdmin_(token);
+
+  return {
+    ok: true,
+    usage: getUsageStatsToday_()
+  };
+}
+
+function adminListProducts(token) {
+  requireAdmin_(token);
+
+  return {
+    ok: true,
+    products: getRows_(SHEET_PRODUCTS),
+    options: getRows_(SHEET_PRODUCT_OPTIONS)
+  };
+}
+
+function adminListSubscriptions(token) {
+  requireAdmin_(token);
+
+  return {
+    ok: true,
+    subscriptions: getRows_(SHEET_USER_SUBSCRIPTIONS)
+  };
+}
+
+function adminGetRobotLogs(token) {
+  requireAdmin_(token);
+
+  return {
+    ok: true,
+    logs: getRows_(SHEET_ROBOT_LOGS).slice(-200).reverse()
+  };
+}
+
+function adminRunRobotNow(token) {
+  requireAdmin_(token);
+
+  robotSurveillanceAbonnements();
+
+  return {
+    ok: true,
+    message: 'Robot exécuté.'
+  };
+}
+
+function requireAdmin_(token) {
+  const session = getSessionFromToken_(token);
+  const user = getUserById_(session.UserID);
+
+  if (String(user.Role || '').toUpperCase() !== 'ADMIN') {
+    throw new Error('ACCES_ADMIN_REFUSE');
+  }
+
+  if (String(user.Status || '').toUpperCase() !== 'ACTIF') {
+    throw new Error('ADMIN_NON_ACTIF');
+  }
+
+  return user;
+}
+
+function publicAdminUser_(user) {
+  const subscription = getActiveOrPendingSubscriptionForUser_(user.UserID);
+  const usage = getUsageInfoForUser_(user);
+
+  return {
+    UserID: user.UserID,
+    Username: user.Username,
+    Role: user.Role,
+    Status: user.Status,
+    NomEnfant: user.NomEnfant,
+    AgeEnfant: user.AgeEnfant,
+    NomNounours: user.NomNounours,
+    NounoursColor: user.NounoursColor,
+    NounoursHat: bool_(user.NounoursHat),
+    NounoursMoustache: bool_(user.NounoursMoustache),
+    ParentName: user.ParentName,
+    ParentRelation: user.ParentRelation,
+    ParentPhone: user.ParentPhone,
+    ParentWhatsapp: user.ParentWhatsapp,
+    ParentEmail: user.ParentEmail,
+    PreferredContact: user.PreferredContact,
+    ProductID: user.ProductID,
+    QuizCategorie: getUserQuizCategorie_(user),
+    QuizDomaineExpertID: user.QuizDomaineExpertID || '',
+    QuizDomaineExpertNom: getQuizDomaineName_(user.QuizDomaineExpertID || ''),
+    DailyLimitCustom: user.DailyLimitCustom,
+    FirstLoginMessage: user.FirstLoginMessage,
+    FirstLoginDone: bool_(user.FirstLoginDone),
+    MustChangePassword: bool_(user.MustChangePassword),
+    SystemInstruction: user.SystemInstruction,
+    Memoire: user.Memoire,
+    CreatedAt: formatDate_(user.CreatedAt),
+    LastLoginAt: formatDate_(user.LastLoginAt),
+    LastUsedAt: formatDate_(user.LastUsedAt),
+    Subscription: publicSubscription_(subscription),
+    Usage: usage
+  };
+}
+
+/****************************************************
+ * OUTILS USERS
+ ****************************************************/
+
+function getUserByUsername_(username) {
+  username = String(username || '').trim().toLowerCase();
+
+  return getRows_(SHEET_USERS)
+    .filter(function(u) {
+      return String(u.Username || '').trim().toLowerCase() === username;
+    })[0] || null;
+}
+
+function getUserById_(userId) {
+  const user = getRows_(SHEET_USERS)
+    .filter(function(u) {
+      return String(u.UserID) === String(userId);
+    })[0];
+
+  if (!user) throw new Error('UTILISATEUR_INTROUVABLE');
+
+  return user;
+}
+
+function updateUser_(userId, fields) {
+  updateRowByKey_(SHEET_USERS, 'UserID', userId, fields);
+}
+
+function generateSequentialUserId_() {
+  const rows = getRows_(SHEET_USERS);
+  let max = 0;
+
+  rows.forEach(function(u) {
+    const m = String(u.UserID || '').match(/^U(\d+)$/);
+    if (m) max = Math.max(max, Number(m[1]));
+  });
+
+  return 'U' + String(max + 1).padStart(4, '0');
+}
+
+/****************************************************
+ * SHEETS : LECTURE / ÉCRITURE
+ ****************************************************/
+
+function getSpreadsheet_() {
+  const id = getSheetId_();
+
+  if (!id) throw new Error('PELUCHE_SHEET_ID manquant.');
+
+  return SpreadsheetApp.openById(id);
+}
+
+function ensureAllSheets_() {
+  Object.keys(HEADERS).forEach(function(name) {
+    getSheet_(name);
+  });
+}
+
+function getSheet_(name) {
+  const ss = getSpreadsheet_();
+  let sheet = ss.getSheetByName(name);
+
+  if (!sheet) {
+    sheet = ss.insertSheet(name);
+  }
+
+  ensureHeaders_(sheet, HEADERS[name] || []);
+
+  return sheet;
+}
+
+function ensureHeaders_(sheet, headers) {
+  if (!headers || !headers.length) return;
+
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    sheet.setFrozenRows(1);
+    return;
+  }
+
+  const lastCol = Math.max(sheet.getLastColumn(), headers.length);
+  const existing = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+
+  headers.forEach(function(h) {
+    if (existing.indexOf(h) === -1) {
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue(h);
+    }
+  });
+
+  sheet.setFrozenRows(1);
+}
+
+function getRows_(sheetName) {
+  const sheet = getSheet_(sheetName);
+  const values = sheet.getDataRange().getValues();
+
+  if (values.length <= 1) return [];
+
+  const headers = values[0];
+  const rows = [];
+
+  for (let r = 1; r < values.length; r++) {
+    const obj = {
+      _rowNumber: r + 1
+    };
+
+    headers.forEach(function(h, c) {
+      if (h) obj[h] = values[r][c];
+    });
+
+    rows.push(obj);
+  }
+
+  return rows;
+}
+
+function appendObject_(sheetName, obj) {
+  const sheet = getSheet_(sheetName);
+  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+
+  const row = headers.map(function(h) {
+    return obj[h] !== undefined ? obj[h] : '';
+  });
+
+  sheet.appendRow(row);
+
+  if (sheetName === SHEET_USAGE_DAILY && obj.DateKey !== undefined) {
+    const dateIdx = headers.indexOf('DateKey');
+    if (dateIdx !== -1) {
+      const lastRow = sheet.getLastRow();
+      sheet.getRange(lastRow, dateIdx + 1).setNumberFormat('@');
+      sheet.getRange(lastRow, dateIdx + 1).setValue(String(obj.DateKey));
+    }
+  }
+
+  return obj;
+}
+
+function updateRowByKey_(sheetName, keyColumn, keyValue, fields) {
+  const sheet = getSheet_(sheetName);
+  const values = sheet.getDataRange().getValues();
+
+  if (values.length <= 1) throw new Error('Ligne introuvable.');
+
+  const headers = values[0];
+  const keyIdx = headers.indexOf(keyColumn);
+
+  if (keyIdx === -1) throw new Error('Colonne introuvable : ' + keyColumn);
+
+  for (let r = 1; r < values.length; r++) {
+    if (String(values[r][keyIdx]) === String(keyValue)) {
+      Object.keys(fields).forEach(function(k) {
+        const idx = headers.indexOf(k);
+
+        if (idx !== -1) {
+          sheet.getRange(r + 1, idx + 1).setValue(fields[k]);
+        }
+      });
+
+      return;
+    }
+  }
+
+  throw new Error('Ligne introuvable : ' + keyValue);
+}
+
+function updateRowByCompositeKeys_(sheetName, keys, fields) {
+  const sheet = getSheet_(sheetName);
+  const values = sheet.getDataRange().getValues();
+
+  if (values.length <= 1) throw new Error('Ligne introuvable.');
+
+  const headers = values[0];
+
+  for (let r = 1; r < values.length; r++) {
+    let ok = true;
+
+    Object.keys(keys).forEach(function(k) {
+      const idx = headers.indexOf(k);
+
+      let cellValue = values[r][idx];
+      let keyValue = keys[k];
+
+      if (k === 'DateKey') {
+        cellValue = normalizeDateKey_(cellValue);
+        keyValue = normalizeDateKey_(keyValue);
+      }
+
+      if (idx === -1 || String(cellValue) !== String(keyValue)) {
+        ok = false;
+      }
+    });
+
+    if (ok) {
+      Object.keys(fields).forEach(function(k) {
+        const idx = headers.indexOf(k);
+
+        if (idx !== -1) {
+          sheet.getRange(r + 1, idx + 1).setValue(fields[k]);
+        }
+      });
+
+      return;
+    }
+  }
+
+  throw new Error('Ligne composite introuvable.');
+}
+
+function deleteRowsWhere_(sheetName, predicate) {
+  const sheet = getSheet_(sheetName);
+  const rows = getRows_(sheetName);
+
+  for (let i = rows.length - 1; i >= 0; i--) {
+    if (predicate(rows[i])) {
+      sheet.deleteRow(rows[i]._rowNumber);
+    }
+  }
+}
+
+/****************************************************
+ * SETTINGS
+ ****************************************************/
+
+function getSettingsMap_() {
+  const map = {};
+
+  Object.keys(DEFAULT_SETTINGS).forEach(function(k) {
+    map[k] = DEFAULT_SETTINGS[k];
+  });
+
+  try {
+    getRows_(SHEET_SETTINGS).forEach(function(r) {
+      if (r.Key) map[String(r.Key)] = r.Value;
+    });
+  } catch (err) {}
+
+  return map;
+}
+
+function getSetting_(key, defaultValue) {
+  const map = getSettingsMap_();
+
+  if (map[key] !== undefined && map[key] !== '') return map[key];
+
+  return defaultValue;
+}
+
+function setSetting_(key, value) {
+  const rows = getRows_(SHEET_SETTINGS);
+  const existing = rows.filter(function(r) {
+    return String(r.Key) === String(key);
+  })[0];
+
+  if (existing) {
+    updateRowByKey_(SHEET_SETTINGS, 'Key', key, {
+      Value: value
+    });
+  } else {
+    appendObject_(SHEET_SETTINGS, {
+      Key: key,
+      Value: value,
+      Description: ''
+    });
+  }
+}
+
+function getGeminiModels_() {
+  return String(getSetting_('GEMINI_MODELS', DEFAULT_SETTINGS.GEMINI_MODELS))
+    .split(',')
+    .map(function(s) {
+      return s.trim();
+    })
+    .filter(function(s) {
+      return !!s;
+    });
+}
+
+/****************************************************
+ * UTILITAIRES
+ ****************************************************/
+
+function getGeminiApiKey_() {
+  return PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
+}
+
+function getSheetId_() {
+  return PropertiesService.getScriptProperties().getProperty('PELUCHE_SHEET_ID');
+}
+
+function cleanCallback_(callback) {
+  callback = String(callback || 'callback');
+
+  if (/^[a-zA-Z_$][0-9a-zA-Z_$\.]*$/.test(callback)) return callback;
+
+  return 'callback';
+}
+
+function jsonp_(callback, obj) {
+  return ContentService
+    .createTextOutput(callback + '(' + JSON.stringify(obj) + ');')
+    .setMimeType(ContentService.MimeType.JAVASCRIPT);
+}
+
+function bool_(value) {
+  if (value === true) return true;
+  if (value === false) return false;
+
+  const s = String(value || '').trim().toLowerCase();
+
+  return s === 'true' || s === 'vrai' || s === 'oui' || s === '1' || s === 'yes';
+}
+
+function formatDate_(value) {
+  if (!value) return '';
+
+  try {
+    const d = new Date(value);
+
+    if (isNaN(d.getTime())) return String(value);
+
+    return d.toISOString();
+
+  } catch (err) {
+    return String(value);
+  }
+}
+
+function addDays_(date, days) {
+  return new Date(date.getTime() + Number(days || 0) * 24 * 60 * 60 * 1000);
+}
+
+function diffDays_(from, to) {
+  const a = new Date(from);
+  const b = new Date(to);
+
+  return Math.ceil((b.getTime() - a.getTime()) / (24 * 60 * 60 * 1000));
+}
+
+function clientErrorMessage_(technical) {
+  const settings = getSettingsMap_();
+  const t = String(technical || '').toLowerCase();
+
+  if (t.indexOf('quota_user_depasse') !== -1 || t.indexOf('quota_global_depasse') !== -1) {
+    return settings.CLIENT_QUOTA_MESSAGE || DEFAULT_SETTINGS.CLIENT_QUOTA_MESSAGE;
+  }
+
+  if (
+    t.indexOf('credits_gemini_epuises') !== -1 ||
+    t.indexOf('resource_exhausted') !== -1 ||
+    t.indexOf('prepayment credits are depleted') !== -1 ||
+    t.indexOf('http 429') !== -1
+  ) {
+    return settings.CLIENT_CREDITS_MESSAGE || DEFAULT_SETTINGS.CLIENT_CREDITS_MESSAGE;
+  }
+
+  if (t.indexOf('mot_de_passe_a_changer') !== -1) {
+    return 'Tu dois changer ton mot de passe avant d’utiliser le nounours.';
+  }
+
+  if (t.indexOf('abonnement_expire') !== -1) {
+    return 'L’abonnement est expiré. Contacte le parent ou l’administrateur.';
+  }
+
+  if (t.indexOf('module_non_autorise') !== -1) {
+    return 'Ce module n’est pas inclus dans ton abonnement.';
+  }
+
+  if (t.indexOf('session') !== -1) {
+    return 'Ta session a expiré. Reconnecte-toi.';
+  }
+
+  return settings.CLIENT_SERVICE_DOWN_MESSAGE || DEFAULT_SETTINGS.CLIENT_SERVICE_DOWN_MESSAGE;
+}
+
+
+
+/****************************************************
+ * ADMIN V3.1.1 - FONCTIONS COMPLÉMENTAIRES
+ ****************************************************/
+
+function adminGetUserDetails(token, userId) {
+  requireAdmin_(token);
+  const user = getUserById_(userId);
+  const subscriptions = getRows_(SHEET_USER_SUBSCRIPTIONS)
+    .filter(function(s) { return String(s.UserID) === String(userId); })
+    .sort(function(a, b) { return new Date(b.CreatedAt || 0) - new Date(a.CreatedAt || 0); });
+  return {
+    ok: true,
+    user: publicAdminUser_(user),
+    subscriptions: subscriptions,
+    robot: getRobotSettingsForUser_(user),
+    products: getRows_(SHEET_PRODUCTS),
+    productOptions: getRows_(SHEET_PRODUCT_OPTIONS),
+    contentLinks: getRows_(SHEET_CONTENT_LINKS)
+  };
+}
+
+function adminSaveRobotSettings(token, userId, data) {
+  requireAdmin_(token);
+  data = data || {};
+  const fields = {
+    UserID: userId,
+    SubscriptionWatchEnabled: data.SubscriptionWatchEnabled,
+    AutoDisableEnabled: data.AutoDisableEnabled,
+    ReminderEnabled: data.ReminderEnabled,
+    ReminderDaysBefore: data.ReminderDaysBefore,
+    ReminderEmail: data.ReminderEmail,
+    SummaryEnabled: data.SummaryEnabled,
+    SummaryFrequency: data.SummaryFrequency,
+    SummaryHour: data.SummaryHour,
+    SummaryEmail: data.SummaryEmail,
+    CensorshipAlertEnabled: data.CensorshipAlertEnabled,
+    CensorshipAlertEmail: data.CensorshipAlertEmail,
+    UpdatedAt: new Date(),
+    Notes: data.Notes || ''
+  };
+  const existing = getRows_(SHEET_ROBOT_SETTINGS).filter(function(r){ return String(r.UserID) === String(userId); })[0];
+  if (existing) updateRowByKey_(SHEET_ROBOT_SETTINGS, 'UserID', userId, fields);
+  else appendObject_(SHEET_ROBOT_SETTINGS, fields);
+  return { ok: true, message: 'Réglages robot enregistrés.' };
+}
+
+function adminCreateSubscription(token, data) {
+  requireAdmin_(token);
+  data = data || {};
+  if (!data.UserID || !data.ProductID) return { ok: false, message: 'UserID et ProductID obligatoires.' };
+  const product = getProductById_(data.ProductID);
+  const duration = Number(data.DurationDays || (product ? product.DurationDays : 31) || 31);
+  let startDate = data.StartDate || '';
+  let endDate = data.EndDate || '';
+  if (String(data.Status || '').toUpperCase() === 'ACTIF' && !startDate) startDate = new Date();
+  if (startDate && !endDate) endDate = addDays_(new Date(startDate), duration);
+  const sub = {
+    SubscriptionID: 'S-' + Utilities.getUuid(),
+    UserID: data.UserID,
+    ProductID: data.ProductID,
+    Status: data.Status || 'EN_ATTENTE',
+    StartMode: data.StartMode || 'FIRST_LOGIN',
+    StartDate: startDate,
+    EndDate: endDate,
+    DurationDays: duration,
+    AutoDisableAtEnd: bool_(data.AutoDisableAtEnd),
+    ReminderEnabled: bool_(data.ReminderEnabled),
+    ReminderDaysBefore: data.ReminderDaysBefore || 3,
+    LastReminderSentAt: '',
+    CreatedAt: new Date(),
+    ActivatedAt: startDate || '',
+    ExpiredAt: '',
+    Notes: data.Notes || ''
+  };
+  appendObject_(SHEET_USER_SUBSCRIPTIONS, sub);
+  updateUser_(data.UserID, { ProductID: data.ProductID });
+  const quizSync = trySyncQuizAccessForUser_(data.UserID);
+  return { ok: true, message: 'Abonnement créé.', subscription: sub, quizSync: quizSync };
+}
+
+function adminUpdateSubscription(token, subscriptionId, data) {
+  requireAdmin_(token);
+  data = data || {};
+  const allowed = ['ProductID','Status','StartMode','StartDate','EndDate','DurationDays','AutoDisableAtEnd','ReminderEnabled','ReminderDaysBefore','LastReminderSentAt','ActivatedAt','ExpiredAt','Notes'];
+  const fields = {};
+  allowed.forEach(function(k){ if (Object.prototype.hasOwnProperty.call(data,k)) fields[k]=data[k]; });
+  updateRowByKey_(SHEET_USER_SUBSCRIPTIONS, 'SubscriptionID', subscriptionId, fields);
+  const sub = getSubscriptionById_(subscriptionId);
+  const quizSync = sub ? trySyncQuizAccessForUser_(sub.UserID) : { ok: false, message: 'Abonnement introuvable après mise à jour.' };
+  return { ok: true, message: 'Abonnement mis à jour.', quizSync: quizSync };
+}
+
+function adminExpireSubscriptionNow(token, subscriptionId) {
+  requireAdmin_(token);
+  const sub = getSubscriptionById_(subscriptionId);
+  if (!sub) return { ok: false, message: 'Abonnement introuvable.' };
+  updateRowByKey_(SHEET_USER_SUBSCRIPTIONS, 'SubscriptionID', subscriptionId, { Status: 'EXPIRE', ExpiredAt: new Date() });
+  const user = getUserById_(sub.UserID);
+  const robot = getRobotSettingsForUser_(user);
+  if (bool_(robot.AutoDisableEnabled) || bool_(sub.AutoDisableAtEnd)) {
+    updateUser_(sub.UserID, { Status: 'BLOQUE' });
+    invalidateSessionsForUser_(sub.UserID);
+  }
+  logRobot_('SUBSCRIPTION_EXPIRED_MANUAL', sub.UserID, subscriptionId, 'OK', 'Expiration manuelle depuis admin.');
+  const quizSync = trySyncQuizAccessForUser_(sub.UserID);
+  return { ok: true, message: 'Abonnement expiré manuellement.', quizSync: quizSync };
+}
+
+function adminRenewSubscription(token, subscriptionId, durationDays) {
+  requireAdmin_(token);
+  const sub = getSubscriptionById_(subscriptionId);
+  if (!sub) return { ok: false, message: 'Abonnement introuvable.' };
+  const duration = Number(durationDays || sub.DurationDays || 31);
+  const start = new Date();
+  const end = addDays_(start, duration);
+  updateRowByKey_(SHEET_USER_SUBSCRIPTIONS, 'SubscriptionID', subscriptionId, {
+    Status: 'ACTIF', StartDate: start, EndDate: end, DurationDays: duration, ActivatedAt: start, ExpiredAt: ''
+  });
+  updateUser_(sub.UserID, { Status: 'ACTIF', ProductID: sub.ProductID });
+  logRobot_('SUBSCRIPTION_RENEWED', sub.UserID, subscriptionId, 'OK', 'Abonnement renouvelé depuis admin.');
+  const quizSync = trySyncQuizAccessForUser_(sub.UserID);
+  return { ok: true, message: 'Abonnement renouvelé.', quizSync: quizSync };
+}
+
+function adminListContentLinks(token) {
+  requireAdmin_(token);
+  return { ok: true, contentLinks: getRows_(SHEET_CONTENT_LINKS) };
+}
+
+function adminListRobotSettings(token) {
+  requireAdmin_(token);
+  return { ok: true, robotSettings: getRows_(SHEET_ROBOT_SETTINGS) };
+}
+
+
+
+
+/****************************************************
+ * ADMIN V3.1.2 - CRUD PRODUITS ET OPTIONS
+ ****************************************************/
+
+function adminCreateProduct(token, data) {
+  requireAdmin_(token);
+  data = data || {};
+
+  const productId = String(data.ProductID || '').trim() || generateProductId_();
+
+  if (!data.ProductName) {
+    return { ok: false, message: 'Nom de formule obligatoire.' };
+  }
+
+  if (getProductById_(productId)) {
+    return { ok: false, message: 'Ce ProductID existe déjà.' };
+  }
+
+  const product = {
+    ProductID: productId,
+    ProductName: data.ProductName || '',
+    ProductDescription: data.ProductDescription || '',
+    Status: data.Status || 'ACTIF',
+    Price: data.Price || '',
+    DurationDays: data.DurationDays || 31,
+    DefaultDailyLimit: data.DefaultDailyLimit || getSetting_('DEFAULT_DAILY_LIMIT', 20),
+    Notes: data.Notes || ''
+  };
+
+  appendObject_(SHEET_PRODUCTS, product);
+
+  return { ok: true, message: 'Formule créée.', product: product };
+}
+
+function adminUpdateProduct(token, productId, data) {
+  requireAdmin_(token);
+  data = data || {};
+
+  const fields = {};
+  ['ProductName','ProductDescription','Status','Price','DurationDays','DefaultDailyLimit','Notes'].forEach(function(k) {
+    if (Object.prototype.hasOwnProperty.call(data, k)) fields[k] = data[k];
+  });
+
+  updateRowByKey_(SHEET_PRODUCTS, 'ProductID', productId, fields);
+
+  return { ok: true, message: 'Formule mise à jour.' };
+}
+
+function adminDeleteProduct(token, productId) {
+  requireAdmin_(token);
+
+  const usedByUsers = getRows_(SHEET_USERS).some(function(u) { return String(u.ProductID) === String(productId); });
+  const usedBySubscriptions = getRows_(SHEET_USER_SUBSCRIPTIONS).some(function(s) { return String(s.ProductID) === String(productId); });
+
+  if (usedByUsers || usedBySubscriptions) {
+    updateRowByKey_(SHEET_PRODUCTS, 'ProductID', productId, { Status: 'INACTIF' });
+    return { ok: true, message: 'Formule utilisée par des comptes. Elle a été désactivée au lieu d’être supprimée.' };
+  }
+
+  deleteRowsWhere_(SHEET_PRODUCT_OPTIONS, function(row) { return String(row.ProductID) === String(productId); });
+  deleteRowsWhere_(SHEET_PRODUCTS, function(row) { return String(row.ProductID) === String(productId); });
+
+  return { ok: true, message: 'Formule supprimée.' };
+}
+
+function adminCreateProductOption(token, data) {
+  requireAdmin_(token);
+  data = data || {};
+
+  if (!data.ProductID || !data.OptionCode) {
+    return { ok: false, message: 'ProductID et OptionCode obligatoires.' };
+  }
+
+  const existing = getRows_(SHEET_PRODUCT_OPTIONS).some(function(o) {
+    return String(o.ProductID) === String(data.ProductID) && String(o.OptionCode).toUpperCase() === String(data.OptionCode).toUpperCase();
+  });
+
+  if (existing) {
+    return { ok: false, message: 'Cette option existe déjà pour cette formule.' };
+  }
+
+  const option = {
+    ProductID: data.ProductID,
+    OptionCode: String(data.OptionCode || '').trim().toUpperCase(),
+    OptionName: data.OptionName || '',
+    Enabled: data.Enabled !== undefined ? data.Enabled : true,
+    LimitValue: data.LimitValue || '',
+    ContentLink: data.ContentLink || '',
+    Notes: data.Notes || ''
+  };
+
+  appendObject_(SHEET_PRODUCT_OPTIONS, option);
+
+  return { ok: true, message: 'Option ajoutée.', option: option };
+}
+
+function adminUpdateProductOption(token, productId, optionCode, data) {
+  requireAdmin_(token);
+  data = data || {};
+
+  const fields = {};
+  ['OptionName','Enabled','LimitValue','ContentLink','Notes'].forEach(function(k) {
+    if (Object.prototype.hasOwnProperty.call(data, k)) fields[k] = data[k];
+  });
+
+  updateRowByCompositeKeys_(SHEET_PRODUCT_OPTIONS, {
+    ProductID: productId,
+    OptionCode: optionCode
+  }, fields);
+
+  return { ok: true, message: 'Option mise à jour.' };
+}
+
+function adminDeleteProductOption(token, productId, optionCode) {
+  requireAdmin_(token);
+
+  deleteRowsWhere_(SHEET_PRODUCT_OPTIONS, function(row) {
+    return String(row.ProductID) === String(productId) && String(row.OptionCode).toUpperCase() === String(optionCode).toUpperCase();
+  });
+
+  return { ok: true, message: 'Option supprimée.' };
+}
+
+function adminToggleProductOption(token, productId, optionCode, enabled) {
+  requireAdmin_(token);
+
+  updateRowByCompositeKeys_(SHEET_PRODUCT_OPTIONS, {
+    ProductID: productId,
+    OptionCode: optionCode
+  }, {
+    Enabled: bool_(enabled)
+  });
+
+  return { ok: true, message: bool_(enabled) ? 'Option activée.' : 'Option désactivée.' };
+}
+
+function generateProductId_() {
+  const rows = getRows_(SHEET_PRODUCTS);
+  let max = 0;
+
+  rows.forEach(function(p) {
+    const m = String(p.ProductID || '').match(/^P(\d+)$/);
+    if (m) max = Math.max(max, Number(m[1]));
+  });
+
+  return 'P' + String(max + 1).padStart(3, '0');
+}
+
+
+/****************************************************
+ * INSTALLATION / TESTS
+ ****************************************************/
+
+function setupV31() {
+  ensureAllSheets_();
+
+  return {
+    ok: true,
+    message: 'Structure V3.1 vérifiée.',
+    sheetId: getSheetId_()
+  };
+}
+
+function test_ping() {
+  return {
+    ok: true,
+    setup: setupV31(),
+    settings: getSettingsMap_()
+  };
+}
+
+function test_robot() {
+  robotSurveillanceAbonnements();
+
+  return {
+    ok: true,
+    message: 'Robot testé.'
+  };
+}
+
+function test_usage_today() {
+  return getUsageStatsToday_();
+}
+
+
+/****************************************************
+ * CORRECTION V3.26 - FONCTIONS MANQUANTES DISCUSSION
+ * À coller à la fin de Code.gs si tu ne remplaces pas
+ * tout le fichier complet.
+ ****************************************************/
+
+function appendMessage_(userId, role, message, moduleCode, safetyStatus, alertCreated) {
+  const messageId = 'MSG-' + Utilities.getUuid();
+
+  appendObject_(SHEET_MESSAGES, {
+    MessageID: messageId,
+    UserID: userId || '',
+    Role: role || '',
+    Message: message || '',
+    CreatedAt: new Date(),
+    ModuleCode: moduleCode || 'TALK',
+    SafetyStatus: safetyStatus || 'OK',
+    AlertCreated: bool_(alertCreated),
+    Notes: ''
+  });
+
+  return messageId;
+}
+
+function clientPing() {
+  try {
+    ensureAllSheets_();
+    return {
+      ok: true,
+      message: 'Serveur BB Burkina Bear actif.',
+      sheetIdPresent: !!getSheetId_(),
+      geminiKeyPresent: !!getGeminiApiKey_(),
+      dateServeur: new Date().toISOString()
+    };
+  } catch (err) {
+    return { ok: false, message: err.message || String(err) };
+  }
+}
+
+function clientLogin(username, password) {
+  try {
+    return loginUser_(username, password);
+  } catch (err) {
+    return { ok: false, message: clientErrorMessage_(err.message || String(err)) };
+  }
+}
+
+function clientMe(token) {
+  try {
+    const session = getSessionFromToken_(token || '');
+    const user = getUserById_(session.UserID);
+    return {
+      ok: true,
+      user: publicUser_(user),
+      dashboard: buildDashboardData_(user)
+    };
+  } catch (err) {
+    return { ok: false, message: clientErrorMessage_(err.message || String(err)) };
+  }
+}
+
+function clientGetDashboard(token) {
+  try {
+    const session = getSessionFromToken_(token || '');
+    const user = getUserById_(session.UserID);
+    return {
+      ok: true,
+      dashboard: buildDashboardData_(user)
+    };
+  } catch (err) {
+    return { ok: false, message: clientErrorMessage_(err.message || String(err)) };
+  }
+}
+
+function clientAsk(token, question, moduleCode) {
+  try {
+    return askBear_(token || '', question || '', moduleCode || 'TALK');
+  } catch (err) {
+    return { ok: false, message: clientErrorMessage_(err.message || String(err)) };
+  }
+}
+
+function clientAskDebug(token, question, moduleCode) {
+  try {
+    const result = askBear_(token || '', question || '', moduleCode || 'TALK');
+    return {
+      ok: true,
+      debug: 'ASK_OK',
+      result: result
+    };
+  } catch (err) {
+    const message = err && err.message ? err.message : String(err);
+    const stack = err && err.stack ? err.stack : '';
+
+    Logger.log('ERREUR CLIENT ASK DEBUG = ' + message);
+    Logger.log(stack);
+
+    return {
+      ok: false,
+      debug: 'ASK_ERROR_DETAIL',
+      rawError: message,
+      stack: stack,
+      message: 'Erreur détaillée : ' + message
+    };
+  }
+}
+
+function clientChangePassword(token, oldPassword, newPassword) {
+  try {
+    return changePassword_(token || '', oldPassword || '', newPassword || '');
+  } catch (err) {
+    return { ok: false, message: clientErrorMessage_(err.message || String(err)) };
+  }
+}
+
+function clientLogout(token) {
+  try {
+    getSessionFromToken_(token || '');
+    updateRowByKey_(SHEET_SESSIONS, 'SessionToken', token, { Status: 'FERMEE' });
+    return { ok: true, message: 'Déconnecté.' };
+  } catch (err) {
+    return { ok: true, message: 'Déconnecté.' };
+  }
+}
+
+function clientForgotPassword(username) {
+  try {
+    username = String(username || '').trim().toLowerCase();
+    if (!username) return { ok: false, message: 'Identifiant obligatoire.' };
+
+    const user = getUserByUsername_(username);
+    if (!user) {
+      return {
+        ok: true,
+        message: 'Si ce compte existe, une demande de réinitialisation sera transmise.'
+      };
+    }
+
+    const email = user.ParentEmail || '';
+    const subject = 'Demande de réinitialisation - BB Burkina Bear';
+    const body =
+      'Bonjour,\n\n' +
+      'Une demande de mot de passe oublié a été faite pour le compte : ' + user.Username + '\n' +
+      'Enfant : ' + (user.NomEnfant || '-') + '\n' +
+      'Nounours : ' + (user.NomNounours || '-') + '\n\n' +
+      'Veuillez contacter l’administrateur pour réinitialiser le mot de passe depuis la console admin.\n\n' +
+      'BB Burkina Bear';
+
+    if (email) {
+      MailApp.sendEmail({ to: email, subject: subject, body: body });
+    }
+
+    return {
+      ok: true,
+      message: email ? 'Demande envoyée au parent/tuteur.' : 'Demande enregistrée. Aucun email parent n’est configuré.'
+    };
+
+  } catch (err) {
+    return { ok: false, message: err.message || String(err) };
+  }
+}
+
+function clientUpdateMySpace(token, data, scope, confirmPassword) {
+  try {
+    const session = getSessionFromToken_(token || '');
+    const user = getUserById_(session.UserID);
+    data = data || {};
+    scope = String(scope || 'CHILD').toUpperCase();
+
+    const fields = {};
+
+    if (scope === 'PARENT') {
+      if (String(user.Password || '') !== String(confirmPassword || '')) {
+        return { ok: false, message: 'Mot de passe de confirmation incorrect.' };
+      }
+
+      ['ParentName', 'ParentPhone', 'ParentEmail', 'ParentWhatsapp', 'PreferredContact', 'ParentRelation'].forEach(function(k) {
+        if (Object.prototype.hasOwnProperty.call(data, k)) fields[k] = data[k];
+      });
+
+    } else {
+      ['NomNounours', 'NounoursColor', 'NounoursHat', 'NounoursMoustache', 'Memoire'].forEach(function(k) {
+        if (Object.prototype.hasOwnProperty.call(data, k)) fields[k] = data[k];
+      });
+    }
+
+    if (!Object.keys(fields).length) {
+      return { ok: false, message: 'Aucune modification reçue.' };
+    }
+
+    updateUser_(user.UserID, fields);
+    const updated = getUserById_(user.UserID);
+
+    return {
+      ok: true,
+      message: 'Mon espace a été mis à jour.',
+      user: publicUser_(updated),
+      dashboard: buildDashboardData_(updated)
+    };
+
+  } catch (err) {
+    return { ok: false, message: err.message || String(err) };
+  }
+}
+
+function testGeminiDirect() {
+  try {
+    const reponse = callGeminiWithFallback_(
+      'Réponds uniquement : test Gemini réussi.',
+      'Tu es un assistant de test.',
+      50
+    );
+
+    Logger.log('REPONSE GEMINI = ' + reponse);
+    return { ok: true, reponse: reponse };
+
+  } catch (err) {
+    Logger.log('ERREUR GEMINI DETAILLEE = ' + (err.message || String(err)));
+    return { ok: false, message: err.message || String(err) };
+  }
+}
+
+
+/****************************************************
+ * CLIENT TTS / DIAGNOSTIC V3.34
+ ****************************************************/
+
+function clientTts(token, text, voiceName, model, style) {
+  try {
+    getSessionFromToken_(token || '');
+    const result = genererAudioGeminiTts_(
+      text || '',
+      normalizeGeminiTtsModel_(model || 'gemini-3.1-flash-tts-preview'),
+      normalizeGeminiTtsVoice_(voiceName || 'Kore'),
+      style || '[warmly, gently, natural pace] Lis le texte en français avec une voix vivante, douce, claire, rassurante et naturelle.'
+    );
+    result.backendVersion = BBBEAR_BACKEND_VERSION;
+    return result;
+  } catch (err) {
+    return {
+      ok: false,
+      backendVersion: BBBEAR_BACKEND_VERSION,
+      message: err.message || String(err),
+      diagnostic: 'Si ce message apparaît, le navigateur bascule ensuite sur la voix de secours.'
+    };
+  }
+}
+
+function testGeminiTtsDirect() {
+  const res = genererAudioGeminiTts_(
+    'Bonjour, je suis ton nounours. Ceci est un test avec la voix Kore.',
+    'gemini-3.1-flash-tts-preview',
+    'Kore',
+    '[warmly, gently, natural pace] Lis en français avec une voix douce, claire, rassurante et naturelle.'
+  );
+
+  Logger.log('TTS OK = ' + res.ok);
+  Logger.log('Voix = ' + res.voiceName);
+  Logger.log('Modèle = ' + res.model);
+  Logger.log('MIME = ' + res.mimeType);
+  Logger.log('Base64 longueur = ' + String(res.audioBase64 || '').length);
+
+  return {
+    ok: res.ok,
+    voiceName: res.voiceName,
+    model: res.model,
+    mimeType: res.mimeType,
+    base64Length: String(res.audioBase64 || '').length
+  };
+}
+
+const BBBEAR_DIAG_VERSION = 'DIAG_TTS_RATIO_2026_05_25_03';
+
+function jsonpEcho_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
+
+  return jsonp_(callback, {
+    ok: true,
+    test: 'echo',
+    message: 'JSONP fonctionne. La route api=echo répond correctement.',
+    diagVersion: BBBEAR_DIAG_VERSION,
+    dateServeur: new Date().toISOString(),
+    paramsRecus: e.parameter || {}
+  });
+}
+
+function jsonpDiag_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
+
+  const result = {
+    ok: true,
+    test: 'diag',
+    message: 'Diagnostic Apps Script exécuté.',
+    diagVersion: BBBEAR_DIAG_VERSION,
+    dateServeur: new Date().toISOString(),
+    paramsRecus: e.parameter || {},
+    routesAttendues: [
+      'ping','echo','diag','ttsDiag','tts','login','ask','changePassword','forgotPassword','updateMySpace','me','getDashboard'
+    ],
+    properties: {},
+    appsScript: {},
+    sheet: {},
+    geminiText: {},
+    timezone: getSetting_('QUOTA_TIMEZONE', 'Africa/Ouagadougou')
+  };
+
+  try {
+    const geminiKey = getGeminiApiKey_();
+    const sheetId = getSheetId_();
+    result.properties.geminiKeyPresent = !!geminiKey;
+    result.properties.geminiKeyLength = geminiKey ? String(geminiKey).length : 0;
+    result.properties.sheetIdPresent = !!sheetId;
+    result.properties.sheetIdLength = sheetId ? String(sheetId).length : 0;
+  } catch (err) {
+    result.properties.error = err.message || String(err);
+  }
+
+  try {
+    result.appsScript.scriptId = ScriptApp.getScriptId();
+  } catch (err) {
+    result.appsScript.scriptIdError = err.message || String(err);
+  }
+
+  try {
+    const sheetId = getSheetId_();
+    if (sheetId) {
+      const ss = SpreadsheetApp.openById(sheetId);
+      result.sheet.ok = true;
+      result.sheet.name = ss.getName();
+      result.sheet.url = ss.getUrl();
+    } else {
+      result.sheet.ok = false;
+      result.sheet.message = 'PELUCHE_SHEET_ID absent dans les propriétés du script.';
+    }
+  } catch (err) {
+    result.sheet.ok = false;
+    result.sheet.error = err.message || String(err);
+  }
+
+  try {
+    result.geminiText.modelsFromSettings = getGeminiModels_ ? getGeminiModels_() : [];
+  } catch (err) {
+    result.geminiText.error = err.message || String(err);
+  }
+
+  return jsonp_(callback, result);
+}
+
+function jsonpTtsDebug_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
+  const result = {
+    ok: false,
+    test: 'ttsDebug',
+    backendVersion: BBBEAR_BACKEND_VERSION,
+    dateServeur: new Date().toISOString(),
+    request: {
+      tokenPresent: !!(e.parameter.token || ''),
+      textLength: String(e.parameter.text || e.parameter.q || 'Bonjour, ceci est un test très court.').length,
+      model: e.parameter.model || e.parameter.ttsModel || 'gemini-3.1-flash-tts-preview',
+      voiceName: e.parameter.voiceName || e.parameter.voice || 'Kore',
+      includeAudio: String(e.parameter.includeAudio || '') === '1'
+    },
+    properties: {},
+    session: {},
+    tts: {}
+  };
+
+  try {
+    const key = getGeminiApiKey_();
+    result.properties.geminiKeyPresent = !!key;
+    result.properties.geminiKeyMasked = maskSecret_(key);
+    result.properties.geminiKeyLength = key ? String(key).length : 0;
+    result.properties.bbbearAppUrlPresent = !!getBbbearAppUrl_();
+    result.properties.bbbearAppUrl = getBbbearAppUrl_();
+    result.properties.githubTalkUrlPresent = !!getGithubTalkUrl_();
+  } catch (err) {
+    result.properties.error = err.message || String(err);
+  }
+
+  try {
+    const session = getSessionFromToken_(e.parameter.token || '');
+    const user = getUserById_(session.UserID);
+    result.session.ok = true;
+    result.session.userId = session.UserID;
+    result.session.username = user.Username || '';
+    result.session.role = user.Role || '';
+    result.session.status = user.Status || '';
+  } catch (err) {
+    result.session.ok = false;
+    result.session.error = err.message || String(err);
+    return jsonp_(callback, result);
+  }
+
+  try {
+    const key = getGeminiApiKey_();
+    if (!key) throw new Error('GEMINI_API_KEY_ABSENTE');
+
+    const text = String(e.parameter.text || e.parameter.q || 'Bonjour, ceci est un test très court avec la voix Kore.').trim();
+    const model = normalizeGeminiTtsModel_(e.parameter.model || e.parameter.ttsModel || 'gemini-3.1-flash-tts-preview');
+    const voiceName = normalizeGeminiTtsVoice_(e.parameter.voiceName || e.parameter.voice || 'Kore');
+    const style = String(e.parameter.style || '[warmly] Lis en français avec une voix claire, courte et naturelle.').trim();
+    const includeAudio = String(e.parameter.includeAudio || '') === '1';
+    const candidates = getGeminiTtsCandidateModels_(model);
+    const attempts = [];
+
+    for (let i = 0; i < candidates.length; i++) {
+      const attempt = fetchGeminiTtsAttempt_(key, text, candidates[i], voiceName, style, !includeAudio);
+      attempts.push(attempt);
+      if (attempt.ok) break;
+      if (attempt.httpCode === 500 || attempt.httpCode === 503 || attempt.httpCode === 429) Utilities.sleep(700);
+    }
+
+    result.tts.ok = attempts.some(function(a) { return a.ok; });
+    result.tts.candidateModels = candidates;
+    result.tts.voiceName = voiceName;
+    result.tts.attempts = summarizeTtsAttempts_(attempts);
+    result.tts.recommandation = result.tts.ok ?
+      'Le TTS Gemini répond. Si tu entends encore la voix navigateur, le problème est côté lecture audio du navigateur.' :
+      'Aucun modèle TTS n’a répondu correctement. Regarde httpCode, bodyExcerpt et error dans attempts.';
+    result.ok = result.tts.ok;
+
+    if (includeAudio) {
+      const success = attempts.filter(function(a) { return a.ok && a.audioBase64; })[0];
+      if (success) {
+        result.audioBase64 = success.audioBase64;
+        result.base64 = success.audioBase64;
+        result.mimeType = success.mimeType;
+      }
+    }
+
+  } catch (err) {
+    result.tts.ok = false;
+    result.tts.error = err.message || String(err);
+  }
+
+  return jsonp_(callback, result);
+}
+
+function jsonpTtsDiag_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
+
+  const model = String(e.parameter.model || 'gemini-3.1-flash-tts-preview').trim();
+  const voiceName = String(e.parameter.voiceName || 'Kore').trim();
+  const style = String(e.parameter.style || 'Lis en français avec une voix naturelle, douce, claire, stable et chaleureuse.').trim();
+  const texte = String(e.parameter.text || 'Bonjour. Ceci est un test de diagnostic de la voix Gemini pour BB Burkina Bear.').trim();
+
+  let result;
+
+  try {
+    result = diagnosticGeminiTts_(texte, model, voiceName, style);
+  } catch (err) {
+    result = {
+      ok: false,
+      test: 'ttsDiag',
+      diagVersion: BBBEAR_DIAG_VERSION,
+      model: model,
+      voiceName: voiceName,
+      message: err.message || String(err),
+      stack: err.stack || ''
+    };
+  }
+
+  return jsonp_(callback, result);
+}
+
+function diagnosticGeminiTts_(texte, model, voiceName, style) {
+  const apiKey = getGeminiApiKey_();
+  if (!apiKey) throw new Error('GEMINI_API_KEY absente dans les propriétés du script.');
+
+  const startedAt = new Date();
+  const t0 = Date.now();
+  const res = genererAudioGeminiTts_(texte, model, voiceName, style);
+
+  return {
+    ok: true,
+    test: 'ttsDiag',
+    diagVersion: BBBEAR_DIAG_VERSION,
+    startedAt: startedAt.toISOString(),
+    elapsedMs: Date.now() - t0,
+    model: res.model,
+    voiceName: res.voiceName,
+    audioMimeType: res.mimeType,
+    audioBase64Length: String(res.audioBase64 || '').length,
+    message: 'Gemini TTS fonctionne côté serveur.'
+  };
+}
+
+
+/****************************************************
+ * DISCUSSION GITHUB SEULEMENT - ACCÈS V3.45
+ *
+ * Nouvelle architecture :
+ * - Index, abonnement, espace, menu et administration restent dans Apps Script.
+ * - GitHub ne sert plus que le module PARLER / DISCUSSION.
+ * - La page GitHub discussion reçoit le token dans l'ancre #token=...
+ *   Cette ancre n'est pas envoyée au serveur GitHub.
+ ****************************************************/
+
+function jsonpTalkAccess_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
+  let result;
+
+  try {
+    result = clientPrepareTalkAccess(e.parameter.token || '');
+  } catch (err) {
+    result = {
+      ok: false,
+      message: clientErrorMessage_(err.message || String(err)),
+      technical: err.message || String(err)
+    };
+  }
+
+  return jsonp_(callback, result);
+}
+
+function clientPrepareTalkAccess(token) {
+  const session = getSessionFromToken_(token || '');
+  const user = getUserById_(session.UserID);
+
+  if (String(user.Status || '').toUpperCase() !== 'ACTIF') {
+    throw new Error('ACCES_NON_ACTIF');
+  }
+
+  if (bool_(user.MustChangePassword)) {
+    throw new Error('MOT_DE_PASSE_A_CHANGER');
+  }
+
+  const subscription = getActiveSubscriptionForUser_(user.UserID);
+
+  if (!subscription || isSubscriptionExpired_(subscription)) {
+    if (subscription) expireSubscriptionAndMaybeUser_(user, subscription);
+    throw new Error('ABONNEMENT_EXPIRE');
+  }
+
+  if (!isModuleAllowed_(subscription.ProductID, 'TALK')) {
+    throw new Error('MODULE_NON_AUTORISE');
+  }
+
+  const usage = getUsageInfoForUser_(user);
+  if (usage.remaining <= 0) throw new Error('QUOTA_USER_DEPASSE');
+
+  const talkUrl = getGithubTalkUrlForProduct_(subscription.ProductID);
+  if (!talkUrl) throw new Error('GITHUB_TALK_URL_MANQUANT');
+
+  const apiUrl = getBbbearAppUrl_();
+  if (!apiUrl) throw new Error('BBBEAR_APP_URL_MANQUANT');
+
+  const launchUrl = buildUrlWithHashParams_(talkUrl, {
+    token: token,
+    apiUrl: apiUrl,
+    username: user.Username || '',
+    child: user.NomEnfant || '',
+    bear: user.NomNounours || 'BB Burkina Bear',
+    version: BBBEAR_BACKEND_VERSION
+  });
+
+  return {
+    ok: true,
+    message: 'Accès discussion prêt.',
+    talkUrl: talkUrl,
+    apiUrl: apiUrl,
+    launchUrl: launchUrl,
+    username: user.Username || '',
+    nomEnfant: user.NomEnfant || '',
+    nomNounours: user.NomNounours || '',
+    usage: usage
+  };
+}
+
+function getGithubTalkUrlForProduct_(productId) {
+  const prop = getGithubTalkUrl_();
+  if (prop) return prop;
+
+  const option = getModulesForProduct_(productId || '')
+    .filter(function(o) {
+      return String(o.OptionCode || '').toUpperCase() === 'TALK';
+    })[0];
+
+  return option && option.ContentLink ? String(option.ContentLink).trim() : '';
+}
+
+function getGithubTalkUrl_() {
+  return String(
+    PropertiesService.getScriptProperties().getProperty('GITHUB_TALK_URL') ||
+    getSetting_('GITHUB_TALK_URL', '') ||
+    ''
+  ).trim();
+}
+
+function getBbbearAppUrl_() {
+  const prop = String(
+    PropertiesService.getScriptProperties().getProperty('BBBEAR_APP_URL') ||
+    getSetting_('BBBEAR_APP_URL', '') ||
+    ''
+  ).trim();
+
+  if (prop) return prop;
+
+  try {
+    return ScriptApp.getService().getUrl() || '';
+  } catch (err) {
+    return '';
+  }
+}
+
+function buildUrlWithHashParams_(baseUrl, params) {
+  const cleanBase = String(baseUrl || '').split('#')[0];
+  const query = Object.keys(params || {})
+    .map(function(k) {
+      return encodeURIComponent(k) + '=' + encodeURIComponent(params[k] == null ? '' : String(params[k]));
+    })
+    .join('&');
+  return cleanBase + '#' + query;
+}
+
+
+/****************************************************
+ * QUIZ INTÉGRÉ V4.00 - MÊME APPLICATION / MÊME SHEET
+ *
+ * Role = droits applicatifs. QuizCategorie = contenu pédagogique.
+ * Les utilisateurs QUIZ ne sont plus dupliqués.
+ ****************************************************/
+
+function jsonpQuizAccess_(e) {
+  const callback = cleanCallback_(e.parameter.callback || 'callback');
+  let result;
+  try {
+    result = clientQuizGetThemes(e.parameter.token || '');
+  } catch (err) {
+    result = { ok: false, message: clientErrorMessage_(err.message || String(err)), technical: err.message || String(err) };
+  }
+  return jsonp_(callback, result);
+}
+
+function clientQuizAccess(token) {
+  return clientQuizGetThemes(token);
+}
+
+function clientQuizGetThemes(token) {
+  const ctx = getQuizContextFromToken_(token);
+  const themes = getQuizAllowedThemesForUser_(ctx.user);
+  const params = getQuizParamsForUser_(ctx.user);
+
+  return {
+    ok: true,
+    message: 'Module QUIZ prêt.',
+    user: publicUser_(ctx.user),
+    quizCategorie: ctx.quizCategorie,
+    quizDomaineExpertID: ctx.quizDomaineExpertID,
+    quizDomaineExpertNom: ctx.quizDomaineExpertNom,
+    themes: themes,
+    params: params
+  };
+}
+
+function clientQuizStartSession(token, idTheme) {
+  const ctx = getQuizContextFromToken_(token);
+  idTheme = String(idTheme || '').trim();
+  if (!idTheme) return { ok: false, message: 'Choisis un thème.' };
+
+  const themes = getQuizAllowedThemesForUser_(ctx.user);
+  const theme = themes.filter(function(t) { return String(t.IdTheme) === idTheme; })[0];
+  if (!theme) throw new Error('THEME_QUIZ_NON_AUTORISE');
+
+  const params = getQuizParamsForUser_(ctx.user);
+  const n = Math.max(1, Number(params.nombreQuestionsParSession || 10));
+  const all = getRows_(SHEET_QUIZ_QUESTIONS).filter(function(q) {
+    return String(q.IdTheme || '') === idTheme && bool_(q.Actif === '' ? 'Oui' : q.Actif);
+  });
+
+  if (!all.length) {
+    return { ok: false, message: 'Aucune question active pour ce thème.' };
+  }
+
+  const selected = shuffleArray_(all).slice(0, Math.min(n, all.length)).map(function(q) {
+    return {
+      IdQuestion: q.IdQuestion,
+      IdTheme: q.IdTheme,
+      NomTheme: q.NomTheme,
+      Question: q.Question,
+      RepA: q.RepA,
+      RepB: q.RepB,
+      RepC: q.RepC,
+      RepD: q.RepD,
+      BonneReponse: String(q.BonneReponse || '').trim().toUpperCase(),
+      Explication: q.Explication || ''
+    };
+  });
+
+  return {
+    ok: true,
+    sessionId: 'QZ-' + Utilities.getUuid(),
+    startedAt: new Date().toISOString(),
+    theme: theme,
+    quizCategorie: ctx.quizCategorie,
+    quizDomaineExpertID: ctx.quizDomaineExpertID,
+    params: params,
+    questions: selected
+  };
+}
+
+function clientQuizFinishSession(token, payload) {
+  const ctx = getQuizContextFromToken_(token);
+  payload = payload || {};
+
+  const sessionId = String(payload.sessionId || ('QZ-' + Utilities.getUuid()));
+  const idTheme = String(payload.idTheme || '').trim();
+  const nomTheme = String(payload.nomTheme || '').trim();
+  const answers = Array.isArray(payload.answers) ? payload.answers : [];
+  const duree = Number(payload.dureeSecondes || 0);
+
+  const score = answers.filter(function(a) {
+    return String(a.choix || '').trim().toUpperCase() === String(a.bonneReponse || '').trim().toUpperCase();
+  }).length;
+  const total = answers.length;
+  const pct = total ? Math.round((score / total) * 100) : 0;
+
+  appendObject_(SHEET_QUIZ_HISTORY, {
+    SessionID: sessionId,
+    DateSession: new Date(),
+    UserID: ctx.user.UserID,
+    Username: ctx.user.Username,
+    QuizCategorie: ctx.quizCategorie,
+    QuizDomaineExpertID: ctx.quizDomaineExpertID,
+    IdTheme: idTheme,
+    NomTheme: nomTheme,
+    Score: score,
+    TotalQuestions: total,
+    Pourcentage: pct,
+    DureeSecondes: duree,
+    DetailsJSON: JSON.stringify(answers)
+  });
+
+  return {
+    ok: true,
+    message: 'Résultat enregistré.',
+    sessionId: sessionId,
+    score: score,
+    total: total,
+    pourcentage: pct
+  };
+}
+
+function getQuizContextFromToken_(token) {
+  const session = getSessionFromToken_(token || '');
+  const user = getUserById_(session.UserID);
+
+  if (String(user.Status || '').toUpperCase() !== 'ACTIF') throw new Error('ACCES_NON_ACTIF');
+
+  const subscription = getActiveSubscriptionForUser_(user.UserID);
+  if (!subscription || isSubscriptionExpired_(subscription)) {
+    if (subscription) expireSubscriptionAndMaybeUser_(user, subscription);
+    throw new Error('ABONNEMENT_EXPIRE');
+  }
+
+  if (!isModuleAllowed_(subscription.ProductID, 'QUIZ')) throw new Error('MODULE_NON_AUTORISE');
+
+  const cat = getUserQuizCategorie_(user);
+  const domaine = String(user.QuizDomaineExpertID || '').trim();
+
+  if (cat === 'Expert' && !domaine) throw new Error('DOMAINE_EXPERT_MANQUANT');
+
+  return {
+    session: session,
+    user: user,
+    subscription: subscription,
+    quizCategorie: cat,
+    quizDomaineExpertID: domaine,
+    quizDomaineExpertNom: getQuizDomaineName_(domaine)
+  };
+}
+
+function getQuizAllowedThemesForUser_(user) {
+  const cat = getUserQuizCategorie_(user);
+  const domaine = String(user.QuizDomaineExpertID || '').trim();
+  const rows = getRows_(SHEET_QUIZ_THEMES).filter(function(t) {
+    if (!bool_(t.Actif === '' ? 'Oui' : t.Actif)) return false;
+
+    if (cat === 'Enfant' && !bool_(t.EnfantAutorise)) return false;
+    if (cat === 'Adulte' && !bool_(t.AdulteAutorise)) return false;
+    if (cat === 'Expert') {
+      if (!bool_(t.ExpertAutorise)) return false;
+      const themeDomaine = String(t.DomaineExpertID || '').trim();
+      if (themeDomaine && themeDomaine !== domaine) return false;
+    }
+    return true;
+  });
+
+  rows.sort(function(a, b) { return Number(a.Ordre || 999) - Number(b.Ordre || 999); });
+  return rows.map(function(t) {
+    return {
+      IdTheme: t.IdTheme,
+      NomTheme: t.NomTheme,
+      Description: t.Description || '',
+      DomaineExpertID: t.DomaineExpertID || '',
+      Ordre: Number(t.Ordre || 0)
+    };
+  });
+}
+
+function getQuizParamsForUser_(user) {
+  const cat = getUserQuizCategorie_(user);
+  const params = {
+    tempsParQuestion: 30,
+    nombreQuestionsParSession: 10,
+    afficherChronoVisuel: 'Oui',
+    modeChrono: 'Barre',
+    quizCategorie: cat
+  };
+  const rows = getRows_(SHEET_QUIZ_PARAMS);
+
+  rows.forEach(function(r) {
+    if (String(r.Categorie || '').trim().toUpperCase() === 'GLOBAL') appliquerQuizParam_(params, r.Cle, r.Valeur);
+  });
+  rows.forEach(function(r) {
+    if (String(r.Categorie || '').trim().toLowerCase() === cat.toLowerCase()) appliquerQuizParam_(params, r.Cle, r.Valeur);
+  });
+  return params;
+}
+
+function appliquerQuizParam_(params, cle, valeur) {
+  cle = String(cle || '').trim();
+  if (cle === 'TempsParQuestion') {
+    const n = Number(valeur); if (n > 0) params.tempsParQuestion = n;
+  }
+  if (cle === 'NombreQuestionsParSession') {
+    const n = Number(valeur); if (n > 0) params.nombreQuestionsParSession = n;
+  }
+  if (cle === 'AfficherChronoVisuel') params.afficherChronoVisuel = String(valeur || 'Oui').trim();
+  if (cle === 'ModeChrono') params.modeChrono = String(valeur || 'Barre').trim();
+}
+
+function getUserQuizCategorie_(user) {
+  return normaliserQuizCategorie_(user && user.QuizCategorie ? user.QuizCategorie : proposerQuizCategorieParAge_(user ? user.AgeEnfant : ''));
+}
+
+function normaliserQuizCategorie_(value) {
+  const s = String(value || '').trim().toLowerCase();
+  if (s === 'expert') return 'Expert';
+  if (s === 'adulte') return 'Adulte';
+  if (s === 'enfant') return 'Enfant';
+  return 'Enfant';
+}
+
+function proposerQuizCategorieParAge_(age) {
+  const n = Number(age || 0);
+  if (n && n >= 18) return 'Adulte';
+  return 'Enfant';
+}
+
+function getQuizDomaineName_(domaineId) {
+  domaineId = String(domaineId || '').trim();
+  if (!domaineId) return '';
+  const d = getRows_(SHEET_QUIZ_DOMAINES_EXPERTS).filter(function(r) {
+    return String(r.DomaineID || '').trim() === domaineId;
+  })[0];
+  return d ? String(d.NomDomaine || '') : domaineId;
+}
+
+function adminListQuizMeta(token) {
+  requireAdmin_(token);
+  return {
+    ok: true,
+    categories: getRows_(SHEET_QUIZ_CATEGORIES),
+    domainesExperts: getRows_(SHEET_QUIZ_DOMAINES_EXPERTS),
+    themes: getRows_(SHEET_QUIZ_THEMES),
+    params: getRows_(SHEET_QUIZ_PARAMS),
+    history: getRows_(SHEET_QUIZ_HISTORY).slice(-200).reverse()
+  };
+}
+
+function adminUpsertQuizDomaineExpert(token, data) {
+  requireAdmin_(token);
+  data = data || {};
+  const id = String(data.DomaineID || '').trim() || generateQuizDomaineId_();
+  const fields = {
+    DomaineID: id,
+    NomDomaine: data.NomDomaine || '',
+    Description: data.Description || '',
+    Actif: data.Actif || 'Oui',
+    Ordre: data.Ordre || '',
+    UpdatedAt: new Date(),
+    Notes: data.Notes || ''
+  };
+  const existing = getRows_(SHEET_QUIZ_DOMAINES_EXPERTS).some(function(r) { return String(r.DomaineID) === id; });
+  if (existing) updateRowByKey_(SHEET_QUIZ_DOMAINES_EXPERTS, 'DomaineID', id, fields);
+  else {
+    fields.CreatedAt = new Date();
+    appendObject_(SHEET_QUIZ_DOMAINES_EXPERTS, fields);
+  }
+  return { ok: true, message: 'Domaine expert enregistré.', domaineId: id };
+}
+
+function generateQuizDomaineId_() {
+  const rows = getRows_(SHEET_QUIZ_DOMAINES_EXPERTS);
+  let max = 0;
+  rows.forEach(function(r) {
+    const m = String(r.DomaineID || '').match(/^DOM_(\d+)$/);
+    if (m) max = Math.max(max, Number(m[1]));
+  });
+  return 'DOM_' + String(max + 1).padStart(3, '0');
+}
+
+function shuffleArray_(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+// Alias conservés : les anciennes zones du code appellent encore cette fonction.
+// Dans V4 fusionnée, il n’y a plus de synchronisation vers un Google Sheet QUIZ externe.
+function trySyncQuizAccessForUser_(userId) {
+  return { ok: true, skipped: true, message: 'V4 fusionnée : pas de synchronisation externe QUIZ.', userId: userId || '' };
+}
+
+function getQuizSheetId_() {
+  return getSheetId_();
+}
+
+function getQuizAppUrl_() {
+  return '';
+}
+
+function setupQuizAccessFromBBbear() {
+  ensureAllSheets_();
+  return { ok: true, message: 'V4 fusionnée : feuilles QUIZ intégrées vérifiées.' };
+}
+
+function syncAllQuizAccessFromBBbear() {
+  return { ok: true, message: 'V4 fusionnée : aucune synchronisation externe nécessaire.', count: 0, results: [] };
+}
+
+function testSyncQuizAccessBBbear(username) {
+  return { ok: true, message: 'V4 fusionnée : test de synchronisation externe inutile.', username: username || '' };
+}
+

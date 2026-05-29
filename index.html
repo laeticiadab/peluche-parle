@@ -21,7 +21,7 @@
 <div class="phone">
   <div class="hud"><button class="hud-btn" onclick="window.close()">⌂</button><div id="battery" class="battery"></div><div class="sound">🔊</div><button class="hud-btn hud-close" onclick="window.close()">×</button></div>
   <div class="panel">
-    <div class="version">Module discussion BBbear — V4.02 TTS robuste</div>
+    <div class="version">Module discussion BBbear — V4.03 diagnostic propre</div>
     <div id="talkShell" class="talk-shell idle">
       <div class="talk-head">
         <div class="talk-topline">
@@ -52,6 +52,7 @@ const DEFAULT_TIMEOUT_MS=120000;
 const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
 let token='',apiUrl='',username='',childName='',bearName='BB Burkina Bear',dashboard=null;
 const $=id=>document.getElementById(id);
+const TALK_PAGE_VERSION='V4.03_TALK_DIAG_CLEAN_2026_05_29';
 
 const GEMINI_TTS_MODEL='gemini-3.1-flash-tts-preview';
 const GEMINI_VOICE_NAME='Kore';
@@ -61,7 +62,18 @@ const GEMINI_TTS_VOICE_STORE='BBBEAR_GEMINI_TTS_VOICE';
 const GEMINI_TTS_STYLE_STORE='BBBEAR_GEMINI_TTS_STYLE';
 
 window.addEventListener('load',init);
+function clearLegacyGithubDiagnostics_(){
+  // Nettoie les anciennes clés de l’ancienne interface GitHub complète.
+  // Ces clés pouvaient déclencher un faux diagnostic 'Connexion / Identifiants incorrects'.
+  ['BBBEAR_REMEMBER_GITHUB_V334','BBBEAR_TOKEN_GITHUB_V334','bbbear_remembered_access','bbbear_token'].forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});
+}
+function resetDiagnostic_(){
+  const box=$('diagnostic');
+  if(box)box.textContent='Diagnostic session '+TALK_PAGE_VERSION+' démarré. Les anciens messages de connexion GitHub sont ignorés.';
+}
 function init(){
+  clearLegacyGithubDiagnostics_();
+  resetDiagnostic_();
   const params=parseHash();
   token=params.token||'';
   apiUrl=params.apiUrl||params.api||'';
@@ -76,6 +88,7 @@ function init(){
     return;
   }
   setStatus('Discussion connectée à BBbear.');
+  runStartupDiagnostics_();
   refreshMe().catch(e=>diag('Chargement profil',e.message||String(e)));
   runTtsDebug().catch(()=>{});
 }
@@ -84,12 +97,13 @@ function setStatus(t){$('statusBox').textContent=t}
 function showLoader(t){$('loaderText').textContent=t||'Chargement...';$('loader').classList.add('show')}
 function hideLoader(){$('loader').classList.remove('show')}
 function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2500)}
-function diag(t,o){$('diagnostic').textContent=($('diagnostic').textContent==='Aucune erreur.'?'':$('diagnostic').textContent+'\n\n')+'--- '+t+' ---\n'+(typeof o==='string'?o:JSON.stringify(o,null,2))}
+function diag(t,o){const box=$('diagnostic');const current=box.textContent||'';const prefix=(current&&current!=='Aucune erreur.')?current+'\n\n':'';box.textContent=prefix+'--- '+t+' ---\n'+(typeof o==='string'?o:JSON.stringify(o,null,2))}
 function setTalkState(state,bearText,userText){const shell=$('talkShell');if(shell){shell.classList.remove('idle','listening','thinking');shell.classList.add(state||'idle')}if(bearText!=null)$('talkBearText').textContent=bearText;if(userText!=null)$('talkUserText').textContent=userText}
 function addBubble(c,t){const d=document.createElement('div');d.className='bubble '+c;d.textContent=t;$('chatBox').appendChild(d)}
 
 function callServer(fn,...args){
   const map={
+    clientPing:{api:'ping',keys:[]},
     clientMe:{api:'me',keys:['token']},
     clientAsk:{api:'ask',keys:['token','q','moduleCode']},
     clientTts:{api:'tts',keys:['token','text','voiceName','model','style']},
@@ -108,7 +122,7 @@ function jsonpRequest(params){
     const timer=setTimeout(()=>{cleanup();reject(new Error('Temps d’attente dépassé vers BBbear après 120 secondes.'))},DEFAULT_TIMEOUT_MS);
     function cleanup(){clearTimeout(timer);if(script.parentNode)script.parentNode.removeChild(script);try{delete window[cb]}catch(e){window[cb]=undefined}}
     window[cb]=data=>{cleanup();resolve(data)};
-    script.onerror=()=>{cleanup();reject(new Error('Erreur JSONP vers Apps Script. Vérifie BBBEAR_APP_URL.'))};
+    script.onerror=()=>{cleanup();reject(new Error('Erreur JSONP vers Apps Script. Vérifie BBBEAR_APP_URL. api='+(params&&params.api?params.api:'?')))};
     const q=new URLSearchParams();
     Object.keys(params||{}).forEach(k=>q.set(k,params[k]));
     q.set('callback',cb);
@@ -116,6 +130,21 @@ function jsonpRequest(params){
     document.body.appendChild(script);
   });
 }
+async function runStartupDiagnostics_(){
+  diag('Diagnostic local GitHub',{pageVersion:TALK_PAGE_VERSION,pageUrl:location.href.split('#')[0],tokenPresent:!!token,tokenLength:String(token||'').length,apiUrlPresent:!!apiUrl,apiUrl:maskUrl_(apiUrl),online:navigator.onLine,secureContext:window.isSecureContext,startedAt:new Date().toISOString()});
+  try{
+    const ping=await callServer('clientPing');
+    diag('Ping BBbear',ping);
+    const version=String((ping&&ping.backendVersion)||'');
+    if(version.indexOf('V4.02')===-1&&version.indexOf('V4.03')===-1){
+      diag('Action requise','Le backend utilisé par cette page est encore '+(version||'inconnu')+'. Pour api=ttsDebug et le correctif TTS, remplace Code.gs par V4.03 puis redéploie en nouvelle version.');
+    }
+  }catch(e){
+    diag('Ping BBbear impossible',(e&&e.message)||String(e));
+  }
+}
+function maskUrl_(url){url=String(url||'');if(url.length<80)return url;return url.substring(0,58)+'...'+url.substring(url.length-18);}
+
 async function refreshMe(){
   const res=await callServer('clientMe',token);
   if(res&&res.ok){dashboard=res.dashboard||{};updateBatteryFromUsage();const u=res.user||{};childName=u.NomEnfant||childName;bearName=u.NomNounours||bearName;setStatus('Connecté : '+(childName||u.Username||username||'utilisateur')+' · '+bearName)}
@@ -150,7 +179,7 @@ function startMicro(){
   setTalkState('listening','Le nounours écoute...','Parle maintenant.');
   showLoader('J’écoute...');
   r.onresult=e=>{const t=e.results[0][0].transcript||'';$('messageText').value=t;hideLoader();sendText(t)};
-  r.onerror=e=>{hideLoader();diag('Micro',e.error);toast('Erreur micro');setTalkState('idle','Je n’ai pas bien entendu.','Réessaie avec le micro ou le clavier.')};
+  r.onerror=e=>{hideLoader();const err=e&&e.error?e.error:'';if(err==='no-speech'){toast('Je n’ai rien entendu. Réessaie en parlant plus près du micro.');setTalkState('idle','Je n’ai pas entendu de voix.','Réessaie avec le micro ou écris ton message.');return;}diag('Micro',err||'Erreur micro');toast('Erreur micro');setTalkState('idle','Je n’ai pas bien entendu.','Réessaie avec le micro ou le clavier.')};
   r.onend=()=>hideLoader();
   try{r.start()}catch(e){hideLoader();diag('Micro',e.message);setTalkState('idle','Le micro ne peut pas démarrer.','Réessaie encore.')}
 }
@@ -204,7 +233,7 @@ async function runTtsDebug(){
     const res=await callServer('clientTtsDebug',token,'Bonjour. Ceci est un test de voix naturelle pour BB Burkina Bear.',getGeminiVoiceName(),getGeminiTtsModel(),getGeminiTtsStyle());
     diag('Auto diagnostic TTS',res);
   }catch(e){
-    diag('Auto diagnostic TTS impossible',(e&&e.message)||String(e));
+    diag('Auto diagnostic TTS impossible',((e&&e.message)||String(e))+' — Si le ping indique V4.00 ou V4.01, le backend n’a pas encore la route api=ttsDebug.');
   }
 }
 try{if(window.speechSynthesis){speechSynthesis.onvoiceschanged=function(){getBestFrenchBrowserVoice();};}}catch(e){}

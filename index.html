@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>BB Burkina Bear V4.02 - Discussion diagnostic corrigé</title>
+  <title>BB Burkina Bear - Discussion</title>
   <style>
     :root{--blue:#58a6d7;--cream:#fffaf1;--sand:#f6e7bd;--green:#23d400;--red:#b71e1e;--text:#24170e;--line:#d9c6ac;--shadow:0 14px 34px rgba(40,22,10,.18)}
     *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,sans-serif;background:#fff;color:var(--text);display:flex;justify-content:center;padding:24px 0}.phone{width:min(96vw,720px);min-height:calc(100vh - 48px);background:var(--blue);padding:0 0 28px;box-shadow:var(--shadow);border-radius:34px;overflow:hidden}.hud{display:flex;align-items:center;gap:12px;margin:16px 16px 12px}.hud-btn{width:56px;height:56px;border-radius:14px;border:0;background:#fff;color:#111;font-size:34px;font-weight:900;box-shadow:0 5px 0 #111;display:flex;align-items:center;justify-content:center;cursor:pointer}.hud-close{background:#b91f1f;color:#fff;border-radius:50%;box-shadow:0 5px 0 #111}.battery{flex:1;height:45px;border:5px solid #111;background:#fff;padding:4px;display:flex;gap:3px;position:relative}.battery:after{content:'';position:absolute;right:-15px;top:10px;width:10px;height:18px;background:#111}.battery-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#111;text-shadow:0 1px 0 #fff;pointer-events:none}.bat-seg{flex:1;background:#e2e2e2}.bat-seg.on{background:#18d900}.bat-seg.low{background:#ffbb21}.bat-seg.critical{background:#e93a2b}.sound{font-size:26px;margin-left:6px}.panel{background:var(--blue);border-radius:0;min-height:calc(100vh - 116px);padding:18px;position:relative;overflow:hidden}.version{background:#fff3cd;border:1px solid #d8b547;border-radius:12px;padding:8px 10px;margin-bottom:10px;font-weight:900;text-align:center;color:#5b4300}.muted{color:#6e6257;line-height:1.45}.hidden{display:none!important}
@@ -21,7 +21,7 @@
 <div class="phone">
   <div class="hud"><button class="hud-btn" onclick="window.close()">⌂</button><div id="battery" class="battery"></div><div class="sound">🔊</div><button class="hud-btn hud-close" onclick="window.close()">×</button></div>
   <div class="panel">
-    <div class="version">Module discussion BBbear V4.02 — Diagnostic corrigé</div>
+    <div class="version">Module discussion BBbear — V4.02 TTS robuste</div>
     <div id="talkShell" class="talk-shell idle">
       <div class="talk-head">
         <div class="talk-topline">
@@ -43,9 +43,6 @@
       <div id="chatBox" class="chat"><div class="bubble bot">Je t’écoute.</div></div>
     </div>
     <div class="status" id="statusBox">Initialisation...</div>
-    <button class="btn blue small" onclick="runConnectionDiagnostic()">DIAGNOSTIC CONNEXION</button>
-    <button class="btn green small" onclick="runTtsDiagnostic()">DIAGNOSTIC VOIX KORE</button>
-    <button class="btn gray small" onclick="clearDiagnostic()">EFFACER DIAGNOSTIC</button>
     <div class="diag"><strong>Diagnostic :</strong><pre id="diagnostic">Aucune erreur.</pre></div>
   </div>
 </div>
@@ -80,6 +77,7 @@ function init(){
   }
   setStatus('Discussion connectée à BBbear.');
   refreshMe().catch(e=>diag('Chargement profil',e.message||String(e)));
+  runTtsDebug().catch(()=>{});
 }
 function parseHash(){const h=(location.hash||'').replace(/^#/,'');const p=new URLSearchParams(h);const o={};p.forEach((v,k)=>o[k]=v);return o}
 function setStatus(t){$('statusBox').textContent=t}
@@ -92,11 +90,10 @@ function addBubble(c,t){const d=document.createElement('div');d.className='bubbl
 
 function callServer(fn,...args){
   const map={
-    clientPing:{api:'ping',keys:[]},
-    clientTtsDebug:{api:'ttsDebug',keys:['token','text','voiceName','model','style','includeAudio']},
     clientMe:{api:'me',keys:['token']},
     clientAsk:{api:'ask',keys:['token','q','moduleCode']},
-    clientTts:{api:'tts',keys:['token','text','voiceName','model','style']}
+    clientTts:{api:'tts',keys:['token','text','voiceName','model','style']},
+    clientTtsDebug:{api:'ttsDebug',keys:['token','text','voiceName','model','style']}
   };
   const cfg=map[fn];
   if(!cfg)return Promise.reject(new Error('API discussion non configurée : '+fn));
@@ -108,92 +105,16 @@ function jsonpRequest(params){
   return new Promise((resolve,reject)=>{
     const cb='bbbear_talk_cb_'+Date.now()+'_'+Math.floor(Math.random()*1000000);
     const script=document.createElement('script');
-    const startedAt=Date.now();
+    const timer=setTimeout(()=>{cleanup();reject(new Error('Temps d’attente dépassé vers BBbear après 120 secondes.'))},DEFAULT_TIMEOUT_MS);
+    function cleanup(){clearTimeout(timer);if(script.parentNode)script.parentNode.removeChild(script);try{delete window[cb]}catch(e){window[cb]=undefined}}
+    window[cb]=data=>{cleanup();resolve(data)};
+    script.onerror=()=>{cleanup();reject(new Error('Erreur JSONP vers Apps Script. Vérifie BBBEAR_APP_URL.'))};
     const q=new URLSearchParams();
-
     Object.keys(params||{}).forEach(k=>q.set(k,params[k]));
     q.set('callback',cb);
-
-    const src=apiUrl+(apiUrl.includes('?')?'&':'?')+q.toString();
-    const timer=setTimeout(()=>{
-      cleanup();
-      reject(new Error('JSONP_TIMEOUT api='+(params.api||'-')+' elapsedMs='+(Date.now()-startedAt)+' urlLength='+src.length+' apiUrl='+maskUrl(apiUrl)));
-    },DEFAULT_TIMEOUT_MS);
-
-    function cleanup(){
-      clearTimeout(timer);
-      if(script.parentNode)script.parentNode.removeChild(script);
-      try{delete window[cb]}catch(e){window[cb]=undefined}
-    }
-
-    window[cb]=data=>{
-      cleanup();
-      if(data&&data.backendVersion)diag('Backend version',data.backendVersion);
-      resolve(data);
-    };
-
-    script.onerror=()=>{
-      cleanup();
-      reject(new Error('JSONP_SCRIPT_ERROR api='+(params.api||'-')+' urlLength='+src.length+' online='+navigator.onLine+' apiUrl='+maskUrl(apiUrl)+' srcStart='+src.substring(0,220)));
-    };
-
-    script.src=src;
+    script.src=apiUrl+(apiUrl.includes('?')?'&':'?')+q.toString();
     document.body.appendChild(script);
   });
-}
-function maskUrl(url){
-  url=String(url||'');
-  if(!url)return '';
-  return url.length>90 ? url.substring(0,55)+'...'+url.substring(url.length-18) : url;
-}
-function clearDiagnostic(){
-  $('diagnostic').textContent='Aucune erreur.';
-}
-async function runConnectionDiagnostic(){
-  showLoader('Diagnostic connexion...');
-  const info={
-    pageUrl: location.href.split('#')[0],
-    tokenPresent: !!token,
-    tokenLength: token ? token.length : 0,
-    apiUrlPresent: !!apiUrl,
-    apiUrl: maskUrl(apiUrl),
-    online: navigator.onLine,
-    secureContext: window.isSecureContext,
-    userAgent: navigator.userAgent,
-    startedAt: new Date().toISOString()
-  };
-  diag('Diagnostic local GitHub',info);
-  try{
-    const ping=await callServer('clientPing');
-    diag('Ping BBbear',ping);
-    if(ping&&ping.ok)toast('Connexion BBbear OK');
-    else toast('Ping reçu mais non OK');
-  }catch(e){
-    diag('Erreur ping BBbear',e.message||String(e));
-    toast('Connexion BBbear échouée');
-  }finally{
-    hideLoader();
-  }
-}
-async function runTtsDiagnostic(){
-  showLoader('Diagnostic voix Kore...');
-  const text='Bonjour, ceci est un test court de la voix Kore.';
-  try{
-    const res=await callServer('clientTtsDebug',token,text,getGeminiVoiceName(),getGeminiTtsModel(),getGeminiTtsStyle(),'0');
-    diag('Diagnostic TTS Kore',res);
-    if(res&&res.ok){
-      toast('TTS Gemini OK. Test audio en cours.');
-      const audio=await generateGeminiTtsServer(text,getGeminiVoiceName(),getGeminiTtsModel());
-      await playGeminiAudio(audio.base64,audio.mimeType);
-    }else{
-      toast('TTS Gemini non OK. Voir diagnostic.');
-    }
-  }catch(e){
-    diag('Erreur diagnostic TTS',e.message||String(e));
-    toast('Diagnostic TTS échoué');
-  }finally{
-    hideLoader();
-  }
 }
 async function refreshMe(){
   const res=await callServer('clientMe',token);
@@ -238,40 +159,55 @@ async function speak(t){
   stopAllAudio();
   setBearTalking(true);
   try{
-    const audio=await generateGeminiTtsServer(t,getGeminiVoiceName(),getGeminiTtsModel());
-    diag('Gemini TTS OK',{model:audio.model||getGeminiTtsModel(),voiceName:audio.voiceName||getGeminiVoiceName(),mimeType:audio.mimeType,base64Length:String(audio.base64||'').length});
+    const textForVoice=cleanTextForVoice(t);
+    const audio=await generateGeminiTtsServer(textForVoice,getGeminiVoiceName(),getGeminiTtsModel());
+    diag('Gemini TTS OK',{model:audio.model,voiceName:audio.voiceName,mimeType:audio.mimeType,attempts:audio.attempts||[]});
     await playGeminiAudio(audio.base64,audio.mimeType);
   }catch(e){
-    diag('Gemini TTS', e.message||String(e));
-    try{
-      const debug=await callServer('clientTtsDebug',token,'Test court Kore',getGeminiVoiceName(),getGeminiTtsModel(),getGeminiTtsStyle(),'0');
-      diag('Auto diagnostic TTS après échec',debug);
-    }catch(debugErr){
-      diag('Auto diagnostic TTS impossible',debugErr.message||String(debugErr));
-    }
+    diag('Gemini TTS', (e&&e.message)||String(e));
+    diag('Voix de secours navigateur','Gemini TTS n’a pas renvoyé un audio jouable. La meilleure voix française disponible dans ce navigateur est utilisée.');
     browserSpeakFallback(t);
   }
 }
 function stopAllAudio(){try{speechSynthesis&&speechSynthesis.cancel()}catch(e){}if(window.__bbbearAudio){try{window.__bbbearAudio.pause()}catch(e){}window.__bbbearAudio=null}}
 function setBearTalking(isTalking){document.querySelectorAll('.bear-box').forEach(x=>x.classList.toggle('talking',!!isTalking))}
+function cleanTextForVoice(t){t=String(t||'').replace(/[\r\n]+/g,'. ').replace(/[*_#>`~]/g,' ').replace(/\s+/g,' ').trim();if(t.length>850)t=t.substring(0,850)+'...';return t}
+function getBestFrenchBrowserVoice(){
+  if(!window.speechSynthesis)return null;
+  const voices=speechSynthesis.getVoices()||[];
+  const fr=voices.filter(v=>String(v.lang||'').toLowerCase().indexOf('fr')===0);
+  const pref=['google français','google french','microsoft denise','microsoft henri','hortense','thomas','amelie','audrey','aurelie'];
+  for(const key of pref){const v=fr.find(x=>String(x.name||'').toLowerCase().includes(key));if(v)return v;}
+  return fr[0]||voices[0]||null;
+}
 function browserSpeakFallback(t){
-  diag('Voix de secours navigateur','La voix par défaut est utilisée parce que Gemini TTS n’a pas renvoyé un audio jouable.');
   if(!speechSynthesis||!t){setBearTalking(false);return}
   speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(t);
+  const u=new SpeechSynthesisUtterance(cleanTextForVoice(t));
+  const v=getBestFrenchBrowserVoice();
   u.lang='fr-FR';
-  u.rate=.95;
+  if(v)u.voice=v;
+  u.rate=.88;
+  u.pitch=1.08;
+  u.volume=1;
   u.onend=()=>setBearTalking(false);
   u.onerror=()=>setBearTalking(false);
-  speechSynthesis.speak(u)
+  speechSynthesis.speak(u);
 }
 async function generateGeminiTtsServer(text,voiceName,modelName){
   const res=await callServer('clientTts',token,String(text||''),voiceName||getGeminiVoiceName(),modelName||getGeminiTtsModel(),getGeminiTtsStyle());
-  if(!res||!res.ok){
-    throw new Error((res&&res.message?res.message:'Erreur TTS serveur.')+' | backend='+(res&&res.backendVersion?res.backendVersion:'?'));
-  }
+  if(!res||!res.ok)throw new Error((res&&res.message)?res.message:'Erreur TTS serveur.');
   return{base64:res.audioBase64||res.base64,mimeType:res.mimeType||'audio/l16; rate=24000; channels=1',model:res.model,voiceName:res.voiceName,attempts:res.attempts||[]}
 }
+async function runTtsDebug(){
+  try{
+    const res=await callServer('clientTtsDebug',token,'Bonjour. Ceci est un test de voix naturelle pour BB Burkina Bear.',getGeminiVoiceName(),getGeminiTtsModel(),getGeminiTtsStyle());
+    diag('Auto diagnostic TTS',res);
+  }catch(e){
+    diag('Auto diagnostic TTS impossible',(e&&e.message)||String(e));
+  }
+}
+try{if(window.speechSynthesis){speechSynthesis.onvoiceschanged=function(){getBestFrenchBrowserVoice();};}}catch(e){}
 async function playGeminiAudio(base64Audio,mimeType){if(!base64Audio)throw new Error('Audio Gemini vide.');let blob;if(String(mimeType||'').toLowerCase().includes('wav')){const bytes=base64ToUint8Array(base64Audio);blob=new Blob([bytes],{type:'audio/wav'})}else{const pcmBytes=base64ToUint8Array(base64Audio);blob=pcm16ToWavBlob(pcmBytes,extractSampleRate(mimeType)||24000,1)}const url=URL.createObjectURL(blob);const audio=new Audio(url);window.__bbbearAudio=audio;audio.onended=()=>{setBearTalking(false);URL.revokeObjectURL(url)};audio.onerror=()=>{setBearTalking(false);URL.revokeObjectURL(url)};await audio.play()}
 function base64ToUint8Array(base64){const binary=atob(base64);const len=binary.length;const bytes=new Uint8Array(len);for(let i=0;i<len;i++)bytes[i]=binary.charCodeAt(i);return bytes}
 function extractSampleRate(mimeType){const m=String(mimeType||'').match(/rate=(\d+)/i);return m?Number(m[1]):null}

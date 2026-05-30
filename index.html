@@ -52,10 +52,10 @@ const DEFAULT_TIMEOUT_MS=120000;
 const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
 let token='',apiUrl='',username='',childName='',bearName='BB Burkina Bear',dashboard=null;
 const $=id=>document.getElementById(id);
-const TALK_PAGE_VERSION='V4.05_TALK_AUTO_URL_2026_05_30';
+const TALK_PAGE_VERSION='V4.05A_TALK_AUTO_URL_VOICE_SYNC_2026_05_30';
 
 const GEMINI_TTS_MODEL='gemini-3.1-flash-tts-preview';
-const GEMINI_VOICE_NAME='Kore';
+const GEMINI_VOICE_NAME='Algieba';
 const GEMINI_TTS_STYLE_PROMPT='[warmly, gently, natural pace] Lis le texte en français avec une voix vivante, douce, claire, rassurante et naturelle. Fais des pauses naturelles. Ne récite pas comme un robot.';
 const GEMINI_TTS_MODEL_STORE='BBBEAR_GEMINI_TTS_MODEL';
 const GEMINI_TTS_VOICE_STORE='BBBEAR_GEMINI_TTS_VOICE';
@@ -71,10 +71,30 @@ function resetDiagnostic_(){
   const box=$('diagnostic');
   if(box)box.textContent='Diagnostic session '+TALK_PAGE_VERSION+' démarré. Les anciens messages de connexion GitHub sont ignorés.';
 }
+
+function syncVoiceSettingsFromHash_(params){
+  params = params || {};
+  const voiceName = params.voiceName || params.voice || '';
+  const ttsModel = params.ttsModel || params.model || '';
+  const ttsStyle = params.ttsStyle || params.style || '';
+
+  try{
+    if(voiceName) localStorage.setItem(GEMINI_TTS_VOICE_STORE, voiceName);
+    if(ttsModel) localStorage.setItem(GEMINI_TTS_MODEL_STORE, ttsModel);
+    if(ttsStyle) localStorage.setItem(GEMINI_TTS_STYLE_STORE, ttsStyle);
+  }catch(e){}
+}
+
 function init(){
   clearLegacyGithubDiagnostics_();
   resetDiagnostic_();
   const params=parseHash();
+
+  // V4.05A — Reçoit la voix choisie depuis l’interface Apps Script principale.
+  // Les deux pages sont sur des domaines différents : leur localStorage n’est pas partagé.
+  // On copie donc les paramètres transmis dans l’ancre #... vers le localStorage GitHub.
+  syncVoiceSettingsFromHash_(params);
+
   token=params.token||'';
   apiUrl=params.apiUrl||params.api||'';
   username=params.username||'';

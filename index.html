@@ -14,27 +14,25 @@
     button{cursor:pointer;border:0;font-weight:900;transition:transform .08s,filter .15s}.btn{width:100%;min-height:58px;border-radius:999px;color:#fff;font-size:21px;text-transform:uppercase;text-shadow:0 2px 0 rgba(0,0,0,.24);border:3px solid rgba(255,255,255,.8);box-shadow:0 7px 0 #5c3a1f,0 12px 20px rgba(0,0,0,.16),inset 0 12px 0 rgba(255,255,255,.25);margin:9px 0}.green{background:linear-gradient(#9bf442,#45ad12)}.blue{background:linear-gradient(#54d1ff,#168cb9)}.red{background:linear-gradient(#ff6359,#c91f1f)}.yellow{background:linear-gradient(#ffe56b,#d99a04)}.gray{background:linear-gradient(#9fa8ad,#65727a);color:#2d363c;text-shadow:none}.small{font-size:15px;min-height:46px;border-radius:18px}
     .status{background:#f6ebd3;border:1px solid #d5bd98;border-radius:16px;padding:12px;text-align:left;color:#5a3b1e;font-size:14px;line-height:1.45;margin:10px 0}.chat{display:none}.bubble{padding:10px 12px;border-radius:16px;margin:7px 0;line-height:1.45}.me{background:#e6f5dd}.bot{background:#f3dfbf}.talk-shell{display:grid;gap:18px}.talk-head{background:#ececec;border-radius:34px;padding:18px;position:relative;overflow:hidden}.talk-topline{display:flex;justify-content:space-between;align-items:flex-start;gap:22px}.talk-bear .bear-box{width:160px;height:160px;margin:0;border-radius:22px;background:transparent;border:0;box-shadow:none}.talk-bear .peluche{transform:scale(.88);transform-origin:left top}.talk-thought{width:220px;min-height:128px;border-radius:24px;background:#d7d2c7;display:none;align-items:center;justify-content:center;position:relative;flex-shrink:0;margin-left:26px}.talk-thought .gear{font-size:54px;line-height:1;display:inline-block;animation:gearSpin 1.7s linear infinite}.talk-thought .gear.small{font-size:44px;margin-left:-8px;animation-duration:1.1s}.talk-thought:before,.talk-thought:after{content:'';position:absolute;border-radius:50%;background:#d7d2c7}.talk-thought:before{width:30px;height:30px;left:-42px;top:46px}.talk-thought:after{width:18px;height:18px;left:-66px;top:76px}.talk-pill{min-height:62px;border-radius:999px;padding:18px 26px;display:flex;align-items:center;font-size:16px;font-weight:800;line-height:1.35;color:#5c4a37;overflow:hidden}.talk-pill:empty{display:none}.talk-pill.bear{background:#efe2b5;margin-top:18px}.talk-pill.user{background:#d8e8f5;margin:18px 28px 0 28px}.compose-wrap{margin-top:18px;background:#f6f4ef;border:2px solid #d5b08b;border-radius:30px;padding:18px;display:grid;grid-template-columns:minmax(0,1fr) 114px;gap:16px}.compose-wrap textarea{min-height:220px;border:0;background:transparent;padding:0;margin:0;font-size:17px;resize:none}.compose-wrap textarea:focus{outline:none}.compose-actions{display:grid;gap:16px;align-content:center}.compose-icon{width:100%;height:112px;background:#ffd100;border:8px solid #000;border-radius:26px;display:flex;align-items:center;justify-content:center;font-size:54px;font-weight:900;box-shadow:0 6px 0 rgba(0,0,0,.18)}.compose-icon.mic{font-size:52px}.talk-shell.listening .compose-icon.mic{animation:micPulse .9s infinite}.talk-shell.thinking .talk-thought{display:flex}.talk-shell.thinking .talk-bear .peluche{animation:thinkBob 1.4s infinite ease-in-out}.talk-shell.listening .talk-user{box-shadow:0 0 0 5px rgba(84,209,255,.22)}@keyframes gearSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}@keyframes micPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}@keyframes thinkBob{0%,100%{transform:scale(.88) translateY(0)}50%{transform:scale(.88) translateY(-4px)}}
     .loader{position:fixed;inset:0;background:rgba(0,0,0,.34);display:none;align-items:center;justify-content:center;z-index:30}.loader.show{display:flex}.loader-card{background:#fff6e8;border-radius:24px;padding:24px;text-align:center;box-shadow:var(--shadow)}.spinner{width:58px;height:58px;border-radius:50%;border:7px solid #e2c69c;border-top-color:#5a3b1e;margin:0 auto 12px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}pre{background:#111;color:#eee;border-radius:12px;padding:12px;max-height:220px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-size:12px;text-align:left}.diag{margin-top:14px}.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#3b2615;color:#fff;padding:12px 15px;border-radius:14px;z-index:50;display:none}.toast.show{display:block}
-    @media(max-width:420px){body{padding:10px 0}.phone{padding:0;width:min(96vw,720px);min-height:calc(100vh - 20px);border-radius:24px}.panel{padding:14px}.hud-btn{width:46px;height:46px;font-size:26px}.battery{height:36px}.talk-topline{display:block}.talk-thought{width:100%;margin:10px 0 0 0}.compose-wrap{grid-template-columns:1fr}.compose-actions{grid-template-columns:1fr 1fr;align-content:initial}.compose-icon{height:86px}}
-  
-    /* V4.05D — mobile, bulle rapprochée, yeux, synchro visuelle */
-    .peluche .oeil{transition:height .15s,top .15s,transform .15s;transform-origin:center center}body:not(.bb-listening) .peluche .oeil{animation:bbBlink 4s infinite}.talk-shell.listening .oeil,.bb-listening .oeil{height:24px;top:61px;box-shadow:0 0 0 4px rgba(84,209,255,.18)}@keyframes bbBlink{0%,92%,100%{height:16px;transform:scaleY(1)}94%,96%{height:3px;transform:scaleY(.25)}}
-    .talk-topline{align-items:center}.talk-thought{flex-direction:column;gap:5px;padding:10px 12px;margin-left:4px}.talk-thought .thought-label{font-size:14px;font-weight:900;line-height:1.2;text-align:center;color:#4d4035}.talk-thought:before{left:-24px;top:58px}.talk-thought:after{left:-42px;top:82px}
-    @media(max-width:640px){body{padding:0;background:#58a6d7}.phone{width:100vw;min-height:100dvh;border-radius:0;box-shadow:none}.hud{margin:8px 10px}.panel{min-height:calc(100dvh - 62px);padding:10px 10px 158px;overflow:visible}.version{font-size:12px;padding:6px}.talk-head{padding:12px;border-radius:24px}.talk-topline{display:flex;gap:6px;align-items:center}.talk-bear .bear-box{width:128px;height:128px}.talk-bear .peluche{transform:scale(.72);transform-origin:left top}.talk-shell.thinking .talk-bear .peluche{animation:thinkBobMobile 1.4s infinite ease-in-out}.talk-thought{width:calc(100% - 138px);min-height:96px;margin:0;border-radius:22px}.talk-thought .gear{font-size:38px}.talk-thought .gear.small{font-size:30px}.talk-thought:before{width:18px;height:18px;left:-14px;top:54px}.talk-thought:after{width:11px;height:11px;left:-26px;top:74px}.talk-pill{min-height:42px;padding:11px 14px;font-size:14px}.talk-pill.bear{margin-top:10px}.talk-pill.user{margin:10px 0 0}.compose-wrap{position:fixed;left:10px;right:10px;bottom:10px;z-index:80;margin:0;grid-template-columns:minmax(0,1fr) 132px;gap:8px;padding:10px;border-radius:22px;box-shadow:0 10px 30px rgba(0,0,0,.22)}.compose-wrap textarea{min-height:70px;max-height:98px;font-size:16px}.compose-actions{grid-template-columns:1fr 1fr;gap:8px;align-content:stretch}.compose-icon{height:70px;border-width:5px;border-radius:18px;font-size:36px}.compose-icon.mic{font-size:34px}.status.diag{max-height:160px;overflow:auto}}@keyframes thinkBobMobile{0%,100%{transform:scale(.72) translateY(0)}50%{transform:scale(.72) translateY(-4px)}}
 
+    .thought-text{display:block;width:100%;text-align:center;font-weight:900;color:#4d463b;margin-bottom:8px;font-size:15px}.talk-thought{flex-direction:column}.talk-shell.idle .oeil{animation:eyeBlink 4s infinite}.talk-shell.listening .oeil{transform:scale(1.25);box-shadow:0 0 0 4px rgba(84,209,255,.25)}.talk-shell.listening .peluche{animation:listenPulse 1.1s infinite ease-in-out}@keyframes eyeBlink{0%,92%,100%{transform:scaleY(1)}94%,96%{transform:scaleY(.12)}}@keyframes listenPulse{0%,100%{transform:scale(.88) translateY(0)}50%{transform:scale(.90) translateY(-2px)}}
+    @media(max-width:640px){body{padding:0}.phone{width:100vw;min-height:100vh;border-radius:0}.panel{min-height:calc(100vh - 70px);padding:12px 12px 172px}.hud{margin:10px 10px 8px}.hud-btn{width:46px;height:46px;font-size:26px}.battery{height:36px}.talk-head{padding:12px 12px 168px}.talk-topline{display:grid;grid-template-columns:118px minmax(0,1fr);gap:4px;align-items:start}.talk-bear .bear-box{width:126px;height:126px}.talk-bear .peluche{transform:scale(.68);transform-origin:left top}.talk-thought{width:auto;min-height:94px;margin:2px 0 0 -8px;border-radius:22px}.talk-thought:before{width:20px;height:20px;left:-18px;top:38px}.talk-thought:after{width:12px;height:12px;left:-32px;top:58px}.talk-thought .gear{font-size:38px}.talk-thought .gear.small{font-size:30px}.compose-wrap{position:fixed;left:10px;right:10px;bottom:10px;z-index:28;margin:0;grid-template-columns:minmax(0,1fr) 128px;gap:10px;padding:12px;border-radius:24px;box-shadow:0 -10px 26px rgba(0,0,0,.18)}.compose-wrap textarea{min-height:72px;max-height:96px}.compose-actions{grid-template-columns:1fr 1fr;gap:8px}.compose-icon{height:72px;font-size:38px;border-width:5px;border-radius:20px}.talk-pill.user{margin:12px 0 0}.talk-pill.bear{margin-top:10px}.diag{display:none}.status{font-size:12px}}
+
+    @media(max-width:420px){body{padding:10px 0}.phone{padding:0;width:min(96vw,720px);min-height:calc(100vh - 20px);border-radius:24px}.panel{padding:14px}.hud-btn{width:46px;height:46px;font-size:26px}.battery{height:36px}.talk-topline{display:block}.talk-thought{width:100%;margin:10px 0 0 0}.compose-wrap{grid-template-columns:1fr}.compose-actions{grid-template-columns:1fr 1fr;align-content:initial}.compose-icon{height:86px}}
   </style>
 </head>
 <body>
 <div class="phone">
   <div class="hud"><button class="hud-btn" onclick="window.close()">⌂</button><div id="battery" class="battery"></div><div class="sound">🔊</div><button class="hud-btn hud-close" onclick="window.close()">×</button></div>
   <div class="panel">
-    <div class="version">Module discussion BBbear — V4.05D</div>
+    <div class="version">Module discussion BBbear — V4.05C</div>
     <div id="talkShell" class="talk-shell idle">
       <div class="talk-head">
         <div class="talk-topline">
           <div class="talk-bear">
             <div class="bear-box"><div class="peluche"><div class="oreille gauche"></div><div class="oreille droite"></div><div class="oeil gauche"></div><div class="oeil droite"></div><div class="museau"><div class="nez"></div><div class="bouche"></div></div></div></div>
           </div>
-          <div class="talk-thought"><div id="talkThoughtText" class="thought-label">Bobo réfléchit...</div><div><span class="gear">⚙</span><span class="gear small">⚙</span></div></div>
+          <div class="talk-thought"><span id="thoughtText" class="thought-text">Bobo réfléchit...</span><span class="gear">⚙</span><span class="gear small">⚙</span></div>
         </div>
         <div id="talkBearText" class="talk-pill bear">Le nounours est prêt à t’écouter.</div>
         <div id="talkUserText" class="talk-pill user talk-user">Appuie sur le micro ou écris ton message.</div>
@@ -58,7 +56,7 @@ const DEFAULT_TIMEOUT_MS=120000;
 const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
 let token='',apiUrl='',username='',childName='',bearName='BB Burkina Bear',dashboard=null;
 const $=id=>document.getElementById(id);
-const TALK_PAGE_VERSION='V4.05D_TALK_RESPONSIVE_AUDIO_SYNC_2026_05_30';
+const TALK_PAGE_VERSION='V4.05C_TALK_MOBILE_AUDIO_SYNC_2026_05_30';
 
 const GEMINI_TTS_MODEL='gemini-3.1-flash-tts-preview';
 const GEMINI_VOICE_NAME='Algieba';
@@ -124,7 +122,7 @@ function showLoader(t){$('loaderText').textContent=t||'Chargement...';$('loader'
 function hideLoader(){$('loader').classList.remove('show')}
 function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2500)}
 function diag(t,o){const box=$('diagnostic');const current=box.textContent||'';const prefix=(current&&current!=='Aucune erreur.')?current+'\n\n':'';box.textContent=prefix+'--- '+t+' ---\n'+(typeof o==='string'?o:JSON.stringify(o,null,2))}
-function setTalkState(state,bearText,userText){const shell=$('talkShell');if(shell){shell.classList.remove('idle','listening','thinking');shell.classList.add(state||'idle')}if(bearText!=null)$('talkBearText').textContent=bearText;if(userText!=null)$('talkUserText').textContent=userText}
+function setTalkState(state,bearText,userText){const shell=$('talkShell');if(shell){shell.classList.remove('idle','listening','thinking');shell.classList.add(state||'idle')}if(bearText!=null)$('talkBearText').textContent=bearText;if(userText!=null)$('talkUserText').textContent=userText;if($('thoughtText'))$('thoughtText').textContent=(bearName||'Bobo')+' réfléchit...'}
 function addBubble(c,t){const d=document.createElement('div');d.className='bubble '+c;d.textContent=t;$('chatBox').appendChild(d)}
 
 function callServer(fn,...args){
@@ -182,7 +180,8 @@ async function sendText(forceText){
   addBubble('me',txt);
   $('messageText').value='';
   setTalkState('thinking','',txt);
-  showLoader('BB réfléchit...');
+  if($('thoughtText'))$('thoughtText').textContent=(bearName||'Bobo')+' réfléchit...';
+  showLoader((bearName||'Bobo')+' réfléchit...');
   try{
     const res=await callServer('clientAsk',token,txt,'TALK');
     const finalRes=res&&res.result?res.result:res;
@@ -213,7 +212,7 @@ function startMicro(){
 async function speak(t){
   if(!t)return;
   stopAllAudio();
-  setBearTalking(true);
+  setBearTalking(false);
   try{
     const textForVoice=cleanTextForVoice(t);
     const audio=await generateGeminiTtsServer(textForVoice,getGeminiVoiceName(),getGeminiTtsModel());
@@ -248,6 +247,7 @@ function browserSpeakFallback(t){
   u.rate=.88;
   u.pitch=1.08;
   u.volume=1;
+  u.onstart=()=>setBearTalking(true);
   u.onend=()=>setBearTalking(false);
   u.onerror=()=>setBearTalking(false);
   speechSynthesis.speak(u);
@@ -266,7 +266,7 @@ async function runTtsDebug(){
   }
 }
 try{if(window.speechSynthesis){speechSynthesis.onvoiceschanged=function(){getBestFrenchBrowserVoice();};}}catch(e){}
-async function playGeminiAudio(base64Audio,mimeType){if(!base64Audio)throw new Error('Audio Gemini vide.');let blob;if(String(mimeType||'').toLowerCase().includes('wav')){const bytes=base64ToUint8Array(base64Audio);blob=new Blob([bytes],{type:'audio/wav'})}else{const pcmBytes=base64ToUint8Array(base64Audio);blob=pcm16ToWavBlob(pcmBytes,extractSampleRate(mimeType)||24000,1)}const url=URL.createObjectURL(blob);const audio=new Audio(url);window.__bbbearAudio=audio;audio.onended=()=>{setBearTalking(false);URL.revokeObjectURL(url)};audio.onerror=()=>{setBearTalking(false);URL.revokeObjectURL(url)};await audio.play()}
+async function playGeminiAudio(base64Audio,mimeType){if(!base64Audio)throw new Error('Audio Gemini vide.');let blob;if(String(mimeType||'').toLowerCase().includes('wav')){const bytes=base64ToUint8Array(base64Audio);blob=new Blob([bytes],{type:'audio/wav'})}else{const pcmBytes=base64ToUint8Array(base64Audio);blob=pcm16ToWavBlob(pcmBytes,extractSampleRate(mimeType)||24000,1)}const url=URL.createObjectURL(blob);const audio=new Audio(url);window.__bbbearAudio=audio;audio.onplaying=()=>setBearTalking(true);audio.onplay=()=>setBearTalking(true);audio.onended=()=>{setBearTalking(false);URL.revokeObjectURL(url)};audio.onerror=()=>{setBearTalking(false);URL.revokeObjectURL(url)};await audio.play()}
 function base64ToUint8Array(base64){const binary=atob(base64);const len=binary.length;const bytes=new Uint8Array(len);for(let i=0;i<len;i++)bytes[i]=binary.charCodeAt(i);return bytes}
 function extractSampleRate(mimeType){const m=String(mimeType||'').match(/rate=(\d+)/i);return m?Number(m[1]):null}
 function pcm16ToWavBlob(pcmBytes,sampleRate,channels){const bytesPerSample=2;const blockAlign=channels*bytesPerSample;const byteRate=sampleRate*blockAlign;const wavHeaderSize=44;const wavBuffer=new ArrayBuffer(wavHeaderSize+pcmBytes.length);const view=new DataView(wavBuffer);writeString(view,0,'RIFF');view.setUint32(4,36+pcmBytes.length,true);writeString(view,8,'WAVE');writeString(view,12,'fmt ');view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,channels,true);view.setUint32(24,sampleRate,true);view.setUint32(28,byteRate,true);view.setUint16(32,blockAlign,true);view.setUint16(34,16,true);writeString(view,36,'data');view.setUint32(40,pcmBytes.length,true);const wavBytes=new Uint8Array(wavBuffer);wavBytes.set(pcmBytes,wavHeaderSize);return new Blob([wavBytes],{type:'audio/wav'})}
@@ -277,58 +277,6 @@ function getGeminiTtsStyle(){return localStorage.getItem(GEMINI_TTS_STYLE_STORE)
 function updateBatteryFromUsage(){const u=dashboard?.usage||{};const remaining=Number(u.remaining??0);const limit=Number(u.limit??0);const ratio=limit>0?Math.max(0,Math.min(1,remaining/limit)):0;renderBatteryRatio(ratio,remaining,limit)}
 function renderBattery(p){renderBatteryRatio(Math.max(0,Math.min(1,Number(p||0)/100)),null,null)}
 function renderBatteryRatio(ratio,remaining,limit){const total=10;const lit=ratio<=0?0:Math.max(1,Math.ceil(ratio*total));let cls='on';if(ratio<=0.2)cls='critical';else if(ratio<=0.4)cls='low';const label=(remaining!=null&&limit!=null&&limit>0)?`${remaining}/${limit}`:`${Math.round(ratio*100)}%`;$('battery').innerHTML=Array.from({length:total},(_,i)=>'<span class="bat-seg '+(i<lit?cls:'')+'"></span>').join('')+'<span class="battery-label">'+label+'</span>'}
-
-
-/****************************************************
- * V4.05D — bulle de réflexion + bouche synchronisée à l'audio
- ****************************************************/
-function setTalkState(state,bearText,userText){
-  const shell=$('talkShell');
-  if(shell){shell.classList.remove('idle','listening','thinking');shell.classList.add(state||'idle')}
-  document.body.classList.toggle('bb-listening',state==='listening');
-  document.body.classList.toggle('bb-thinking',state==='thinking');
-  const thought=$('talkThoughtText');
-  if(thought)thought.textContent=state==='listening'?'Bobo écoute...':(state==='thinking'?'Bobo réfléchit...':'Bobo est prêt.');
-  if(bearText!=null)$('talkBearText').textContent=bearText;
-  if(userText!=null)$('talkUserText').textContent=userText;
-}
-async function sendText(forceText){
-  const txt=(forceText||$('messageText').value).trim();
-  if(!txt){toast('Écris un message');return}
-  addBubble('me',txt);$('messageText').value='';setTalkState('thinking','Bobo réfléchit...',txt);
-  try{
-    const res=await callServer('clientAsk',token,txt,'TALK');
-    const finalRes=res&&res.result?res.result:res;
-    if(!finalRes||!finalRes.ok){diag('Discussion',res);toast((finalRes&&finalRes.message)||'Erreur');setTalkState('idle','Je n’ai pas pu répondre pour le moment.',txt);return}
-    if(finalRes.usage){dashboard=dashboard||{};dashboard.usage=finalRes.usage;updateBatteryFromUsage()}
-    const repRaw=finalRes.reponse||finalRes.response||finalRes.answer||finalRes.message||'';
-    const rep=cleanBotReplyText(repRaw);
-    if(!rep){diag('Réponse vide',res);toast('Réponse vide. Voir diagnostic.');setTalkState('idle','Réponse vide reçue.',txt);return}
-    addBubble('bot',rep);setTalkState('idle',rep,txt);speak(rep);refreshMe().catch(()=>{});
-  }catch(e){diag('Erreur discussion',e.message||String(e));setTalkState('idle','Une erreur est survenue.',txt)}finally{hideLoader()}
-}
-function startMicro(){
-  if(!SpeechRecognition){toast('Micro indisponible. Utilise Chrome.');return}
-  const r=new SpeechRecognition();r.lang='fr-FR';r.continuous=false;r.interimResults=false;
-  setTalkState('listening','Bobo écoute...','Parle maintenant.');
-  r.onresult=e=>{const t=e.results[0][0].transcript||'';$('messageText').value=t;sendText(t)};
-  r.onerror=e=>{const err=e&&e.error?e.error:'';if(err==='no-speech'){toast('Je n’ai rien entendu. Réessaie en parlant plus près du micro.');setTalkState('idle','Je n’ai pas entendu de voix.','Réessaie avec le micro ou écris ton message.');return}diag('Micro',err||'Erreur micro');toast('Erreur micro');setTalkState('idle','Je n’ai pas bien entendu.','Réessaie avec le micro ou le clavier.')};
-  r.onend=()=>{if(document.body.classList.contains('bb-listening'))setTalkState('idle','Bobo est prêt à écouter.','Écris ou parle.')};
-  try{r.start()}catch(e){diag('Micro',e.message);setTalkState('idle','Le micro ne peut pas démarrer.','Réessaie encore.')}
-}
-async function speak(t){
-  if(!t)return;stopAllAudio();
-  try{const textForVoice=cleanTextForVoice(t);const audio=await generateGeminiTtsServer(textForVoice,getGeminiVoiceName(),getGeminiTtsModel());diag('Gemini TTS OK',{model:audio.model,voiceName:audio.voiceName,mimeType:audio.mimeType,policyVersion:audio.policyVersion||'',attempts:audio.attempts||[]});await playGeminiAudio(audio.base64,audio.mimeType)}catch(e){diag('Gemini TTS',(e&&e.message)||String(e));diag('Voix de secours navigateur','Gemini TTS n’a pas renvoyé un audio jouable. La meilleure voix française disponible dans ce navigateur est utilisée.');browserSpeakFallback(t)}
-}
-function stopAllAudio(){try{speechSynthesis&&speechSynthesis.cancel()}catch(e){}if(window.__bbbearAudio){try{window.__bbbearAudio.pause()}catch(e){}window.__bbbearAudio=null}setBearTalking(false)}
-function browserSpeakFallback(t){
-  if(!speechSynthesis||!t){setBearTalking(false);return}
-  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(cleanTextForVoice(t));const v=getBestFrenchBrowserVoice();u.lang='fr-FR';if(v)u.voice=v;u.rate=.88;u.pitch=1.08;u.volume=1;u.onstart=()=>setBearTalking(true);u.onend=()=>setBearTalking(false);u.onerror=()=>setBearTalking(false);speechSynthesis.speak(u);
-}
-async function playGeminiAudio(base64Audio,mimeType){
-  if(!base64Audio)throw new Error('Audio Gemini vide.');let blob;if(String(mimeType||'').toLowerCase().includes('wav')){const bytes=base64ToUint8Array(base64Audio);blob=new Blob([bytes],{type:'audio/wav'})}else{const pcmBytes=base64ToUint8Array(base64Audio);blob=pcm16ToWavBlob(pcmBytes,extractSampleRate(mimeType)||24000,1)}const url=URL.createObjectURL(blob);const audio=new Audio(url);window.__bbbearAudio=audio;audio.onplaying=()=>setBearTalking(true);audio.onended=()=>{setBearTalking(false);URL.revokeObjectURL(url)};audio.onerror=()=>{setBearTalking(false);URL.revokeObjectURL(url)};await audio.play();
-}
-
 </script>
 </body>
 </html>

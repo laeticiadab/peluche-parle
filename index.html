@@ -21,7 +21,7 @@
 <div class="phone">
   <div class="hud"><button class="hud-btn" onclick="window.close()">⌂</button><div id="battery" class="battery"></div><div class="sound">🔊</div><button class="hud-btn hud-close" onclick="window.close()">×</button></div>
   <div class="panel">
-    <div class="version">Module discussion BBbear — V4.05D</div>
+    <div class="version">Module discussion BBbear — V4.05F</div>
     <div id="talkShell" class="talk-shell idle">
       <div class="talk-head">
         <div class="talk-topline">
@@ -52,7 +52,7 @@ const DEFAULT_TIMEOUT_MS=120000;
 const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
 let token='',apiUrl='',username='',childName='',bearName='BB Burkina Bear',dashboard=null;
 const $=id=>document.getElementById(id);
-const TALK_PAGE_VERSION='V4.05D_TALK_SYNC_VOIX_QUIZ_FUSION_2026_05_30';
+const TALK_PAGE_VERSION='V4.05F_TALK_SYNC_VOIX_QUIZ_FUSION_2026_05_30';
 
 const GEMINI_TTS_MODEL='gemini-3.1-flash-tts-preview';
 const GEMINI_VOICE_NAME='Algieba';
@@ -90,7 +90,7 @@ function init(){
   resetDiagnostic_();
   const params=parseHash();
 
-  // V4.05D — Reçoit la voix choisie depuis l’interface Apps Script principale.
+  // V4.05F — Reçoit la voix choisie depuis l’interface Apps Script principale.
   // Les deux pages sont sur des domaines différents : leur localStorage n’est pas partagé.
   // On copie donc les paramètres transmis dans l’ancre #... vers le localStorage GitHub.
   syncVoiceSettingsFromHash_(params);
@@ -157,7 +157,7 @@ async function runStartupDiagnostics_(){
     diag('Ping BBbear',ping);
     const version=String((ping&&ping.backendVersion)||'');
     if(version.indexOf('V4.02')===-1&&version.indexOf('V4.03')===-1&&version.indexOf('V4.05')===-1){
-      diag('Action requise','Le backend utilisé par cette page est encore '+(version||'inconnu')+'. Pour api=ttsDebug et le correctif TTS, remplace Code.gs par V4.05D puis redéploie en nouvelle version.');
+      diag('Action requise','Le backend utilisé par cette page est encore '+(version||'inconnu')+'. Pour api=ttsDebug et le correctif TTS, remplace Code.gs par V4.05F puis redéploie en nouvelle version.');
     }
   }catch(e){
     diag('Ping BBbear impossible',(e&&e.message)||String(e));

@@ -21,7 +21,7 @@
 <div class="phone">
   <div class="hud"><button class="hud-btn" onclick="window.close()">⌂</button><div id="battery" class="battery"></div><div class="sound">🔊</div><button class="hud-btn hud-close" onclick="window.close()">×</button></div>
   <div class="panel">
-    <div class="version">Module discussion BBbear — V4.05</div>
+    <div class="version">Module discussion BBbear — V4.05B</div>
     <div id="talkShell" class="talk-shell idle">
       <div class="talk-head">
         <div class="talk-topline">
@@ -182,7 +182,8 @@ async function sendText(forceText){
     const finalRes=res&&res.result?res.result:res;
     if(!finalRes||!finalRes.ok){diag('Discussion',res);toast((finalRes&&finalRes.message)||'Erreur');setTalkState('idle','Je n’ai pas pu répondre pour le moment.',txt);return}
     if(finalRes.usage){dashboard=dashboard||{};dashboard.usage=finalRes.usage;updateBatteryFromUsage()}
-    const rep=finalRes.reponse||finalRes.response||finalRes.answer||finalRes.message||'';
+    const repRaw=finalRes.reponse||finalRes.response||finalRes.answer||finalRes.message||'';
+    const rep=cleanBotReplyText(repRaw);
     if(!rep){diag('Réponse vide',res);toast('Réponse vide. Voir diagnostic.');setTalkState('idle','Réponse vide reçue.',txt);return}
     addBubble('bot',rep);
     setTalkState('idle',rep,txt);
@@ -220,7 +221,9 @@ async function speak(t){
 }
 function stopAllAudio(){try{speechSynthesis&&speechSynthesis.cancel()}catch(e){}if(window.__bbbearAudio){try{window.__bbbearAudio.pause()}catch(e){}window.__bbbearAudio=null}}
 function setBearTalking(isTalking){document.querySelectorAll('.bear-box').forEach(x=>x.classList.toggle('talking',!!isTalking))}
-function cleanTextForVoice(t){t=String(t||'').replace(/[\r\n]+/g,'. ').replace(/[*_#>`~]/g,' ').replace(/\s+/g,' ').trim();if(t.length>850)t=t.substring(0,850)+'...';return t}
+function cleanBotReplyText(t){let x=String(t||'').trim();const labels=['Nounours','Le nounours','Assistant','BB Burkina Bear',bearName].filter(Boolean).map(escapeRegExpJs);if(labels.length){const rx=new RegExp('^(?:'+labels.join('|')+')\\s*[:：\\-–—]\\s*','i');for(let i=0;i<8;i++){const old=x;x=x.replace(rx,'').trim();if(x===old)break;}}return x||String(t||'').trim()}
+function escapeRegExpJs(s){return String(s||'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
+function cleanTextForVoice(t){t=cleanBotReplyText(t);t=String(t||'').replace(/[\r\n]+/g,'. ').replace(/[*_#>`~]/g,' ').replace(/\s+/g,' ').trim();if(t.length>850)t=t.substring(0,850)+'...';return t}
 function getBestFrenchBrowserVoice(){
   if(!window.speechSynthesis)return null;
   const voices=speechSynthesis.getVoices()||[];

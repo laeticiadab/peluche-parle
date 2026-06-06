@@ -6,7 +6,7 @@
   <title>Démo vocale BBbear</title>
   <style>
     :root{--sky:#58a6d7;--cream:#fffaf4;--sand:#f6e7bd;--brown:#7f5636;--text:#2e2218;--green:#6aa93f;--orange:#efb648;--red:#c75b42;--line:#e4d4b8;--shadow:0 18px 42px rgba(58,36,18,.16)}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:"Trebuchet MS",Arial,sans-serif;background:linear-gradient(180deg,#c9f0ff,#fff7df 62%,#f6e7bd);color:var(--text);display:flex;justify-content:center;padding:18px}.phone{width:min(96vw,820px);background:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.65);border-radius:34px;box-shadow:var(--shadow);padding:18px}.panel{background:rgba(255,250,244,.96);border:1px solid var(--line);border-radius:34px;padding:22px;min-height:680px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.badge{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-weight:900;color:#6b4329}.screen{display:none}.screen.active{display:block}.center{text-align:center}.bear{width:min(58vw,260px);height:310px;margin:10px auto 4px;border-radius:28px;background:rgba(255,250,244,.72);position:relative;box-shadow:0 10px 22px rgba(55,34,16,.10);border:1px solid var(--line);display:flex;align-items:flex-end;justify-content:center;overflow:hidden}.bear-img{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 8px 10px rgba(80,49,22,.16));transition:transform .25s ease,opacity .2s ease}.bear.speaking .bear-img{transform:translateY(-2px) scale(1.025)}.bear.listening .bear-img{transform:rotate(-1deg) scale(1.015)}.bear.thinking .bear-img{transform:translateY(1px) scale(.995);opacity:.95}.bear:after{content:"";position:absolute;left:18%;right:18%;bottom:7px;height:12px;background:rgba(80,49,22,.12);border-radius:999px;filter:blur(2px)}h1{color:var(--brown);font-size:32px;margin:10px 0}h2{color:var(--brown);font-size:25px}.muted{color:#6a5642;line-height:1.5}.card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:16px;margin:14px 0;box-shadow:0 8px 18px rgba(55,34,16,.07)}input,textarea{width:100%;border:1px solid var(--line);border-radius:18px;padding:14px;font:inherit;background:#fff;color:var(--text)}textarea{min-height:86px;resize:vertical}.btn{width:100%;border:0;border-radius:999px;min-height:58px;margin:8px 0;padding:12px 18px;color:#fff;font-weight:900;font-size:18px;cursor:pointer;box-shadow:0 5px 0 rgba(95,72,53,.9),0 10px 18px rgba(0,0,0,.12),inset 0 10px 0 rgba(255,255,255,.18)}.btn:disabled{opacity:.55;cursor:not-allowed}.blue{background:linear-gradient(#72c9ef,#2f93c4)}.green{background:linear-gradient(#b9dd7a,#6aa93f)}.orange{background:linear-gradient(#ffe17d,#efb648)}.gray{background:linear-gradient(#f5f0e8,#ddd3c6);color:#604e3a;text-shadow:none}.red{background:linear-gradient(#ef8a6d,#c75b42)}.row{display:grid;gap:10px}.choice{font-size:19px}.bubble{background:#fff3d7;border:1px solid var(--line);border-radius:22px;padding:14px;margin:12px 0;line-height:1.55;white-space:pre-wrap}.quiz-q{font-size:22px;font-weight:900;color:#51351f}.opt{background:#fff;border:2px solid var(--line);border-radius:18px;padding:13px;text-align:left;font-weight:800;cursor:pointer;margin:8px 0;width:100%;font-size:16px}.opt.good{border-color:#6aa93f;background:#eef8e4}.opt.bad{border-color:#c75b42;background:#fff0ec}.small{font-size:13px;color:#6a5642}.hidden{display:none!important}.mic{width:86px;height:86px;border-radius:50%;border:0;background:linear-gradient(#ff8a70,#c75b42);color:#fff;font-size:38px;font-weight:900;box-shadow:0 7px 0 rgba(95,72,53,.9);cursor:pointer}.mic.listening{animation:pulse 1s infinite;background:linear-gradient(#b9dd7a,#6aa93f)}@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}.log{font-size:12px;background:#1f211f;color:#d9ffd9;border-radius:12px;padding:10px;white-space:pre-wrap;max-height:140px;overflow:auto;margin-top:12px;text-align:left}.voice-line{display:grid;grid-template-columns:1fr;gap:8px}.voice-start{margin-top:12px;background:linear-gradient(#b9dd7a,#6aa93f)}.voice-hint{background:#fff3d7;border:1px solid var(--line);border-radius:16px;padding:10px;margin-top:8px;color:#6a4329;font-weight:800}.toolbar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}@media(max-width:640px){body{padding:0}.phone{width:100vw;min-height:100vh;border-radius:0}.panel{border-radius:28px;min-height:calc(100vh - 36px)}.toolbar{grid-template-columns:1fr}}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:"Trebuchet MS",Arial,sans-serif;background:linear-gradient(180deg,#c9f0ff,#fff7df 62%,#f6e7bd);color:var(--text);display:flex;justify-content:center;padding:18px}.phone{width:min(96vw,820px);background:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.65);border-radius:34px;box-shadow:var(--shadow);padding:18px}.panel{background:rgba(255,250,244,.96);border:1px solid var(--line);border-radius:34px;padding:22px;min-height:680px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.badge{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-weight:900;color:#6b4329}.screen{display:none}.screen.active{display:block}.center{text-align:center}.bear{width:min(58vw,260px);height:310px;margin:10px auto 4px;border-radius:28px;background:rgba(255,250,244,.72);position:relative;box-shadow:0 10px 22px rgba(55,34,16,.10);border:1px solid var(--line);display:flex;align-items:flex-end;justify-content:center;overflow:hidden}.bear-img{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 8px 10px rgba(80,49,22,.16));transition:transform .25s ease,opacity .2s ease}.bear.speaking .bear-img{transform:translateY(-2px) scale(1.025)}.bear.listening .bear-img{transform:rotate(-1deg) scale(1.015)}.bear.thinking .bear-img{transform:translateY(1px) scale(.995);opacity:.95}.bear:after{content:"";position:absolute;left:18%;right:18%;bottom:7px;height:12px;background:rgba(80,49,22,.12);border-radius:999px;filter:blur(2px)}h1{color:var(--brown);font-size:32px;margin:10px 0}h2{color:var(--brown);font-size:25px}.muted{color:#6a5642;line-height:1.5}.card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:16px;margin:14px 0;box-shadow:0 8px 18px rgba(55,34,16,.07)}input,textarea{width:100%;border:1px solid var(--line);border-radius:18px;padding:14px;font:inherit;background:#fff;color:var(--text)}textarea{min-height:86px;resize:vertical}.btn{width:100%;border:0;border-radius:999px;min-height:58px;margin:8px 0;padding:12px 18px;color:#fff;font-weight:900;font-size:18px;cursor:pointer;box-shadow:0 5px 0 rgba(95,72,53,.9),0 10px 18px rgba(0,0,0,.12),inset 0 10px 0 rgba(255,255,255,.18)}.btn:disabled{opacity:.55;cursor:not-allowed}.blue{background:linear-gradient(#72c9ef,#2f93c4)}.green{background:linear-gradient(#b9dd7a,#6aa93f)}.orange{background:linear-gradient(#ffe17d,#efb648)}.gray{background:linear-gradient(#f5f0e8,#ddd3c6);color:#604e3a;text-shadow:none}.red{background:linear-gradient(#ef8a6d,#c75b42)}.row{display:grid;gap:10px}.choice{font-size:19px}.bubble{background:#fff3d7;border:1px solid var(--line);border-radius:22px;padding:14px;margin:12px 0;line-height:1.55;white-space:pre-wrap}.quiz-q{font-size:22px;font-weight:900;color:#51351f}.opt{background:#fff;border:2px solid var(--line);border-radius:18px;padding:13px;text-align:left;font-weight:800;cursor:pointer;margin:8px 0;width:100%;font-size:16px}.opt.good{border-color:#6aa93f;background:#eef8e4}.opt.bad{border-color:#c75b42;background:#fff0ec}.small{font-size:13px;color:#6a5642}.hidden{display:none!important}.mic{width:86px;height:86px;border-radius:50%;border:0;background:linear-gradient(#ff8a70,#c75b42);color:#fff;font-size:38px;font-weight:900;box-shadow:0 7px 0 rgba(95,72,53,.9);cursor:pointer}.mic.listening{animation:pulse 1s infinite;background:linear-gradient(#b9dd7a,#6aa93f)}@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}.log{font-size:12px;background:#1f211f;color:#d9ffd9;border-radius:12px;padding:10px;white-space:pre-wrap;max-height:140px;overflow:auto;margin-top:12px;text-align:left}.voice-line{display:grid;grid-template-columns:1fr;gap:8px}.voice-start{margin-top:12px;background:linear-gradient(#b9dd7a,#6aa93f)}.voice-hint{background:#fff3d7;border:1px solid var(--line);border-radius:16px;padding:10px;margin-top:8px;color:#6a4329;font-weight:800}.toolbar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}@media(max-width:640px){body{padding:0}.phone{width:100vw;min-height:100vh;border-radius:0}.panel{border-radius:28px;min-height:calc(100vh - 36px)}.toolbar{grid-template-columns:1fr}}
   
 
     /* V4.07H — Animation du même asset pour masquer l'attente sans voix différente */
@@ -92,11 +92,11 @@
     <h1>Écouter un conte</h1><div id="storyText" class="bubble">Chargement...</div><button class="btn blue" onclick="replayLastSpeech()">Réécouter</button><button class="btn gray" onclick="showActivities()">Retour</button>
   </section>
 
-  <div class="toolbar"><button id="musicBtn" class="btn orange" onclick="toggleMusic()">Activer musique</button><button class="btn gray" onclick="replayLastSpeech()">Répéter la phrase</button><button class="btn red" onclick="resetDemo()">Réinitialiser testeur</button></div>
+  <div class="toolbar"><button id="musicBtn" class="btn orange" onclick="toggleMusic()">Activer musique</button><button class="btn gray" onclick="replayLastSpeech()">Répéter la phrase</button><button class="btn red" onclick="resetDemo()">Réinitialiser testeur</button><button class="btn gray" onclick="diagMusic('bouton-diagnostic')">Diagnostic musique</button></div>
   <div class="log" id="diag">Initialisation...</div>
 </div></div>
 <script>
-const DEMO_PAGE_VERSION='V4.08B_DEMO_MUSIC_FIX_2026_06_06';
+const DEMO_PAGE_VERSION='V4.08D_AUDIO_VALIDATION_DEMO_DIAG_2026_06_06';
 let cfg={},tester='',talkCount=0,quiz=null,quizIndex=0,quizScore=0,apiUrl='',lastSpeech='',pendingAutoSpeech='',recognition=null,userAudioUnlocked=false,latencyFillerTimer=null,latencyFillerActive=false,voiceRunId=0,currentVoiceAudio=null;
 let audioCtx=null,musicGain=null,musicTimer=null,musicWanted=false,musicUserDisabled=false,musicToggleLock=false,musicDucked=false,currentMusicPage='welcome',musicStep=0,currentMusicTheme=null,musicAssets=[],musicPages={},externalMusicAudio=null,currentExternalMusicId='';
 const DEFAULT_API_URL='';
@@ -111,6 +111,7 @@ function playPageMusic(page){
   currentMusicTheme=getMusicThemeForPage(currentMusicPage);
   musicStep=0;
   updateMusicButton();
+  diagMusic('changement-page');
   if(musicWanted)restartMusicLoop();
 }
 const NOTE_FREQ={C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392,A4:440,B4:493.88,C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99,A5:880};
@@ -121,12 +122,23 @@ const MUSIC_THEMES={
   quiz:{tempo:310,vol:.56,type:'triangle',notes:['E5','G5','A5','G5','E5','D5','C5','D5']},
   story:{tempo:650,vol:.42,type:'sine',notes:['C4','G4','E4','G4','F4','A4','G4','E4']}
 };
+function normalizeAudioUrl(raw){
+  let url=String(raw||'').trim();
+  if(!url)return '';
+  const driveFile=url.match(/drive\.google\.com\/file\/d\/([^\/]+)/i);
+  const driveOpen=url.match(/drive\.google\.com\/open\?id=([^&]+)/i);
+  const driveUc=url.match(/drive\.google\.com\/uc\?[^#]*id=([^&#]+)/i);
+  const id=driveFile?driveFile[1]:(driveOpen?driveOpen[1]:(driveUc?driveUc[1]:''));
+  if(id)return 'https://drive.google.com/uc?export=download&id='+encodeURIComponent(decodeURIComponent(id));
+  return url;
+}
 function configureMusicFromConfig(){
-  musicAssets=Array.isArray(cfg.musicAssets)?cfg.musicAssets:[];
+  musicAssets=Array.isArray(cfg.musicAssets)?cfg.musicAssets.map(a=>Object.assign({},a,{url:normalizeAudioUrl(a&&a.url)})):[];
   musicPages=cfg.musicPages||{};
   if(!musicAssets.length){
     musicAssets=[{id:'synth-welcome',label:'Accueil intégré',url:''},{id:'synth-menu',label:'Menu intégré',url:''},{id:'synth-talk',label:'Discussion intégrée',url:''},{id:'synth-quiz',label:'Quiz intégré',url:''},{id:'synth-story',label:'Conte intégré',url:''}];
   }
+  diagMusic('configuration-chargee');
 }
 function getMusicAssetForPage(page){
   const id=musicPages[page]||musicPages.welcome||'';
@@ -181,7 +193,8 @@ async function startExternalMusic(asset){
   externalMusicAudio.loop=true;
   externalMusicAudio.preload='auto';
   externalMusicAudio.volume=musicDucked?getConfiguredDuckVolume():getPageMusicVolume();
-  externalMusicAudio.addEventListener('error',()=>{diag('Impossible de lire la musique : '+(asset.label||asset.url));fallbackToSynthMusic();});
+  externalMusicAudio.addEventListener('error',()=>{diagMusic('erreur-lecture-url-audio');fallbackToSynthMusic();});
+  externalMusicAudio.addEventListener('playing',()=>diagMusic('lecture-url-audio-ok'),{once:true});
   await externalMusicAudio.play();
 }
 function stopExternalMusic(){
@@ -189,6 +202,7 @@ function stopExternalMusic(){
 }
 function fallbackToSynthMusic(){
   stopExternalMusic();
+  diagMusic('retour-musique-integree-par-defaut');
   if(!musicWanted)return;
   getAudioContext().then(()=>{playMusicNote();const theme=currentMusicTheme||getMusicThemeForPage(currentMusicPage);clearInterval(musicTimer);musicTimer=setInterval(playMusicNote,theme.tempo||420);restoreMusic();});
 }
@@ -248,6 +262,46 @@ async function tryAutostartMusic(){
 
 function safe(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function diag(x){$('diag').textContent=typeof x==='string'?x:JSON.stringify(x,null,2)}
+function buildMusicDiagnostic(reason){
+  const asset=getMusicAssetForPage(currentMusicPage||'welcome')||{};
+  let audioInfo=null;
+  if(externalMusicAudio){
+    audioInfo={
+      src:externalMusicAudio.currentSrc||externalMusicAudio.src||'',
+      paused:externalMusicAudio.paused,
+      readyState:externalMusicAudio.readyState,
+      networkState:externalMusicAudio.networkState,
+      volume:externalMusicAudio.volume,
+      error:externalMusicAudio.error?{code:externalMusicAudio.error.code,message:externalMusicAudio.error.message||''}:null
+    };
+  }
+  const selectedId=(musicPages||{})[currentMusicPage]||(musicPages||{}).welcome||'';
+  return {
+    diagnostic:'musique-demo-github',
+    reason:reason||'-',
+    pageVersion:DEMO_PAGE_VERSION,
+    backendVersion:cfg.backendVersion||'-',
+    apiUrlPresent:!!apiUrl,
+    apiUrl:apiUrl||'',
+    pageUrl:location.href,
+    currentMusicPage:currentMusicPage,
+    selectedMusicId:selectedId,
+    selectedAsset:{id:asset.id||'',label:asset.label||'',kind:asset.kind||'',url:asset.url||'',hasUrl:!!asset.url},
+    musicPages:musicPages,
+    musicAssetsCount:musicAssets.length,
+    musicAssets:musicAssets.map(a=>({id:a.id,label:a.label,kind:a.kind,url:a.url?String(a.url).slice(0,180):'',hasUrl:!!a.url})),
+    musicWanted:musicWanted,
+    musicUserDisabled:musicUserDisabled,
+    musicDucked:musicDucked,
+    externalMusicActive:!!externalMusicAudio,
+    externalMusicId:currentExternalMusicId,
+    externalAudio:audioInfo,
+    volumeNormal:getPageMusicVolume(),
+    volumePendantVoix:getConfiguredDuckVolume(),
+    interpretation:asset.url?'Une URL audio est bien sélectionnée pour cette page. Si l’ancienne musique joue encore, le fichier audio n’est probablement pas lisible et la page repasse en synthèse intégrée.':'Aucune URL audio n’est sélectionnée pour cette page : la musique intégrée par défaut est normale.'
+  };
+}
+function diagMusic(reason){diag(buildMusicDiagnostic(reason))}
 function setBearMood(mood,label){const img=$('bearImg'),box=$('bearBox'),note=$('bearStatus');if(!img||!box)return;box.classList.remove('speaking','listening','thinking','pose','normal-idle');let src=BEAR_IMAGES.normal;let noteText='';if(mood==='speaking'){src=BEAR_IMAGES.excited;box.classList.add('speaking');noteText=label||'Je te réponds…'}else if(mood==='listening'){src=BEAR_IMAGES.curious;box.classList.add('listening');noteText=label||'Je t’écoute…'}else if(mood==='thinking'){src=BEAR_IMAGES.happy;box.classList.add('thinking');noteText=label||'Je réfléchis…'}else if(mood==='pose'){src=BEAR_IMAGES.pose;box.classList.add('pose');noteText=label||'Choisis une activité'}else if(mood==='happy'){src=BEAR_IMAGES.happy;box.classList.add('normal-idle')}else{box.classList.add('normal-idle')}img.src=src;if(note){if(noteText){note.textContent=noteText;note.classList.remove('hidden')}else{note.classList.add('hidden')}}}
 function params(){const out={};try{new URLSearchParams(location.search||'').forEach((v,k)=>out[k]=v)}catch(e){}try{new URLSearchParams((location.hash||'').replace(/^#/,'')).forEach((v,k)=>out[k]=v)}catch(e){}return out}
 function jsonp(api,p){return new Promise((resolve,reject)=>{if(!apiUrl){reject(new Error('apiUrl manquant'));return;}const cb='bbdemo_cb_'+Math.random().toString(36).slice(2);window[cb]=res=>{delete window[cb];script.remove();resolve(res)};const qs=new URLSearchParams(Object.assign({},p||{},{api:api,callback:cb,_:Date.now()}));const script=document.createElement('script');script.onerror=()=>{delete window[cb];reject(new Error('Erreur JSONP '+api))};script.src=apiUrl+(apiUrl.includes('?')?'&':'?')+qs.toString();document.body.appendChild(script)})}
@@ -265,7 +319,7 @@ async function load(){
     cfg=await jsonp('demoConfig',{});
     if(!cfg.ok)throw new Error(cfg.message||'Config invalide');
     configureMusicFromConfig();
-    diag({pageVersion:DEMO_PAGE_VERSION,backendVersion:cfg.backendVersion||'-',musicAssets:musicAssets.length,musicPages:musicPages,demoMusicVolume:cfg.demoMusicVolume,demoMusicDuckVolume:cfg.demoMusicDuckVolume});
+    diagMusic('config-recue-du-backend');
     tryAutostartMusic();
     $('welcomeText').textContent=(cfg.welcomeMessage||'Bienvenue chez {{STRUCTURE}}. Donne-moi ton prénom.').replace(/{{STRUCTURE}}/g,cfg.structureName||'notre boutique');
     tester=sessionStorage.getItem('DEMO_TESTER_NAME')||'';

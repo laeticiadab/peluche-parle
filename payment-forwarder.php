@@ -7,6 +7,8 @@
  * STUDIOATY_PAIEMENT_RELAIS_URL=https://paiement.studioaty.com/api/relais/v1/sms
  * STUDIOATY_PAIEMENT_RELAIS_TERMINAL=tel_...
  * STUDIOATY_PAIEMENT_RELAIS_SECRET=<clé du terminal fournie une seule fois>
+ * Pour plusieurs SIM, remplacer TERMINAL/SECRET par :
+ * STUDIOATY_PAIEMENT_SIM_CONFIG_JSON={"SIM1":{"terminal":"tel_...","secret":"..."}}
  * STUDIOATY_PAIEMENT_SMS_START_ID=<id initial des SMS à synchroniser>
  */
 declare(strict_types=1);
@@ -65,8 +67,29 @@ function transmettre(string $url, string $terminal, string $secret, array $sms):
 }
 try {
     $url = envRequis('STUDIOATY_PAIEMENT_RELAIS_URL');
-    $terminal = envRequis('STUDIOATY_PAIEMENT_RELAIS_TERMINAL');
-    $secret = envRequis('STUDIOATY_PAIEMENT_RELAIS_SECRET');
+    $rawMap = getenv('STUDIOATY_PAIEMENT_SIM_CONFIG_JSON');
+    $map = [];
+    if (is_string($rawMap) && trim($rawMap) !== '') {
+        $parsedMap = json_decode($rawMap, true, 8, JSON_THROW_ON_ERROR);
+        if (!is_array($parsedMap) || array_is_list($parsedMap) || count($parsedMap) > 20 || count($parsedMap) === 0) {
+            throw new RuntimeException('Configuration des SIM invalide');
+        }
+        foreach ($parsedMap as $nomSim => $identifiants) {
+            if (!is_string($nomSim) || $nomSim === '' || strlen($nomSim) > 80 ||
+                !is_array($identifiants) || !is_string($identifiants['terminal'] ?? null) ||
+                !is_string($identifiants['secret'] ?? null) ||
+                !preg_match('/^tel_[A-Za-z0-9_-]{1,36}$/', $identifiants['terminal']) ||
+                strlen($identifiants['secret']) < 32) {
+                throw new RuntimeException('Configuration des SIM invalide');
+            }
+            $map[$nomSim] = [
+                'terminal' => $identifiants['terminal'],
+                'secret' => $identifiants['secret'],
+            ];
+        }
+    }
+    $terminal = $map === [] ? envRequis('STUDIOATY_PAIEMENT_RELAIS_TERMINAL') : null;
+    $secret = $map === [] ? envRequis('STUDIOATY_PAIEMENT_RELAIS_SECRET') : null;
     $depart = envRequis('STUDIOATY_PAIEMENT_SMS_START_ID');
     $parts = parse_url($url);
     if (!is_array($parts) || ($parts['scheme'] ?? '') !== 'https' ||
@@ -98,14 +121,25 @@ try {
     $succes = 0; $erreurs = 0;
     foreach ($query->fetchAll() as $s) {
         $id = (int)$s['id'];
-        $sms = [
-            'id' => uuidDeterministe($terminal, $id),
-            'expediteur' => (string)$s['sender'],
-            'contenu' => (string)$s['body'],
-            'recu_le' => dateIso($s['received_at']),
-            'sim' => (string)($s['sim'] ?? ''),
-        ];
-        $ok = transmettre($url, $terminal, $secret, $sms);
+        $sim = (string)($s['sim'] ?? '');
+        $identifiants = $map === [] ? ['terminal' => $terminal, 'secret' => $secret] : ($map[$sim] ?? null);
+        $ok = false;
+        // Une SIM absente de la configuration reste en attente ; elle n'est
+        // JAMAIS transmise sous l'identité d'une autre SIM.
+        if ($identifiants !== null) {
+            try {
+                $sms = [
+                    'id' => uuidDeterministe($identifiants['terminal'], $id),
+                    'expediteur' => (string)$s['sender'],
+                    'contenu' => (string)$s['body'],
+                    'recu_le' => dateIso($s['received_at']),
+                    'sim' => $sim,
+                ];
+                $ok = transmettre($url, $identifiants['terminal'], $identifiants['secret'], $sms);
+            } catch (Throwable $ignore) {
+                $ok = false;
+            }
+        }
         $maj = $db->prepare("INSERT INTO sms_paiement_transmissions
             (sms_id,statut,essais,prochain_essai,maj_le) VALUES (:id,:etat,1,:next,:date)
             ON CONFLICT(sms_id) DO UPDATE SET

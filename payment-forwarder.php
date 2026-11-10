@@ -71,11 +71,15 @@ try {
     $map = [];
     if (is_string($rawMap) && trim($rawMap) !== '') {
         $parsedMap = json_decode($rawMap, true, 8, JSON_THROW_ON_ERROR);
-        if (!is_array($parsedMap) || array_is_list($parsedMap) || count($parsedMap) > 20 || count($parsedMap) === 0) {
+        if (!str_starts_with(trim($rawMap), '{') || !is_array($parsedMap) ||
+            count($parsedMap) > 20 || count($parsedMap) === 0) {
             throw new RuntimeException('Configuration des SIM invalide');
         }
         foreach ($parsedMap as $nomSim => $identifiants) {
-            if (!is_string($nomSim) || $nomSim === '' || strlen($nomSim) > 80 ||
+            // json_decode peut convertir la clé JSON "0" ou "1" en entier ;
+            // les numéros de slots SIM numériques restent pourtant valides.
+            $nomSim = (string)$nomSim;
+            if ($nomSim === '' || strlen($nomSim) > 80 ||
                 !is_array($identifiants) || !is_string($identifiants['terminal'] ?? null) ||
                 !is_string($identifiants['secret'] ?? null) ||
                 !preg_match('/^tel_[A-Za-z0-9_-]{1,36}$/', $identifiants['terminal']) ||
@@ -115,7 +119,7 @@ try {
     $query = $db->prepare("SELECT s.id,s.sender,s.body,s.received_at,s.sim
         FROM sms s LEFT JOIN sms_paiement_transmissions t ON t.sms_id=s.id
         WHERE s.id>:depart AND (t.sms_id IS NULL OR
-            (t.statut='reessayer' AND t.essais<50 AND t.prochain_essai<=:now))
+            (t.statut='reessayer' AND t.prochain_essai<=:now))
         ORDER BY s.id ASC LIMIT 20");
     $query->execute([':depart' => (int)$depart, ':now' => time()]);
     $succes = 0; $erreurs = 0;
@@ -144,7 +148,8 @@ try {
             (sms_id,statut,essais,prochain_essai,maj_le) VALUES (:id,:etat,1,:next,:date)
             ON CONFLICT(sms_id) DO UPDATE SET
             statut=:etat, essais=essais+1, prochain_essai=:next, maj_le=:date");
-        // Jusqu'à 15 minutes d'attente en cas d'échec ; aucune perte de SMS.
+        // Reprise toutes les 15 minutes tant que l'API ne confirme pas,
+        // sans limite de tentatives qui ferait perdre un SMS durablement.
         $maj->execute([
             ':id' => $id, ':etat' => $ok ? 'transmis' : 'reessayer',
             ':next' => $ok ? 0 : time()+900,

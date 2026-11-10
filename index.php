@@ -18,6 +18,8 @@ function db():PDO{
  $pdo->exec('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY,value TEXT NOT NULL)');
  $pdo->exec('CREATE TABLE IF NOT EXISTS sms(id INTEGER PRIMARY KEY AUTOINCREMENT,sender TEXT NOT NULL,body TEXT NOT NULL,received_at TEXT NOT NULL,created_at TEXT NOT NULL,sim TEXT,app TEXT,source TEXT)');
  $pdo->exec('CREATE INDEX IF NOT EXISTS sms_by_date ON sms(created_at DESC)');
+ $pdo->exec('CREATE TABLE IF NOT EXISTS deliveries (id INTEGER PRIMARY KEY AUTOINCREMENT,created_at TEXT NOT NULL,status INTEGER NOT NULL,reason TEXT NOT NULL)');
+ $pdo->exec('CREATE INDEX IF NOT EXISTS deliveries_recent ON deliveries(id DESC)');
  $pdo->exec('CREATE TABLE IF NOT EXISTS failures(ip TEXT,at INTEGER)');
  $pdo->exec('CREATE INDEX IF NOT EXISTS failures_recent ON failures(ip,at)');
  $i=$pdo->prepare('INSERT OR IGNORE INTO settings(key,value) VALUES(?,?)');
@@ -26,10 +28,21 @@ function db():PDO{
 }
 function opt(string $key):string{$q=db()->prepare('SELECT value FROM settings WHERE key=?');$q->execute([$key]);$v=$q->fetchColumn();return $v===false?'':(string)$v;}
 function saveopt(string $k,string $v):void{$q=db()->prepare('INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value');$q->execute([$k,$v]);}
-function jsonout(int $status,array $data):never{http_response_code($status);header('Content-Type: application/json; charset=utf-8');echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;}
+function jsonout(int $status,array $data):never{
+ if(!empty($GLOBALS['sms_api_call'])){
+  try{
+   $log=db()->prepare('INSERT INTO deliveries(created_at,status,reason) VALUES(?,?,?)');
+   $log->execute([gmdate('Y-m-d\\TH:i:s\\Z'),$status,mb_substr((string)($data['error']??($status===201?'accepted':'response')),0,70)]);
+   db()->exec('DELETE FROM deliveries WHERE id NOT IN (SELECT id FROM deliveries ORDER BY id DESC LIMIT 100)');
+  }catch(Throwable $e){}
+ }
+ http_response_code($status);header('X-StudioATY-SMS: receiver-v2');
+ header('Content-Type: application/json; charset=utf-8');echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+}
 function token():string{$v=$_SERVER['HTTP_AUTHORIZATION']??$_SERVER['REDIRECT_HTTP_AUTHORIZATION']??'';return preg_match('/^Bearer\s+(.+)$/i',trim($v),$m)?trim($m[1]):'';}
 function scalar(mixed $v):string{return is_string($v)||is_numeric($v)?trim((string)$v):'';}
 function api():never{
+ $GLOBALS['sms_api_call']=true;
  if($_SERVER['REQUEST_METHOD']!=='POST')jsonout(405,['error'=>'method_not_allowed']);
  $hash=opt('token_hash');
  if($hash==='')jsonout(503,['error'=>'webhook_not_configured']);
@@ -53,8 +66,13 @@ function api():never{
  jsonout(201,['ok'=>true,'id'=>$id]);
 }
 $page=(string)($_GET['p']??'messages');
-if($page==='api'||($_SERVER['REQUEST_METHOD']==='POST'&&(token()!==''||str_contains(strtolower($_SERVER['CONTENT_TYPE']??''),'application/json')))){
- if($_SERVER['REQUEST_METHOD']==='GET')jsonout(200,['ok'=>true,'service'=>'StudioATY SMS']);
+// Every POST on the webhook root MUST be handled by the API, even if
+// Authorization/Content-Type is missing. Otherwise PHP login redirects can
+// be mistaken by the Android sender for a successful webhook transfer.
+$method=(string)($_SERVER['REQUEST_METHOD']??'GET');
+$adminForm=$method==='POST'&&in_array($page,['login','logout','settings'],true);
+if($page==='api'||($method==='POST'&&!$adminForm)){
+ if($method==='GET')jsonout(200,['ok'=>true,'service'=>'StudioATY SMS','version'=>2]);
  api();
 }
 ini_set('session.use_strict_mode','1');ini_set('session.cookie_httponly','1');ini_set('session.cookie_samesite','Strict');ini_set('session.cookie_secure','1');
@@ -104,6 +122,15 @@ if($page==='settings'){
    else{saveopt('password_hash',password_hash($pass,PASSWORD_DEFAULT));$ok='Mot de passe changé.';}
   }
   elseif($action==='retention'){$days=(string)($_POST['days']??'');if(in_array($days,['7','30','90','365','0'],true)){saveopt('retention',$days);$ok='Durée de conservation enregistrée.';}else $err='Valeur incorrecte.';}
+  elseif($action==='storage_test'){
+   try{
+    db()->beginTransaction();
+    $q=db()->prepare('INSERT INTO sms(sender,body,received_at,created_at) VALUES(?,?,?,?)');
+    $q->execute(['TEST_INTERNE','Test de stockage (transaction annulée)',gmdate('c'),gmdate('c')]);
+    db()->rollBack();
+    $ok='Test local réussi : la base accepte les écritures. Aucun faux SMS conservé.';
+   }catch(Throwable $e){if(db()->inTransaction())db()->rollBack();$err='Test de stockage échoué. Vérifiez les permissions du serveur.';}
+  }
  }
  top('Paramètres');echo '<h1>Paramètres</h1><p class="muted">Réception JSON, sécurité et conservation.</p>';
  if($ok)echo '<div class="alert good">'.esc($ok).'</div>';if($err)echo '<div class="alert bad">'.esc($err).'</div>';
@@ -113,7 +140,17 @@ if($page==='settings'){
  echo '<section class="panel"><h2>Mot de passe administrateur</h2><form method="post" action="?p=settings">'.csrf().'<input type="hidden" name="action" value="password"><label>Mot de passe actuel</label><input type="password" name="old" required><label>Nouveau mot de passe (14 caractères min.)</label><input type="password" name="password" minlength="14" required><label>Confirmation</label><input type="password" name="confirm" minlength="14" required><p><button>Changer le mot de passe</button></p></form></section></div>';
  echo '<section class="panel" style="margin-top:18px"><h2>Conservation des SMS</h2><form method="post" action="?p=settings">'.csrf().'<input type="hidden" name="action" value="retention"><label>Durée</label><select name="days">';
  foreach(['7'=>'7 jours','30'=>'30 jours','90'=>'90 jours','365'=>'1 an','0'=>'Sans limite'] as $k=>$v)echo '<option value="'.$k.'"'.(opt('retention')===$k?' selected':'').'>'.$v.'</option>';
- echo '</select><p><button>Enregistrer</button></p><p class="muted">Le nettoyage automatique se fait à la réception du prochain SMS.</p></form></section>';bottom();
+ echo '</select><p><button>Enregistrer</button></p><p class="muted">Le nettoyage automatique se fait à la réception du prochain SMS.</p></form></section>';
+ echo '<section class="panel" style="margin-top:18px"><h2>Diagnostic des transferts</h2><p class="muted">Le journal ne conserve ni le texte des SMS, ni les jetons. Si aucun événement n’apparaît après un nouveau test, l’application envoie probablement sa requête vers une autre URL.</p>';
+ echo '<form method="post" action="?p=settings">'.csrf().'<input type="hidden" name="action" value="storage_test"><button class="secondary">Tester la base de données</button></form>';
+ $events=db()->query('SELECT created_at,status,reason FROM deliveries ORDER BY id DESC LIMIT 20')->fetchAll();
+ if(!$events){echo '<div class="alert">Aucune requête reçue par l’API depuis l’installation de ce journal.</div>';}
+ else {
+  echo '<table><thead><tr><th>Date UTC</th><th>HTTP</th><th>Résultat</th></tr></thead><tbody>';
+  foreach($events as $event)echo '<tr><td>'.esc($event['created_at']).'</td><td>'.esc($event['status']).'</td><td>'.esc($event['reason']).'</td></tr>';
+  echo '</tbody></table>';
+ }
+ echo '<p class="muted small">201 = enregistré, 401 = jeton incorrect/manquant, 422 = JSON incomplet, 503 = jeton non configuré. Actualisez cette page après un nouveau test.</p></section>';bottom();
 }
 if($page==='detail'){
  $id=filter_input(INPUT_GET,'id',FILTER_VALIDATE_INT);$q=db()->prepare('SELECT * FROM sms WHERE id=?');$q->execute([$id?:0]);$msg=$q->fetch();

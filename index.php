@@ -32,7 +32,7 @@ function jsonout(int $status,array $data):never{
  if(!empty($GLOBALS['sms_api_call'])){
   try{
    $log=db()->prepare('INSERT INTO deliveries(created_at,status,reason) VALUES(?,?,?)');
-   $log->execute([gmdate('Y-m-d\\TH:i:s\\Z'),$status,mb_substr((string)($data['error']??($status===201?'accepted':'response')),0,70)]);
+   $log->execute([gmdate('Y-m-d\TH:i:s\Z'),$status,mb_substr((string)($data['error']??($status===201?'accepted':'response')),0,70)]);
    db()->exec('DELETE FROM deliveries WHERE id NOT IN (SELECT id FROM deliveries ORDER BY id DESC LIMIT 100)');
   }catch(Throwable $e){}
  }

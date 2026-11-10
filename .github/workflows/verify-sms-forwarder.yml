@@ -1,0 +1,13 @@
+name: Vérification passerelle SMS PHP
+on:
+  pull_request:
+    branches: [studioaty-sms-receiver]
+jobs:
+  php:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - run: php -v
+      - run: php -l index.php
+      - run: php -l payment-forwarder.php

@@ -1,8 +1,10 @@
 Options -Indexes
+DirectoryIndex index.php
+RewriteEngine On
+RewriteRule (^|/)\.git(/|$) - [F,L,NC]
 <FilesMatch "^\.">
 Require all denied
 </FilesMatch>
 <FilesMatch "\.(sqlite|db|log|bak)$">
 Require all denied
 </FilesMatch>
-DirectoryIndex index.php

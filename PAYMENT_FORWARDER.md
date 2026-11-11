@@ -29,6 +29,22 @@ Ne pas mettre le secret dans le crontab visible, les journaux, l'URL ou le dép�
 - Le récepteur source applique sa propre durée de conservation (90 jours par défaut dans la version vérifiée). Le pont ne peut pas récupérer un SMS déjà purgé : régler cette durée selon le délai de reprise acceptable et surveiller les pannes du cron. Les états du pont associés aux SMS purgés sont nettoyés.
 - **Aucun débit, validation financière ou changement d'état de commande n'est déclenché par le script PHP**.
 
+## Recette automatisée sans production
+
+Le test `python3 tests/test_forwarder.py` (intégré à GitHub Actions) crée :
+- une base SQLite temporaire au même emplacement relatif que le récepteur réel ;
+- un relais HTTPS local à certificat de test, qui vérifie la signature et l'identité de chaque SIM ;
+- quatre faux SMS, dont une SIM inconnue et un message dont le premier envoi échoue avec HTTP 503.
+
+Il vérifie que les SMS acquittés ne sont pas retransmis, qu'une SIM inconnue ne peut pas emprunter un autre terminal et que le même UUID est conservé lors d'une nouvelle tentative. Ce test **ne prouve pas** que l'application Android transmet les bons slots `sim`, ni que le domaine de production est disponible.
+
+Exécution locale (nécessite Python 3, OpenSSL, PHP CLI avec `pdo_sqlite` et `curl`) :
+
+```bash
+php -l payment-forwarder.php
+python3 tests/test_forwarder.py
+```
+
 ## Recette avant activation
 1. Comparer le total des SMS livrés et le total des SMS reçus par le moteur, sur un petit jeu fictif.
 2. Vérifier la SIM, l'expéditeur autorisé, l'authentification HMAC, les doublons et une coupure réseau.

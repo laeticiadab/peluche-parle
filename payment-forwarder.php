@@ -116,14 +116,28 @@ try {
         sms_id INTEGER PRIMARY KEY, statut TEXT NOT NULL, essais INTEGER NOT NULL,
         prochain_essai INTEGER NOT NULL, maj_le TEXT NOT NULL
     )');
-    $query = $db->prepare("SELECT s.id,s.sender,s.body,s.received_at,s.sim
+    // Réserver 15 places aux nouveaux SMS et 5 aux reprises. Ainsi,
+    // une panne prolongée sur d'anciens messages ne bloque pas les nouveaux.
+    $nouveaux = $db->prepare("SELECT s.id,s.sender,s.body,s.received_at,s.sim
         FROM sms s LEFT JOIN sms_paiement_transmissions t ON t.sms_id=s.id
-        WHERE s.id>:depart AND (t.sms_id IS NULL OR
-            (t.statut='reessayer' AND t.prochain_essai<=:now))
-        ORDER BY s.id ASC LIMIT 20");
-    $query->execute([':depart' => (int)$depart, ':now' => time()]);
+        WHERE s.id>:depart AND t.sms_id IS NULL
+        ORDER BY s.id ASC LIMIT 15");
+    $nouveaux->execute([':depart' => (int)$depart]);
+    $messages = $nouveaux->fetchAll();
+    $placesReprise = 20 - count($messages);
+    if ($placesReprise > 0) {
+        $reprises = $db->prepare("SELECT s.id,s.sender,s.body,s.received_at,s.sim
+            FROM sms s INNER JOIN sms_paiement_transmissions t ON t.sms_id=s.id
+            WHERE s.id>:depart AND t.statut='reessayer' AND t.prochain_essai<=:now
+            ORDER BY t.prochain_essai ASC,s.id ASC LIMIT :limite");
+        $reprises->bindValue(':depart', (int)$depart, PDO::PARAM_INT);
+        $reprises->bindValue(':now', time(), PDO::PARAM_INT);
+        $reprises->bindValue(':limite', $placesReprise, PDO::PARAM_INT);
+        $reprises->execute();
+        $messages = array_merge($messages, $reprises->fetchAll());
+    }
     $succes = 0; $erreurs = 0;
-    foreach ($query->fetchAll() as $s) {
+    foreach ($messages as $s) {
         $id = (int)$s['id'];
         $sim = (string)($s['sim'] ?? '');
         $identifiants = $map === [] ? ['terminal' => $terminal, 'secret' => $secret] : ($map[$sim] ?? null);

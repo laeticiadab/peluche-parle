@@ -13,9 +13,9 @@ Le fichier `payment-forwarder.php` lit les nouveaux messages stockés dans la ba
 ## Configuration (en dehors du dépôt)
 Fournir les 4 variables à la tâche cron Hostinger :
 - `STUDIOATY_PAIEMENT_RELAIS_URL=https://.../api/relais/v1/sms`
-- `STUDIOATY_PAIEMENT_RELAIS_TERMINAL=tel_...`
-- `STUDIOATY_PAIEMENT_RELAIS_SECRET=secret_hmac_du_terminal`
-- `STUDIOATY_PAIEMENT_SMS_START_ID=identifiant_numerique_initial`
+- `STUDIOATY_PAIEMENT_SMS_START_ID=identifiant_numerique_exclusif` (les SMS synchronisés doivent avoir un ID strictement supérieur)
+- Pour une seule SIM : `STUDIOATY_PAIEMENT_RELAIS_TERMINAL=tel_...` et `STUDIOATY_PAIEMENT_RELAIS_SECRET=secret_hmac_du_terminal`
+- Pour plusieurs SIM : `STUDIOATY_PAIEMENT_SIM_CONFIG_JSON={"SIM1":{"terminal":"tel_...","secret":"..."},"SIM2":{"terminal":"tel_...","secret":"..."}}` ; chaque SIM doit avoir un terminal et un secret HMAC distincts.
 
 Ne pas mettre le secret dans le crontab visible, les journaux, l'URL ou le dépôt GitHub. Utiliser la configuration de variables de l'hébergement ou un mécanisme de secret équivalent. Ne pas réutiliser la clé d'une boutique.
 
@@ -24,8 +24,8 @@ Ne pas mettre le secret dans le crontab visible, les journaux, l'URL ou le dép�
 - UUID stable dérivé de l'identifiant du terminal + identifiant du SMS : la reprise ne crée pas un nouvel événement métier.
 - Signature du corps exact envoyé : horodatage + méthode + chemin + corps, selon le contrat du Relais.
 - Le champ `sim` présent dans le SMS Forwarder est conservé, sans être considéré fiable à lui seul.
-- Réponse 200/201 et JSON `ok:true` nécessaires à la marque de transmission. Sinon nouvelle tentative après 15 minutes (maximum 50).
-- Un verrou de fichier évite deux tâches concurrentes. Le journal n'expose ni SMS ni secret.
+- Réponse 200/201 et JSON `ok:true` nécessaires à la marque de transmission. Sinon nouvelle tentative toutes les 15 minutes, sans abandon automatique. Chaque exécution traite jusqu'à 15 nouveaux SMS et réserve jusqu'à 5 places aux reprises (jusqu'à 20 reprises si aucun nouveau SMS), pour éviter qu'une panne ancienne bloque les nouveaux messages.
+- Un verrou de fichier évite deux tâches concurrentes. Le journal n'expose ni SMS ni secret. Une SIM inconnue reste en attente et n'est jamais envoyée sous l'identité d'une autre SIM.
 - **Aucun débit, validation financière ou changement d'état de commande n'est déclenché par le script PHP**.
 
 ## Recette avant activation

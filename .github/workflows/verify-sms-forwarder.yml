@@ -11,3 +11,9 @@ jobs:
       - run: php -v
       - run: php -l index.php
       - run: php -l payment-forwarder.php
+      - name: Vérifier les extensions PHP requises
+        run: |
+          php -m | grep -iq '^pdo_sqlite$'
+          php -m | grep -iq '^curl$'
+      - name: Recette TLS + HMAC + multi-SIM + reprises (données fictives)
+        run: python3 tests/test_forwarder.py

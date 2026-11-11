@@ -26,6 +26,7 @@ Ne pas mettre le secret dans le crontab visible, les journaux, l'URL ou le dép�
 - Le champ `sim` présent dans le SMS Forwarder est conservé, sans être considéré fiable à lui seul.
 - Réponse 200/201 et JSON `ok:true` nécessaires à la marque de transmission. Sinon nouvelle tentative toutes les 15 minutes, sans abandon automatique. Chaque exécution traite jusqu'à 15 nouveaux SMS et réserve jusqu'à 5 places aux reprises (jusqu'à 20 reprises si aucun nouveau SMS), pour éviter qu'une panne ancienne bloque les nouveaux messages.
 - Un verrou de fichier évite deux tâches concurrentes. Le journal n'expose ni SMS ni secret. Une SIM inconnue reste en attente et n'est jamais envoyée sous l'identité d'une autre SIM.
+- Le récepteur source applique sa propre durée de conservation (90 jours par défaut dans la version vérifiée). Le pont ne peut pas récupérer un SMS déjà purgé : régler cette durée selon le délai de reprise acceptable et surveiller les pannes du cron. Les états du pont associés aux SMS purgés sont nettoyés.
 - **Aucun débit, validation financière ou changement d'état de commande n'est déclenché par le script PHP**.
 
 ## Recette avant activation

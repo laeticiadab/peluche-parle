@@ -116,6 +116,10 @@ try {
         sms_id INTEGER PRIMARY KEY, statut TEXT NOT NULL, essais INTEGER NOT NULL,
         prochain_essai INTEGER NOT NULL, maj_le TEXT NOT NULL
     )');
+    // Le récepteur source applique une durée de conservation aux SMS.
+    // Nettoyer les pointeurs de suivi dont le SMS source a été purgé.
+    $db->exec('DELETE FROM sms_paiement_transmissions
+        WHERE sms_id NOT IN (SELECT id FROM sms)');
     // Réserver 15 places aux nouveaux SMS et 5 aux reprises. Ainsi,
     // une panne prolongée sur d'anciens messages ne bloque pas les nouveaux.
     $nouveaux = $db->prepare("SELECT s.id,s.sender,s.body,s.received_at,s.sim

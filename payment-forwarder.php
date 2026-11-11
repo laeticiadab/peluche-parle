@@ -70,6 +70,7 @@ try {
     $rawMap = getenv('STUDIOATY_PAIEMENT_SIM_CONFIG_JSON');
     $map = [];
     $terminauxDejaUtilises = [];
+    $secretsDejaUtilises = [];
     if (is_string($rawMap) && trim($rawMap) !== '') {
         $parsedMap = json_decode($rawMap, true, 8, JSON_THROW_ON_ERROR);
         if (!str_starts_with(trim($rawMap), '{') || !is_array($parsedMap) ||
@@ -87,10 +88,12 @@ try {
                 strlen($identifiants['secret']) < 32) {
                 throw new RuntimeException('Configuration des SIM invalide');
             }
-            if (isset($terminauxDejaUtilises[$identifiants['terminal']])) {
-                throw new RuntimeException('Chaque SIM doit avoir un terminal distinct');
+            if (isset($terminauxDejaUtilises[$identifiants['terminal']]) ||
+                isset($secretsDejaUtilises[hash('sha256', $identifiants['secret'])])) {
+                throw new RuntimeException('Chaque SIM doit avoir un terminal et un secret distincts');
             }
             $terminauxDejaUtilises[$identifiants['terminal']] = true;
+            $secretsDejaUtilises[hash('sha256', $identifiants['secret'])] = true;
             $map[$nomSim] = [
                 'terminal' => $identifiants['terminal'],
                 'secret' => $identifiants['secret'],

@@ -69,6 +69,7 @@ try {
     $url = envRequis('STUDIOATY_PAIEMENT_RELAIS_URL');
     $rawMap = getenv('STUDIOATY_PAIEMENT_SIM_CONFIG_JSON');
     $map = [];
+    $terminauxDejaUtilises = [];
     if (is_string($rawMap) && trim($rawMap) !== '') {
         $parsedMap = json_decode($rawMap, true, 8, JSON_THROW_ON_ERROR);
         if (!str_starts_with(trim($rawMap), '{') || !is_array($parsedMap) ||
@@ -86,6 +87,10 @@ try {
                 strlen($identifiants['secret']) < 32) {
                 throw new RuntimeException('Configuration des SIM invalide');
             }
+            if (isset($terminauxDejaUtilises[$identifiants['terminal']])) {
+                throw new RuntimeException('Chaque SIM doit avoir un terminal distinct');
+            }
+            $terminauxDejaUtilises[$identifiants['terminal']] = true;
             $map[$nomSim] = [
                 'terminal' => $identifiants['terminal'],
                 'secret' => $identifiants['secret'],
@@ -94,6 +99,12 @@ try {
     }
     $terminal = $map === [] ? envRequis('STUDIOATY_PAIEMENT_RELAIS_TERMINAL') : null;
     $secret = $map === [] ? envRequis('STUDIOATY_PAIEMENT_RELAIS_SECRET') : null;
+    if ($map === [] && (
+        !is_string($terminal) || !preg_match('/^tel_[A-Za-z0-9_-]{1,36}$/', $terminal) ||
+        !is_string($secret) || strlen($secret) < 32
+    )) {
+        throw new RuntimeException('Identifiants du terminal invalides');
+    }
     $depart = envRequis('STUDIOATY_PAIEMENT_SMS_START_ID');
     $parts = parse_url($url);
     if (!is_array($parts) || ($parts['scheme'] ?? '') !== 'https' ||
@@ -116,6 +127,8 @@ try {
         sms_id INTEGER PRIMARY KEY, statut TEXT NOT NULL, essais INTEGER NOT NULL,
         prochain_essai INTEGER NOT NULL, maj_le TEXT NOT NULL
     )');
+    $db->exec('CREATE INDEX IF NOT EXISTS sms_paiement_transmissions_reprise
+        ON sms_paiement_transmissions(statut, prochain_essai, sms_id)');
     // Le récepteur source applique une durée de conservation aux SMS.
     // Nettoyer les pointeurs de suivi dont le SMS source a été purgé.
     $db->exec('DELETE FROM sms_paiement_transmissions
